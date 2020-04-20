@@ -25,7 +25,6 @@
 		570AFE64240D35DB00D06312 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D320F9C023FCC3DE007814C5 /* ProfileViewController.swift */; };
 		570AFE66240D35DB00D06312 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D92E102405C1FF008C2F2E /* BaseViewController.swift */; };
 		570AFE67240D35DB00D06312 /* FilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5740D076240810C500E7DFF4 /* FilterViewController.swift */; };
-		570AFE68240D35DB00D06312 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33A21B92404454C0034D932 /* UIColor.swift */; };
 		570AFE69240D35DB00D06312 /* TechRatingColorMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57A81599240D189300CE0888 /* TechRatingColorMapper.swift */; };
 		570AFE6A240D35DB00D06312 /* CommunityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D320F9BA23FCC355007814C5 /* CommunityViewController.swift */; };
 		570AFE6B240D35DB00D06312 /* ActivitiesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D320F9BC23FCC3A6007814C5 /* ActivitiesViewController.swift */; };
@@ -77,13 +76,14 @@
 		57A815A6240D1DBB00CE0888 /* Synchronize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57A815A3240D1DBB00CE0888 /* Synchronize.swift */; };
 		B3071D84EAE81CC362384549 /* Pods_DemoApp_Test_.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 632F7FEB30875F7CB5B86EA3 /* Pods_DemoApp_Test_.framework */; };
 		C13F3B7EE781961CC5590812 /* Pods_DemoApp_Develop_.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0273858F6B58D5ADC2F7B9D /* Pods_DemoApp_Develop_.framework */; };
+		D31C2219244E164200B0E74E /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D31C2218244E164200B0E74E /* UIColor.swift */; };
+		D31C221A244E164200B0E74E /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D31C2218244E164200B0E74E /* UIColor.swift */; };
 		D320F9BB23FCC355007814C5 /* CommunityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D320F9BA23FCC355007814C5 /* CommunityViewController.swift */; };
 		D320F9BD23FCC3A6007814C5 /* ActivitiesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D320F9BC23FCC3A6007814C5 /* ActivitiesViewController.swift */; };
 		D320F9C123FCC3DE007814C5 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D320F9C023FCC3DE007814C5 /* ProfileViewController.swift */; };
 		D320F9C323FCE094007814C5 /* TaskBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D320F9C223FCE094007814C5 /* TaskBar.swift */; };
 		D325661123F48F8C0087A0DE /* UserRatingContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D325661023F48F8C0087A0DE /* UserRatingContainer.swift */; };
 		D325661323F48F990087A0DE /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D325661223F48F980087A0DE /* UIImage.swift */; };
-		D33A21BA2404454C0034D932 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33A21B92404454C0034D932 /* UIColor.swift */; };
 		D34A296F2406CAC500FECDDF /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = D34A296E2406CAC500FECDDF /* String.swift */; };
 		D34E744B23EFB4C2005C7FA8 /* UIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D34E744A23EFB4C2005C7FA8 /* UIButton.swift */; };
 		D34E744D23EFB6F6005C7FA8 /* TrailInfoDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = D34E744C23EFB6F6005C7FA8 /* TrailInfoDisplay.swift */; };
@@ -155,13 +155,13 @@
 		AEE331AB943198A73DED20B9 /* Pods-DemoApp(Develop).release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoApp(Develop).release.xcconfig"; path = "Target Support Files/Pods-DemoApp(Develop)/Pods-DemoApp(Develop).release.xcconfig"; sourceTree = "<group>"; };
 		BF324C706A919E18B25662F8 /* Pods-DemoApp(Develop).debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoApp(Develop).debug.xcconfig"; path = "Target Support Files/Pods-DemoApp(Develop)/Pods-DemoApp(Develop).debug.xcconfig"; sourceTree = "<group>"; };
 		CD68C04B46E0FDA5AADEBFFE /* Pods-DemoApp(Test).release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoApp(Test).release.xcconfig"; path = "Target Support Files/Pods-DemoApp(Test)/Pods-DemoApp(Test).release.xcconfig"; sourceTree = "<group>"; };
+		D31C2218244E164200B0E74E /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		D320F9BA23FCC355007814C5 /* CommunityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityViewController.swift; sourceTree = "<group>"; };
 		D320F9BC23FCC3A6007814C5 /* ActivitiesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivitiesViewController.swift; sourceTree = "<group>"; };
 		D320F9C023FCC3DE007814C5 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		D320F9C223FCE094007814C5 /* TaskBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskBar.swift; sourceTree = "<group>"; };
 		D325661023F48F8C0087A0DE /* UserRatingContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRatingContainer.swift; sourceTree = "<group>"; };
 		D325661223F48F980087A0DE /* UIImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
-		D33A21B92404454C0034D932 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = SOURCE_ROOT; };
 		D34A296E2406CAC500FECDDF /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = String.swift; path = DemoApp/Classes/String.swift; sourceTree = SOURCE_ROOT; };
 		D34E744A23EFB4C2005C7FA8 /* UIButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIButton.swift; sourceTree = "<group>"; };
 		D34E744C23EFB6F6005C7FA8 /* TrailInfoDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrailInfoDisplay.swift; sourceTree = "<group>"; };
@@ -289,9 +289,9 @@
 		572080E223E18B27008C0EDD /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				D31C2218244E164200B0E74E /* UIColor.swift */,
 				D34A296E2406CAC500FECDDF /* String.swift */,
 				D3D92E122405C8BD008C2F2E /* UIPageViewController.swift */,
-				D33A21B92404454C0034D932 /* UIColor.swift */,
 				D34E744A23EFB4C2005C7FA8 /* UIButton.swift */,
 				D325661223F48F980087A0DE /* UIImage.swift */,
 				572080E323E18B27008C0EDD /* UIView.swift */,
@@ -737,6 +737,7 @@
 				570AFE57240D35DB00D06312 /* AppDelegate.swift in Sources */,
 				570AFE58240D35DB00D06312 /* TrailDetails.swift in Sources */,
 				570AFE59240D35DB00D06312 /* DownloadViewController.swift in Sources */,
+				D31C221A244E164200B0E74E /* UIColor.swift in Sources */,
 				570AFE5A240D35DB00D06312 /* UIPageViewController.swift in Sources */,
 				570AFE5B240D35DB00D06312 /* String.swift in Sources */,
 				570AFE5C240D35DB00D06312 /* TrailInfoDisplay.swift in Sources */,
@@ -751,7 +752,6 @@
 				570AFE64240D35DB00D06312 /* ProfileViewController.swift in Sources */,
 				570AFE66240D35DB00D06312 /* BaseViewController.swift in Sources */,
 				570AFE67240D35DB00D06312 /* FilterViewController.swift in Sources */,
-				570AFE68240D35DB00D06312 /* UIColor.swift in Sources */,
 				570AFE69240D35DB00D06312 /* TechRatingColorMapper.swift in Sources */,
 				570AFE6A240D35DB00D06312 /* CommunityViewController.swift in Sources */,
 				570AFE6B240D35DB00D06312 /* ActivitiesViewController.swift in Sources */,
@@ -776,6 +776,7 @@
 				5720809B23E189F8008C0EDD /* AppDelegate.swift in Sources */,
 				575FF6EC23FEB75800099C1B /* TrailDetails.swift in Sources */,
 				5716AABF240111BD00E95104 /* DownloadViewController.swift in Sources */,
+				D31C2219244E164200B0E74E /* UIColor.swift in Sources */,
 				D3D92E132405C8BD008C2F2E /* UIPageViewController.swift in Sources */,
 				D34A296F2406CAC500FECDDF /* String.swift in Sources */,
 				D34E744D23EFB6F6005C7FA8 /* TrailInfoDisplay.swift in Sources */,
@@ -791,7 +792,6 @@
 				D320F9C123FCC3DE007814C5 /* ProfileViewController.swift in Sources */,
 				D3D92E112405C1FF008C2F2E /* BaseViewController.swift in Sources */,
 				5740D077240810C500E7DFF4 /* FilterViewController.swift in Sources */,
-				D33A21BA2404454C0034D932 /* UIColor.swift in Sources */,
 				57A8159A240D189300CE0888 /* TechRatingColorMapper.swift in Sources */,
 				D320F9BB23FCC355007814C5 /* CommunityViewController.swift in Sources */,
 				D320F9BD23FCC3A6007814C5 /* ActivitiesViewController.swift in Sources */,
