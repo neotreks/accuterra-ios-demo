@@ -29,7 +29,13 @@ class BaseViewController: UIViewController {
     
     var taskBar: TaskBar? {
         get {
-            return ((self.parent as? HomePageViewController)?.homeDelegate as? HomeViewController)?.taskBar
+            if let homePageViewController = self.parent as? HomePageViewController {
+                return (homePageViewController.homeDelegate as? HomeViewController)?.taskBar
+            } else if let homeViewController = self.navigationController?.viewControllers.first as? HomeViewController {
+                return homeViewController.taskBar
+            } else {
+                return nil
+            }
         }
     }
 }

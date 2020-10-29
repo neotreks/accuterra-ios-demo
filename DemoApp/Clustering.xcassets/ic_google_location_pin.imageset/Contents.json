@@ -1,8 +1,8 @@
 {
   "images" : [
     {
+      "filename" : "ic_google_location_pin_red.png",
       "idiom" : "universal",
-      "filename" : "map-pin.png",
       "scale" : "1x"
     },
     {
@@ -15,7 +15,10 @@
     }
   ],
   "info" : {
-    "version" : 1,
-    "author" : "xcode"
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "template-rendering-intent" : "template"
   }
 }

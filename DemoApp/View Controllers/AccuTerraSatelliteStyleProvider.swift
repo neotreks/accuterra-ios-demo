@@ -15,8 +15,6 @@ import Mapbox
 */
 class AccuTerraSatelliteStyleProvider: AccuTerraStyleProvider {
     
-    var iconSize: Double = 32.0
-
     // Trail Path properties
     override func getTrailProperties(type:TrailLayerStyleType, layer: MGLLineStyleLayer) -> MGLLineStyleLayer {
         if type == TrailLayerStyleType.TRAIL_PATH {
@@ -40,20 +38,16 @@ class AccuTerraSatelliteStyleProvider: AccuTerraStyleProvider {
     
     // Unclustered marker and POIs image
     override func getPoiImage(type: TrailPoiStyleType) -> UIImage {
-        if type == TrailPoiStyleType.TRAIL_HEAD {
-            let image = UIImage(named: "pin") ?? UIImage()
-            // Make cluster markers same size as unclustered
-            iconSize = Double(image.size.width)
+        switch type {
+        case .TRAIL_HEAD:
+            let image = UIImage(named: "location-pin") ?? UIImage()
             return image
-        }
-        else if type == TrailPoiStyleType.TRAIL_POI {
-            let image = UIImage(named: "pin") ?? UIImage()
-            // Make cluster markers same size as unclustered
-            iconSize = Double(image.size.width)
+        case .TRAIL_POI:
+            let image = UIImage(named: "location-pin") ?? UIImage()
             return image
-        }
-        else {
-            return UIImage()
+        case .SELECTED_TRAIL_POI:
+            let image = UIImage(named: "ic_google_location_pin") ?? UIImage()
+            return image
         }
     }
     
@@ -89,7 +83,7 @@ class AccuTerraSatelliteStyleProvider: AccuTerraStyleProvider {
                 let circleLayer = layer as! MGLCircleStyleLayer
                 circleLayer.circleRadius = NSExpression(forConstantValue: NSNumber(value: iconSize / 2))
                 circleLayer.circleOpacity = NSExpression(forConstantValue: 0.65)
-                circleLayer.circleColor = NSExpression(forConstantValue: UIColor(hex: "ff777777"))
+                circleLayer.circleColor = NSExpression(forConstantValue: UIColor(hex: "777777"))
                 return circleLayer
             }
             else {

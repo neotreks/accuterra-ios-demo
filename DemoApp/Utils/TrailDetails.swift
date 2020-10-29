@@ -15,6 +15,8 @@ import CoreLocation
 ///
 struct TrailDetails {
     
+    private let TAG = "TrailDetails"
+    
     var systemInfoValues: [(key: String, value: String)]
     var basicInfoValues: [(key: String, value: String)]
     var accessConcernsValues: [(key: String, value: String)]
@@ -232,10 +234,6 @@ struct TrailDetails {
             
             // Navigation Info
             if let navigationInfo = trail?.navigationInfo {
-                navigationInfoValues.append((key: "One Way", value: navigationInfo.isOneWay ? "YES" : "NO"))
-                if let nearestTownWithServices = navigationInfo.nearestTownWithServicesName {
-                    navigationInfoValues.append((key: "Nearest Town with Services", value: nearestTownWithServices))
-                }
                 if let officialRoadName = navigationInfo.officialRoadName {
                     navigationInfoValues.append((key: "Official Road Name", value: officialRoadName))
                 }
@@ -294,7 +292,7 @@ struct TrailDetails {
             }
             
         } catch {
-            debugPrint("\(error)")
+            Log.e(TAG, error)
         }
         
         self.systemInfoValues = systemInfoValues
@@ -334,9 +332,6 @@ struct TrailDetails {
         if let desc = mapPoint.description {
             values.append((key: "Description", value: desc))
         }
-        if let distanceMarker = mapPoint.distanceMarker {
-            values.append((key: "Distance Marker", value: "\(distanceMarker) meters"))
-        }
         values.append((key: "Is Waypoint", value: mapPoint.isWaypoint ? "YES" : "NO"))
         values.append((key: "Type Name", value: mapPoint.type.name))
         values.append((key: "Type Code", value: mapPoint.type.code))
@@ -350,9 +345,6 @@ struct TrailDetails {
             values.append((key: "Sub Type Description", value: subTypeDescription))
         }
         
-        if let navigationOrder = mapPoint.navigationOrder {
-            values.append((key: "Navigation Order", value: "\(navigationOrder)"))
-        }
         values.append(contentsOf: TrailDetails.locationValues(mapPoint.location))
         
         return values

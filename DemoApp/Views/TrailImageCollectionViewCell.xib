@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097.3" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gTV-IL-0wX" customClass="TrailImageCollectionViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="171" height="164"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="171" height="164"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="MV4-I1-fPT">
+                        <rect key="frame" x="0.0" y="0.0" width="171" height="164"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </imageView>
+                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="uWL-uI-BTH">
+                        <rect key="frame" x="75.5" y="72" width="20" height="20"/>
+                    </activityIndicatorView>
+                </subviews>
+            </view>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstItem="MV4-I1-fPT" firstAttribute="height" secondItem="gTV-IL-0wX" secondAttribute="height" id="6c1-Gx-wdb"/>
+                <constraint firstItem="uWL-uI-BTH" firstAttribute="centerY" secondItem="gTV-IL-0wX" secondAttribute="centerY" id="fCa-IS-d3o"/>
+                <constraint firstItem="MV4-I1-fPT" firstAttribute="centerX" secondItem="gTV-IL-0wX" secondAttribute="centerX" id="hJY-d3-WOv"/>
+                <constraint firstItem="MV4-I1-fPT" firstAttribute="centerY" secondItem="gTV-IL-0wX" secondAttribute="centerY" id="he4-bg-DlA"/>
+                <constraint firstItem="uWL-uI-BTH" firstAttribute="centerX" secondItem="gTV-IL-0wX" secondAttribute="centerX" id="xKI-NV-Rug"/>
+                <constraint firstItem="MV4-I1-fPT" firstAttribute="width" secondItem="gTV-IL-0wX" secondAttribute="width" id="zHE-Nz-hgb"/>
+            </constraints>
+            <size key="customSize" width="171" height="164"/>
+            <connections>
+                <outlet property="imageLoadingIndicator" destination="uWL-uI-BTH" id="ir6-qI-pV2"/>
+                <outlet property="imageView" destination="MV4-I1-fPT" id="7Or-kh-9UK"/>
+            </connections>
+            <point key="canvasLocation" x="225.36231884057972" y="137.94642857142856"/>
+        </collectionViewCell>
+    </objects>
+</document>

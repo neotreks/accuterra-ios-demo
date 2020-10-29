@@ -16,7 +16,8 @@ protocol DownloadViewControllerDelegate: SdkInitDelegate {
 }
 
 class DownloadViewController : BaseViewController {
-    @IBOutlet weak var progressLabel: UILabel!
+    @IBOutlet weak var progressTitle: UILabel!
+    @IBOutlet weak var progressValue: UILabel!
     @IBOutlet weak var progressView: UIProgressView!
     
     override func viewDidLoad() {
@@ -38,11 +39,13 @@ class DownloadViewController : BaseViewController {
     }
     
     private func initSdk() {
-        guard let clientToken = Bundle.main.infoDictionary?["AccuTerraClientToken"] as? String,
-            let serviceUrl = Bundle.main.infoDictionary?["AccuTerraServiceUrl"] as? String else {
-                fatalError("AccuTerraClientToken and AccuTerraServiceUrl is missing in info.plist")
+        guard let serviceUrl = Bundle.main.infoDictionary?["WS_BASE_URL"] as? String else {
+                fatalError("WS_BASE_URL is missing in info.plist")
         }
-        SdkManager.shared.initSdkAsync(config: SdkConfig(clientToken: clientToken, wsUrl: serviceUrl), delegate: self)
+        guard let accuTerraMapStyleUrl = Bundle.main.infoDictionary?["ACCUTERRA_MAP_STYLE_URL"] as? String else {
+            fatalError("ACCUTERRA_MAP_STYLE_URL is missing in info.plist")
+        }
+        SdkManager.shared.initSdkAsync(config: SdkConfig(wsUrl: serviceUrl, accuterraMapStyleUrl: accuTerraMapStyleUrl), accessProvider: DemoAccessManager.shared, delegate: self)
     }
 }
 
@@ -50,11 +53,29 @@ extension DownloadViewController : SdkInitDelegate {
     func onProgressChanged(progress: Int) {
         DispatchQueue.main.async {
             self.progressView.progress = Float(progress) / 100.0
-            self.progressLabel.text = "\(progress)%"
+            self.progressValue.text = "\(progress)%"
         }
     }
     
     func onStateChanged(state: SdkInitState, detail: SdkInitStateDetail?) {
         self.delegate?.onStateChanged(state: state, detail: detail)
+        executeBlockOnMainThread {
+            switch state {
+            case .IN_PROGRESS:
+                switch detail ?? .TRAIL_DB_DOWNLOAD {
+                case .TRAIL_DB_UNPACK:
+                    self.progressTitle.text = "Extracting"
+                    self.progressValue.text = ""
+                case .TRAIL_MARKERS_CACHE_INIT:
+                    self.progressTitle.text = "Initializing Trail Markers Cache ... "
+                case .TRAIL_PATHS_CACHE_INIT:
+                    self.progressTitle.text = "Initializing Trail Paths Cache ... "
+                default:
+                    self.progressTitle.text = "Downloading ... "
+                }
+            default:
+                break
+            }
+        }
     }
 }

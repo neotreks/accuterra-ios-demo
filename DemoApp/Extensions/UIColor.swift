@@ -38,6 +38,22 @@ extension UIColor {
         return UIColor(named: "TaskbarActiveBarColor")
     }
     
+    static var WaypointActiveTextColor: UIColor? {
+        return UIColor(named: "WaypointActive")
+    }
+    
+    static var WaypointInactiveTextColor: UIColor? {
+        return UIColor(named: "WaypointInactive")
+    }
+    
+    static var DrivingNavigationBarColor: UIColor? {
+        return UIColor(named: "DrivingNavigationBar")
+    }
+    
+    static var DrivingNavigationBarTextColor: UIColor? {
+        return UIColor(named: "DrivingNavigationBarText")
+    }
+    
 }
 
 

@@ -14,7 +14,8 @@ protocol TaskbarDelegate: class {
 
 enum TaskTypes: String {
     case community = "COMMUNITY"
-    case activities = "ACTIVITIES"
+//    case activities = "ACTIVITIES"
+    case mytrips = "MY TRIPS"
     case discover = "DISCOVER"
     case profile = "PROFILE"
 }
@@ -24,7 +25,8 @@ class TaskBar: UIView {
     static var tasks: [Int: TaskTypes] {
         return [
             0: .community,
-            1: .activities,
+//            1: .activities,
+            1: .mytrips,
             2: .discover,
             3: .profile
         ]
@@ -56,7 +58,8 @@ class TaskBar: UIView {
         addConstraintsWithFormat("H:|[v0]|", views: collectionView)
         addConstraintsWithFormat("V:|[v0]|", views: collectionView)
         
-        let selectedIndexPath = IndexPath(item: 2, section: 0)
+        // Initially select tab Discover
+        let selectedIndexPath = IndexPath(item: UIUtils.getIndexFromTask(task: .discover), section: 0)
         collectionView.selectItem(at: selectedIndexPath, animated: false, scrollPosition: .bottom)
     }
 }
@@ -64,7 +67,7 @@ class TaskBar: UIView {
 extension TaskBar: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 4
+        return TaskBar.tasks.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -74,7 +77,7 @@ extension TaskBar: UICollectionViewDataSource, UICollectionViewDelegate, UIColle
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: frame.width / 4, height: frame.height)
+        return CGSize(width: frame.width / CGFloat(TaskBar.tasks.count), height: frame.height)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
@@ -87,5 +90,14 @@ extension TaskBar: UICollectionViewDataSource, UICollectionViewDelegate, UIColle
     
     func getTask (taskIndex: Int) -> TaskTypes {
         return TaskBar.tasks[taskIndex] ?? .discover
+    }
+    
+    func select(task: TaskTypes) {
+        if let index = TaskBar.tasks.first(where: { (key, value) -> Bool in
+            return value == task
+        }) {
+            self.collectionView.selectItem(at: IndexPath(row: index.key, section: 0), animated: true, scrollPosition: .centeredHorizontally)
+            delegate?.taskSelected(task: task)
+        }
     }
 }

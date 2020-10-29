@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>ACCUTERRA_MAP_API_KEY</key>
+	<string></string>
+	<key>ACCUTERRA_MAP_STYLE_URL</key>
+	<string>https://maps-test.accuterra.com/v1/styles/accuterra-outdoors/style.json</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -17,13 +21,19 @@
 	<key>CFBundleShortVersionString</key>
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MGLMapboxMetricsEnabledSettingShownInApp</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Add images to your trip.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>The AccuTerra Demo App needs your location to display it on the map and record your trips in background.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>The AccuTerra Demo App needs your location to display this on the map.</string>
+	<string>The AccuTerra Demo App needs your location to display it on the map.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Add images to your trip.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>fa-regular-400.ttf</string>
@@ -47,6 +57,10 @@
 			</array>
 		</dict>
 	</dict>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -70,5 +84,13 @@
 	</array>
 	<key>UIUserInterfaceStyle</key>
 	<string>Light</string>
+	<key>WS_AUTH_CLIENT_ID</key>
+	<string>mobile-sdk</string>
+	<key>WS_AUTH_CLIENT_SECRET</key>
+	<string></string>
+	<key>WS_AUTH_URL</key>
+	<string>https://dev.accuterra.com/</string>
+	<key>WS_BASE_URL</key>
+	<string>https://dev.accuterra.com:443/api/</string>
 </dict>
 </plist>

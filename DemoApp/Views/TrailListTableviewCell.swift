@@ -23,6 +23,9 @@ class TrailListTableviewCell: UITableViewCell {
     @IBOutlet weak var goToDetailsButton: UIButton!
     @IBOutlet weak var difficultyColorBarLabel: UILabel!
     
+    static let cellIdentifier = "TrailInfoCell"
+    static let cellXibName = "TrailListTableviewCell"
+    
     weak var delegate: TrailListViewDelegate?
     var trail: TrailBasicInfo?
     

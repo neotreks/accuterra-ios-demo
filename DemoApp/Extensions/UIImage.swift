@@ -37,9 +37,6 @@ extension UIImage {
     static var getThereImage: UIImage? {
         return UIImage(named: "arrow.up.right.diamond.fill")
     }
-    static var downloadImage: UIImage? {
-        return UIImage(named: "square.and.arrow.down.fill")
-    }
     static var startNavigationImage: UIImage? {
         return UIImage(named: "location.north")
     }
@@ -51,6 +48,18 @@ extension UIImage {
     }
     static var filterImage: UIImage? {
         return UIImage(named: "filter")
+    }
+    static var cacheInfoImage: UIImage? {
+        return UIImage(named: "cache.info")
+    }
+    static var cacheDownloadImage: UIImage? {
+        return UIImage(named: "cache.download")
+    }
+    static var cacheProgressImage: UIImage? {
+        return UIImage(named: "cache.progress")
+    }
+    static var cacheDeleteImage: UIImage? {
+        return UIImage(named: "cache.delete")
     }
     
     static func ==(lhs: UIImage, rhs: UIImage) -> Bool {

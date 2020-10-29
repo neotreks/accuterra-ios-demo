@@ -22,11 +22,9 @@ protocol TrailListViewDelegate : class {
 
 class TrailListView: UIView {
 
+    private let TAG = "TrailListView"
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var listButton: UIButton!
-    
-    var cellIdentifier="TrailInfoCell"
-    var cellXibName = "TrailListTableviewCell"
     
     var trailsService: ITrailService?
     
@@ -37,9 +35,9 @@ class TrailListView: UIView {
     private var selectedTrailId: Int64?
     
     func loadTrails() -> Set<Int64> {
-        tableView.register(UINib(nibName: cellXibName, bundle: nil), forCellReuseIdentifier: cellIdentifier)
+        tableView.register(UINib(nibName: TrailListTableviewCell.cellXibName, bundle: nil), forCellReuseIdentifier: TrailListTableviewCell.cellIdentifier)
         guard let delegate = self.delegate else {
-            debugPrint("TrailListView delegate not set")
+            Log.e(TAG, "TrailListView delegate not set")
             return Set<Int64>()
         }
         guard SdkManager.shared.isTrailDbInitialized else {
@@ -98,7 +96,7 @@ class TrailListView: UIView {
             self.selectTrail(trailId: self.selectedTrailId)
         }
         catch {
-            debugPrint("\(error)")
+            Log.e(TAG, error)
         }
         
         if let filteredTrailIds = self.trails?.map({ (trail) -> Int64 in
@@ -134,7 +132,7 @@ extension TrailListView : UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell :TrailListTableviewCell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! TrailListTableviewCell
+        let cell :TrailListTableviewCell = tableView.dequeueReusableCell(withIdentifier: TrailListTableviewCell.cellIdentifier, for: indexPath) as! TrailListTableviewCell
         if let trails = trails {
             var userRatingsContainer = UserRatingContainer(one: cell.ratingStarOne, two: cell.ratingStarTwo, three: cell.ratingStarThree, four: cell.ratingStarFour, five:cell.ratingStarFive)
             TrailInfoDisplay.setDisplayFieldValues(trailTitleLabel: &cell.trailTitle, descriptionLabel:&cell.trailDescription, distanceLabel: &cell.trailDistanceLabel, userRatings: &userRatingsContainer, difficultyColorBar:&cell.difficultyColorBarLabel, basicTrailInfo: trails[indexPath.row])

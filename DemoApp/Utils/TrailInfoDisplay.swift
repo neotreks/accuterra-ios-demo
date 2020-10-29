@@ -66,7 +66,7 @@ public class TrailInfoDisplay {
         }
         
         if let trailDistance = basicTrailInfo?.length {
-            distanceLabel.text = GeoUtils.distanceKilometersToMiles(kilometers: trailDistance)
+            distanceLabel.text = DistanceFormatter.formatDistance(distanceInMeters: trailDistance * 1000)
         }
         else {
             distanceLabel.text = "-- mi"
@@ -149,7 +149,7 @@ public class TrailInfoDisplay {
         setDisplayFieldValuesPartial(trailTitleLabel: &trailTitleLabel, distanceLabel: &distanceLabel, userRatingsContainer: &userRatings, basicTrailInfo: basicTrailInfo)
         
         if let description = basicTrailInfo?.highlights {
-            descriptionTextView.text = description
+            descriptionTextView.attributedText = description.htmlAttributed(family: "-apple-system", size: 14, color: UIColor.Inactive!)
         }
         else {
             descriptionTextView.text = "N/A"

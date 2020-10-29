@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "570AFE52240D35DB00D06312"
-               BuildableName = "DemoApp(Test).app"
+               BuildableName = "ATSDK(Test).app"
                BlueprintName = "DemoApp(Test)"
                ReferencedContainer = "container:DemoApp.xcodeproj">
             </BuildableReference>
@@ -29,7 +29,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5720809623E189F8008C0EDD"
-               BuildableName = "DemoApp(Develop).app"
+               BuildableName = "ATSDK(Develop).app"
                BlueprintName = "DemoApp(Develop)"
                ReferencedContainer = "container:DemoApp.xcodeproj">
             </BuildableReference>
@@ -87,7 +87,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5720809623E189F8008C0EDD"
-            BuildableName = "DemoApp(Develop).app"
+            BuildableName = "ATSDK(Develop).app"
             BlueprintName = "DemoApp(Develop)"
             ReferencedContainer = "container:DemoApp.xcodeproj">
          </BuildableReference>
@@ -103,7 +103,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5720809623E189F8008C0EDD"
-            BuildableName = "DemoApp(Develop).app"
+            BuildableName = "ATSDK(Develop).app"
             BlueprintName = "DemoApp(Develop)"
             ReferencedContainer = "container:DemoApp.xcodeproj">
          </BuildableReference>

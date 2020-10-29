@@ -17,7 +17,7 @@ class HomePageViewController: UIPageViewController {
     private(set) lazy var orderedViewControllers: [UIViewController] = {
         return [
             self.newViewController("Community"),
-            self.newViewController("Activities"),
+            self.newViewController("My Trips"),
             self.newViewController("Discover"),
             self.newViewController("Profile")
             ]
@@ -46,11 +46,13 @@ class HomePageViewController: UIPageViewController {
     }
     
     private func initSdk() {
-        guard let clientToken = Bundle.main.infoDictionary?["AccuTerraClientToken"] as? String,
-            let serviceUrl = Bundle.main.infoDictionary?["AccuTerraServiceUrl"] as? String else {
-                fatalError("AccuTerraClientToken and AccuTerraServiceUrl is missing in info.plist")
+        guard let serviceUrl = Bundle.main.infoDictionary?["WS_BASE_URL"] as? String else {
+                fatalError("WS_BASE_URL is missing in info.plist")
         }
-        SdkManager.shared.initSdkAsync(config: SdkConfig(clientToken: clientToken, wsUrl: serviceUrl), delegate: self)
+        guard let accuTerraMapStyleUrl = Bundle.main.infoDictionary?["ACCUTERRA_MAP_STYLE_URL"] as? String else {
+            fatalError("ACCUTERRA_MAP_STYLE_URL is missing in info.plist")
+        }
+        SdkManager.shared.initSdkAsync(config: SdkConfig(wsUrl: serviceUrl, accuterraMapStyleUrl: accuTerraMapStyleUrl), accessProvider: DemoAccessManager.shared, delegate: self)
     }
     
     private func goToDownload() {
@@ -68,12 +70,9 @@ class HomePageViewController: UIPageViewController {
         scrollToViewController(viewController: initialViewController)
     }
 
-    /**
-     Scrolls to the view controller at the given index. Automatically calculates
-     the direction.
-     
-     - parameter newIndex: the new index to scroll to
-     */
+    /// Scrolls to the view controller at the given index. Automatically calculates the direction.
+    ///
+    /// - Parameter newIndex: the new index to scroll to
     func scrollToViewController(index newIndex: Int) {
         if let firstViewController = viewControllers?.first,
             let currentIndex = orderedViewControllers.firstIndex(of: firstViewController) {
@@ -96,12 +95,12 @@ class HomePageViewController: UIPageViewController {
         return UIStoryboard(name: "Main", bundle: nil) .
         instantiateViewController(withIdentifier: name)
     }
-    
-    /**
-     Scrolls to the given 'viewController' page.
-     
-     - parameter viewController: the view controller to show.
-     */
+
+    /// Scrolls to the given 'viewController' page.
+    ///
+    /// - Parameters:
+    ///   - viewController: the view controller to show.
+    ///   - direction: direction
     private func scrollToViewController(viewController: UIViewController,
                                         direction: UIPageViewController.NavigationDirection = .forward) {
         setViewControllers([viewController],
@@ -115,9 +114,7 @@ class HomePageViewController: UIPageViewController {
         })
     }
     
-    /**
-     Notifies '_tutorialDelegate' that the current page index was updated.
-     */
+    /// Notifies '_tutorialDelegate' that the current page index was updated.
     private func notifyTutorialDelegateOfNewIndex() {
     }
     
@@ -191,22 +188,19 @@ extension HomePageViewController: UIPageViewControllerDelegate {
 }
 
 protocol HomePageViewControllerDelegate: class {
-    
-    /**
-     The number of pages is updated.
-     
-     - parameter tutorialPageViewController: the TutorialPageViewController instance
-     - parameter count: the total number of pages.
-     */
+    /// The number of pages is updated.
+    ///
+    /// - Parameters:
+    ///   - homePageViewController: the TutorialPageViewController instance
+    ///   - count: the total number of pages.
     func homePageViewController(homePageViewController: HomeViewController,
         didUpdatePageCount count: Int)
-    
-    /**
-     The current index is updated.
-     
-     - parameter tutorialPageViewController: the TutorialPageViewController instance
-     - parameter index: the index of the currently visible page.
-     */
+
+    /// The current index is updated.
+    ///
+    /// - Parameters:
+    ///   - homePageViewController: the TutorialPageViewController instance
+    ///   - index: the index of the currently visible page.
     func homePageViewController(homePageViewController: HomeViewController,
         didUpdatePageIndex index: Int)
     
@@ -228,7 +222,12 @@ extension HomePageViewController : SdkInitDelegate, DownloadViewControllerDelega
             switch state {
             case .COMPLETED:
                 taskBar?.isUserInteractionEnabled = true
+                // Initially select Discover tab
                 self.goToTrailsDiscovery()
+                
+                let service = ServiceFactory.getUploadService()
+                service.resumeUploadQueue()
+                
             case .FAILED(let error):
                 taskBar?.isUserInteractionEnabled = true
                 self.displaySdkInitError(error)

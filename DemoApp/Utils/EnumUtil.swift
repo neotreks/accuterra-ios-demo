@@ -14,6 +14,7 @@ import AccuTerraSDK
 ///
 
 public class EnumUtil {
+    private static let TAG = "EnumUtil"
     private static var techRatings = [String: TechnicalRating]()
     
     ///
@@ -46,7 +47,7 @@ public class EnumUtil {
                         }
                     }
                     catch {
-                        debugPrint("\(error)")
+                        Log.e(TAG, error)
                     }
                 }
             }
