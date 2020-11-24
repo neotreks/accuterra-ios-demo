@@ -1,5 +1,16 @@
 source 'https://github.com/CocoaPods/Specs.git'
-source 'https://bgqgokyrqxdhquz4h6qulylgdmngwrknnibwwiaffz4hp3ctcyha:bgqgokyrqxdhquz4h6qulylgdmngwrknnibwwiaffz4hp3ctcyha@dev.azure.com/neotreks/Cocoapods/_git/Specs/'
+source 'https://github.com/neotreks/Specs/'
+
+#
+#  In order to download SDK binary from distribution.accuterra.com you need to set credentials in .netrc file:
+#
+#  machine distribution.accuterra.com
+#  login ###
+#  password ###
+#
+#  Please ask NeoTreks to provide you these credentials. If you already have access to SDK documentation you can use the same credentials.
+#
+
 platform :ios, '10.0'
 use_frameworks!
 
