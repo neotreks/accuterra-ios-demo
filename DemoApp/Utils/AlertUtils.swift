@@ -26,4 +26,13 @@ class AlertUtils {
         }))
         viewController.present(alert, animated: false, completion: nil)
     }
+    
+    static func buildBlockingProgressValueDialog() -> BlockingProgressViewController? {
+        if let vc = UIStoryboard(name: "Main", bundle: nil)
+            .instantiateViewController(withIdentifier: "BlockingProgressVC") as? BlockingProgressViewController {
+            vc.modalPresentationStyle = .overCurrentContext
+            return vc
+        }
+        return nil
+    }
 }

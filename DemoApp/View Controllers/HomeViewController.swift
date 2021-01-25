@@ -2,15 +2,18 @@ import UIKit
 
 class HomeViewController: UIViewController {
 
+    // MARK:- Outlets
     @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var taskBar: TaskBar!
-    
+
+    // MARK:- Properties
     var homePageViewController: HomePageViewController? {
         didSet {
             homePageViewController?.homeDelegate = self
         }
     }
-    
+
+    // MARK:- Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationItem.title = String.appTitle
@@ -19,7 +22,8 @@ class HomeViewController: UIViewController {
         navigationController?.navigationBar.backgroundColor = .white
         navigationController?.navigationBar.isTranslucent = false
     }
-    
+
+    // MARK:-
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let homePageViewController = segue.destination as? HomePageViewController {
             self.homePageViewController = homePageViewController
@@ -33,6 +37,7 @@ class HomeViewController: UIViewController {
     }
 }
 
+// MARK:- HomePageViewControllerDelegate extension
 extension HomeViewController: HomePageViewControllerDelegate {
     func homePageViewController(homePageViewController: HomeViewController, didUpdatePageCount count: Int) {
         //
@@ -43,6 +48,7 @@ extension HomeViewController: HomePageViewControllerDelegate {
     }
 }
 
+// MARK:- TaskbarDelegate extension
 extension HomeViewController: TaskbarDelegate {
     func taskSelected(task: TaskTypes) {
         homePageViewController?.scrollToViewController(index: UIUtils.getIndexFromTask(task: task))

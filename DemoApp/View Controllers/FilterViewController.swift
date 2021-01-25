@@ -15,13 +15,16 @@ protocol FilterViewControllerDelegate: class {
 }
 
 class FilterViewController : UIViewController {
+
+    // MARK:- IBOutlets
     @IBOutlet private weak var maxDifficultySlider: UISlider!
     @IBOutlet private weak var maxDifficultyValueLabel: UILabel!
     @IBOutlet private weak var minUserRatingSlider: UISlider!
     @IBOutlet private weak var minUserRatingValueLabel: UILabel!
     @IBOutlet private weak var maxDistanceSlider: UISlider!
     @IBOutlet private weak var maxDistanceValueLabel: UILabel!
-    
+
+    // MARK:- Properties
     private var tripDistances = [5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 100,
     120, 150, 200, 250, 300, 400, 500, 600, 700, 800, 900, 1000]
     
@@ -60,14 +63,12 @@ class FilterViewController : UIViewController {
             refreshTripDistanceLabel(tripDistance: newValue)
         }
     }
-    
-    func initialize(trailsFilter: TrailsFilter) {
-        self.trailsFilter = trailsFilter
-        
-        self.maxDifficultyLevel = trailsFilter.maxDifficulty
-        self.minUserRatings = trailsFilter.minUserRating
-        self.maxDistance = trailsFilter.maxTripDistance
+
+    override var prefersStatusBarHidden: Bool {
+        return true
     }
+    
+    // MARK:- Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -76,7 +77,17 @@ class FilterViewController : UIViewController {
         initUserRatingSlider()
         initTripDistanceSlider()
     }
-    
+
+    // MARK:- Initializers
+
+    func initialize(trailsFilter: TrailsFilter) {
+        self.trailsFilter = trailsFilter
+
+        self.maxDifficultyLevel = trailsFilter.maxDifficulty
+        self.minUserRatings = trailsFilter.minUserRating
+        self.maxDistance = trailsFilter.maxTripDistance
+    }
+
     private func initDifficultySlider() {
         // min = 0
         maxDifficultySlider.maximumValue = Float(difficultyLevels.count)
@@ -100,7 +111,8 @@ class FilterViewController : UIViewController {
 
         refreshTripDistanceLabel()
     }
-    
+
+    // MARK:- Refreshers
     private func refreshDifficultyLabel() {
         refreshDifficultyLabel(difficultyLevel: maxDifficultyLevel)
     }
@@ -140,7 +152,8 @@ class FilterViewController : UIViewController {
             maxDistanceValueLabel.text = "Any"
         }
     }
-    
+
+    // MARK:- Getters
     private func getDifficultyLevelFromProgress(progress: Float) -> TechnicalRating? {
         if (Int(progress) < difficultyLevels.count) {
             return difficultyLevels[Int(progress)]
@@ -192,7 +205,8 @@ class FilterViewController : UIViewController {
             return nil
         }
     }
-    
+
+    // MARK:- IBActions
     @IBAction func didTapOkButton() {
         self.dismiss(animated: true) {
             if let trailsFilter = self.trailsFilter {
@@ -217,9 +231,5 @@ class FilterViewController : UIViewController {
         let newTripDistance = getTripDistanceFromProgress(progress: maxDistanceSlider.value)
         refreshTripDistanceLabel(tripDistance: newTripDistance)
         self.trailsFilter?.maxTripDistance = newTripDistance
-    }
-    
-    override var prefersStatusBarHidden: Bool {
-        return true
     }
 }

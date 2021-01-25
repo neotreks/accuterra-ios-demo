@@ -16,17 +16,20 @@ protocol DownloadViewControllerDelegate: SdkInitDelegate {
 }
 
 class DownloadViewController : BaseViewController {
+    // MARK:- IBOutlets
     @IBOutlet weak var progressTitle: UILabel!
     @IBOutlet weak var progressValue: UILabel!
     @IBOutlet weak var progressView: UIProgressView!
-    
+
+    // MARK:- Properties
+    weak var delegate: DownloadViewControllerDelegate?
+
+    // MARK:- Lifecycle
     override func viewDidLoad() {
         self.view.alpha = 0
         super.viewDidLoad()
     }
-    
-    weak var delegate: DownloadViewControllerDelegate?
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
@@ -45,10 +48,11 @@ class DownloadViewController : BaseViewController {
         guard let accuTerraMapStyleUrl = Bundle.main.infoDictionary?["ACCUTERRA_MAP_STYLE_URL"] as? String else {
             fatalError("ACCUTERRA_MAP_STYLE_URL is missing in info.plist")
         }
-        SdkManager.shared.initSdkAsync(config: SdkConfig(wsUrl: serviceUrl, accuterraMapStyleUrl: accuTerraMapStyleUrl), accessProvider: DemoAccessManager.shared, delegate: self)
+        SdkManager.shared.initSdkAsync(config: SdkConfig(wsUrl: serviceUrl, accuterraMapStyleUrl: accuTerraMapStyleUrl), accessProvider: DemoAccessManager.shared, identityProvider: DemoIdentityManager.shared, delegate: self)
     }
 }
 
+// MARK:- SdkInitDelegate extension
 extension DownloadViewController : SdkInitDelegate {
     func onProgressChanged(progress: Int) {
         DispatchQueue.main.async {

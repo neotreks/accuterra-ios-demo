@@ -16,10 +16,9 @@ import AccuTerraSDK
 class DemoAccessManager : IAccessProvider {
     private var clientId: String
     private var clientSecret: String
-    private let userId = "demoApp"
     
     public static var shared: DemoAccessManager = {
-        return DemoAccessManager()
+        DemoAccessManager()
     }()
     
     private init() {
@@ -109,7 +108,7 @@ class DemoAccessManager : IAccessProvider {
             clientId: self.clientId,
             clientSecret: self.clientSecret,
             grantType: "client_credentials",
-            userId: self.userId,
+            userId: DemoIdentityManager.shared.getUserId(),
             callback: { (response) in
                 callback(response.toApi())
         }, errorHandler: errorHandler)

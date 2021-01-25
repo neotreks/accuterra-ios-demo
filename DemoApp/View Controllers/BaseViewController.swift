@@ -10,8 +10,10 @@ import UIKit
 
 class BaseViewController: UIViewController {
 
+    // MARK:- Properties
     weak var homeNavItem: UINavigationItem?
 
+    // MARK:- Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -20,7 +22,8 @@ class BaseViewController: UIViewController {
         super.viewWillAppear(animated)
         setNavBar()
     }
-    
+
+    // MARK:-
     func setNavBar() {
         self.homeNavItem?.leftBarButtonItem = nil
         self.homeNavItem?.setRightBarButtonItems(nil, animated: false)

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gTV-IL-0wX" customClass="TripMediaCollectionViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="N46-h6-U5N">
+                        <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+                    </imageView>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="cache.delete" translatesAutoresizingMaskIntoConstraints="NO" id="tZt-4U-PMu">
+                        <rect key="frame" x="93" y="5" width="30" height="30"/>
+                        <color key="backgroundColor" red="0.80000000000000004" green="0.80000000000000004" blue="0.80000000000000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="tintColor" name="R4"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="30" id="Hdd-Zx-XSh"/>
+                            <constraint firstAttribute="width" constant="30" id="j1X-bq-Udp"/>
+                        </constraints>
+                    </imageView>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sl8-r3-KwY">
+                        <rect key="frame" x="88" y="0.0" width="40" height="40"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="40" id="ClN-XR-LPc"/>
+                            <constraint firstAttribute="height" constant="40" id="Nqs-Qv-Ucj"/>
+                        </constraints>
+                        <connections>
+                            <action selector="deletePressed" destination="gTV-IL-0wX" eventType="touchUpInside" id="l6v-F2-8er"/>
+                        </connections>
+                    </button>
+                </subviews>
+            </view>
+            <constraints>
+                <constraint firstItem="tZt-4U-PMu" firstAttribute="top" secondItem="N46-h6-U5N" secondAttribute="top" constant="5" id="4kr-SY-qu5"/>
+                <constraint firstItem="Sl8-r3-KwY" firstAttribute="top" secondItem="N46-h6-U5N" secondAttribute="top" id="76h-og-N8h"/>
+                <constraint firstItem="N46-h6-U5N" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="GWK-73-HHw"/>
+                <constraint firstItem="tZt-4U-PMu" firstAttribute="trailing" secondItem="N46-h6-U5N" secondAttribute="trailing" constant="-5" id="H9o-XB-v1I"/>
+                <constraint firstItem="N46-h6-U5N" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="PsG-jW-imd"/>
+                <constraint firstAttribute="bottom" secondItem="N46-h6-U5N" secondAttribute="bottom" id="T0Y-a1-XwV"/>
+                <constraint firstItem="Sl8-r3-KwY" firstAttribute="trailing" secondItem="N46-h6-U5N" secondAttribute="trailing" id="e6L-vh-8SK"/>
+                <constraint firstAttribute="trailing" secondItem="N46-h6-U5N" secondAttribute="trailing" id="fDz-zb-tbe"/>
+            </constraints>
+            <size key="customSize" width="102" height="90"/>
+            <connections>
+                <outlet property="deleteButton" destination="Sl8-r3-KwY" id="wpC-wq-8QF"/>
+                <outlet property="deleteImageView" destination="tZt-4U-PMu" id="j2b-fP-QmS"/>
+                <outlet property="imageView" destination="N46-h6-U5N" id="rcT-Xi-AtH"/>
+            </connections>
+            <point key="canvasLocation" x="49.275362318840585" y="97.767857142857139"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <image name="cache.delete" width="13" height="14"/>
+        <namedColor name="R4">
+            <color red="0.93300002813339233" green="0.13300000131130219" blue="0.046999998390674591" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
+</document>

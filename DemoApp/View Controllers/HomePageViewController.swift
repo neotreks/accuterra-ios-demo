@@ -9,8 +9,29 @@
 import UIKit
 import AccuTerraSDK
 
+// MARK:- Protocols
+protocol HomePageViewControllerDelegate: class {
+    /// The number of pages is updated.
+    ///
+    /// - Parameters:
+    ///   - homePageViewController: the TutorialPageViewController instance
+    ///   - count: the total number of pages.
+    func homePageViewController(homePageViewController: HomeViewController,
+                                didUpdatePageCount count: Int)
+
+    /// The current index is updated.
+    ///
+    /// - Parameters:
+    ///   - homePageViewController: the TutorialPageViewController instance
+    ///   - index: the index of the currently visible page.
+    func homePageViewController(homePageViewController: HomeViewController,
+                                didUpdatePageIndex index: Int)
+}
+
+// MARK:- Class
 class HomePageViewController: UIPageViewController {
 
+    // MARK:- Properties
     weak var homeDelegate: HomePageViewControllerDelegate?
     weak var homeNavItem: UINavigationItem?
     
@@ -22,7 +43,8 @@ class HomePageViewController: UIPageViewController {
             self.newViewController("Profile")
             ]
     }()
-    
+
+    // MARK:- Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -44,6 +66,10 @@ class HomePageViewController: UIPageViewController {
         
         self.isPagingEnabled = false
     }
+
+    required init?(coder: NSCoder) {
+        super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+    }
     
     private func initSdk() {
         guard let serviceUrl = Bundle.main.infoDictionary?["WS_BASE_URL"] as? String else {
@@ -52,9 +78,10 @@ class HomePageViewController: UIPageViewController {
         guard let accuTerraMapStyleUrl = Bundle.main.infoDictionary?["ACCUTERRA_MAP_STYLE_URL"] as? String else {
             fatalError("ACCUTERRA_MAP_STYLE_URL is missing in info.plist")
         }
-        SdkManager.shared.initSdkAsync(config: SdkConfig(wsUrl: serviceUrl, accuterraMapStyleUrl: accuTerraMapStyleUrl), accessProvider: DemoAccessManager.shared, delegate: self)
+        SdkManager.shared.initSdkAsync(config: SdkConfig(wsUrl: serviceUrl, accuterraMapStyleUrl: accuTerraMapStyleUrl), accessProvider: DemoAccessManager.shared, identityProvider: DemoIdentityManager.shared, delegate: self)
     }
-    
+
+    // MARK:-
     private func goToDownload() {
         let taskBar = (homeDelegate as? HomeViewController)?.taskBar
         if let downloadViewController = self.newViewController("Download") as? DownloadViewController {
@@ -118,10 +145,6 @@ class HomePageViewController: UIPageViewController {
     private func notifyTutorialDelegateOfNewIndex() {
     }
     
-    required init?(coder: NSCoder) {
-        super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-    }
-    
     private func displaySdkInitError(_ error: Error?) {
         let alert = UIAlertController(title: "Error", message: "AccuTerra SDK initialization has failed because of:|\n\(String(describing: error))|\nDo not use the SDK in case of initialization failure!", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
@@ -129,6 +152,7 @@ class HomePageViewController: UIPageViewController {
     }
 }
 
+// MARK:- UIPageViewControllerDataSource extension
 extension HomePageViewController: UIPageViewControllerDataSource {
     
     func pageViewController(_ pageViewController: UIPageViewController,
@@ -176,37 +200,17 @@ extension HomePageViewController: UIPageViewControllerDataSource {
     
 }
 
+// MARK:- UIPageViewControllerDelegate extension
 extension HomePageViewController: UIPageViewControllerDelegate {
-    
     func pageViewController(_ pageViewController: UIPageViewController,
         didFinishAnimating finished: Bool,
         previousViewControllers: [UIViewController],
         transitionCompleted completed: Bool) {
         notifyTutorialDelegateOfNewIndex()
     }
-    
 }
 
-protocol HomePageViewControllerDelegate: class {
-    /// The number of pages is updated.
-    ///
-    /// - Parameters:
-    ///   - homePageViewController: the TutorialPageViewController instance
-    ///   - count: the total number of pages.
-    func homePageViewController(homePageViewController: HomeViewController,
-        didUpdatePageCount count: Int)
-
-    /// The current index is updated.
-    ///
-    /// - Parameters:
-    ///   - homePageViewController: the TutorialPageViewController instance
-    ///   - index: the index of the currently visible page.
-    func homePageViewController(homePageViewController: HomeViewController,
-        didUpdatePageIndex index: Int)
-    
-}
-
-
+// MARK:- SdkInitDelegate and DownloadViewControllerDelegate extensions
 extension HomePageViewController : SdkInitDelegate, DownloadViewControllerDelegate {
     func present(_ viewControllerToPresent: UIViewController, animated flag: Bool) {
         self.present(viewControllerToPresent, animated: flag, completion: nil)

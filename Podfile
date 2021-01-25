@@ -15,9 +15,10 @@ platform :ios, '10.0'
 use_frameworks!
 
 def shared_pods
-  pod 'AccuTerraSDK', '~> 0.6'
+  pod 'AccuTerraSDK', '0.6.2'
   # UI pods
   pod 'StarryStars', '~> 1.0.0'
+  pod 'Kingfisher'
 end
 
 target 'DemoApp(Develop)' do

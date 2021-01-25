@@ -10,6 +10,7 @@ import UIKit
 
 class ActivitiesViewController: BaseViewController {
 
+    // MARK:- Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
     }

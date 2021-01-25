@@ -8,6 +8,7 @@
 
 import UIKit
 import AccuTerraSDK
+import StarryStars
 
 enum StarFillMode: Int {
     case full = 0
@@ -17,46 +18,11 @@ enum StarFillMode: Int {
 
 public class TrailInfoDisplay {
     
-    private static let totalStars = 5
-    
     init() {
     }
     
-    //
-    // derived from: https://iosexample.com/a-star-rating-control-for-ios-swift/
-    //
-    private static func checkBounds(ratingRemainder: Double) -> Double {
-      
-      var result = ratingRemainder
-      
-      if result > 1 { result = 1 }
-      if result < 0 { result = 0 }
-        
-      return result
-      
-    }
-    
-    private static func setStarFillLevel(imageContainer: inout UserRatingContainer, sequence: Int, fillType: StarFillMode) {
-      
-        if sequence == 5 {
-            setStarImage(star: &imageContainer.starFive, fillType: fillType)
-        }
-        else if sequence == 4 {
-          setStarImage(star: &imageContainer.starFour, fillType: fillType)
-        }
-        else if sequence == 3 {
-          setStarImage(star: &imageContainer.starThree, fillType: fillType)
-        }
-        else if sequence == 2 {
-          setStarImage(star: &imageContainer.starTwo, fillType: fillType)
-        }
-        else if sequence == 1 {
-          setStarImage(star: &imageContainer.starOne, fillType: fillType)
-        }
-    }
-    
     // Set all but description
-    private static func setDisplayFieldValuesPartial(trailTitleLabel: inout UILabel, distanceLabel: inout UILabel, userRatingsContainer: inout UserRatingContainer, basicTrailInfo: TrailBasicInfo?) {
+    private static func setDisplayFieldValuesPartial(trailTitleLabel: inout UILabel, distanceLabel: inout UILabel, basicTrailInfo: TrailBasicInfo?) {
         
         if let name = basicTrailInfo?.name {
             trailTitleLabel.text = name
@@ -71,61 +37,12 @@ public class TrailInfoDisplay {
         else {
             distanceLabel.text = "-- mi"
         }
-        
-        setUserRatings(basicTrailInfo: basicTrailInfo, userRatingsContainer: &userRatingsContainer)
-    }
-    
-    // function is public to allow for XCTest calls
-    public static func setUserRatings(basicTrailInfo: TrailBasicInfo?,  userRatingsContainer: inout UserRatingContainer) {
-        if let userRating = basicTrailInfo?.userRating?.rating {
-            // round to float with one place
-            let roundedRating = roundToPlaces(value: userRating, places: 1)
-            
-            // start with left sidset each star and 1/2 fill those > .5
-            var runningValue = roundedRating
-            for seq in 1...5 {
-                
-                if runningValue >= 1 {
-                    setStarFillLevel(imageContainer: &userRatingsContainer, sequence: seq, fillType: .full)
-                }
-                else if runningValue < 1 {
-                    let test = checkBounds(ratingRemainder: runningValue)
-                    // show a 1/2 star if rating is 0.1 or greater
-                    if test >= 0.1 {
-                        setStarFillLevel(imageContainer: &userRatingsContainer, sequence: seq, fillType: .partial)
-                    }
-                    else {
-                        setStarFillLevel(imageContainer: &userRatingsContainer, sequence: seq, fillType: .none)
-                    }
-                }
-                runningValue -= 1
-            }
-        }
-        else {
-            setStarImage(star: &userRatingsContainer.starOne, fillType: .none)
-            setStarImage(star: &userRatingsContainer.starTwo, fillType: .none)
-            setStarImage(star: &userRatingsContainer.starThree, fillType: .none)
-            setStarImage(star: &userRatingsContainer.starFour, fillType: .none)
-            setStarImage(star: &userRatingsContainer.starFive, fillType: .none)
-        }
-    }
-    
-    private static func setStarImage(star: inout UIImageView, fillType: StarFillMode) {
-        if fillType == .full {
-            star.image = UIImage.fullStarImage
-        }
-        else if fillType == .partial {
-            star.image = UIImage.partialStarImage
-        }
-        else if fillType == .none {
-            star.image = UIImage.emptyStarImage
-        }
     }
     
     // Description with a UILabel (Trail List)
-    public static func setDisplayFieldValues(trailTitleLabel: inout UILabel, descriptionLabel: inout UILabel, distanceLabel: inout UILabel, userRatings: inout UserRatingContainer, difficultyColorBar: inout UILabel, basicTrailInfo: TrailBasicInfo?) {
+    public static func setDisplayFieldValues(trailTitleLabel: inout UILabel, descriptionLabel: inout UILabel, distanceLabel: inout UILabel, userRatings: inout RatingView, difficultyColorBar: inout UILabel, basicTrailInfo: TrailBasicInfo?) {
         
-        setDisplayFieldValuesPartial(trailTitleLabel: &trailTitleLabel, distanceLabel: &distanceLabel, userRatingsContainer: &userRatings, basicTrailInfo: basicTrailInfo)
+        setDisplayFieldValuesPartial(trailTitleLabel: &trailTitleLabel, distanceLabel: &distanceLabel, basicTrailInfo: basicTrailInfo)
         
         if let description = basicTrailInfo?.highlights {
             descriptionLabel.text = description
@@ -144,9 +61,9 @@ public class TrailInfoDisplay {
     }
         
     // Description with a UITextView (Trail Info)
-    public static func setDisplayFieldValues(trailTitleLabel: inout UILabel, descriptionTextView: inout UITextView, distanceLabel: inout UILabel, userRatings: inout UserRatingContainer, userRatingCountLabel: inout UILabel, userRatingValueLabel: inout UILabel, difficultyLabel: inout UILabel, basicTrailInfo: TrailBasicInfo?) {
+    public static func setDisplayFieldValues(trailTitleLabel: inout UILabel, descriptionTextView: inout UITextView, distanceLabel: inout UILabel, userRatings: inout RatingView, userRatingCountLabel: inout UILabel, userRatingValueLabel: inout UILabel, difficultyLabel: inout UILabel, basicTrailInfo: TrailBasicInfo?) {
         
-        setDisplayFieldValuesPartial(trailTitleLabel: &trailTitleLabel, distanceLabel: &distanceLabel, userRatingsContainer: &userRatings, basicTrailInfo: basicTrailInfo)
+        setDisplayFieldValuesPartial(trailTitleLabel: &trailTitleLabel, distanceLabel: &distanceLabel, basicTrailInfo: basicTrailInfo)
         
         if let description = basicTrailInfo?.highlights {
             descriptionTextView.attributedText = description.htmlAttributed(family: "-apple-system", size: 14, color: UIColor.Inactive!)
@@ -163,10 +80,12 @@ public class TrailInfoDisplay {
         }
         
         if let userRating = basicTrailInfo?.userRating?.rating {
-            userRatingValueLabel.text = String(format: "%.1f", Double(round(userRating * 10) / 10))
+            userRatingValueLabel.text = String(format: "%.1f", Float(userRating))
+            userRatings.rating = Float(userRating)
         }
         else {
             userRatingValueLabel.text = "*"
+            userRatings.rating = 0
         }
         
         if let difficulty = basicTrailInfo?.techRatingHigh {
@@ -175,19 +94,5 @@ public class TrailInfoDisplay {
         else {
            difficultyLabel.text = "UNKNOWN"
         }
-    }
-    
-    public static func roundToPlaces(value: Double, places: Int) -> Double {
-      let divisor = pow(10.0, Double(places))
-      return round(value * divisor) / divisor
-    }
-    
-    public static func centerButtonImageAndTitle(button: UIButton, tileOffset: Double, imageOffset: Double) {
-      let spacing: CGFloat = 5
-      let titleSize = button.titleLabel!.frame.size
-      let imageSize = button.imageView!.frame.size
-
-        button.titleEdgeInsets = UIEdgeInsets(top: 0, left: -imageSize.width - CGFloat(tileOffset), bottom: -(imageSize.height + spacing), right: 0)
-      button.imageEdgeInsets = UIEdgeInsets(top: -(titleSize.height + spacing), left: -imageSize.width/2 - CGFloat(imageOffset), bottom: 0, right: -titleSize.width)
     }
 }

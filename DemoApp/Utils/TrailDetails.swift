@@ -76,7 +76,7 @@ struct TrailDetails {
         }
     }
     
-    init(trailId: Int64) {
+    init(trail: Trail) {
         var systemInfoValues = [(key: String, value: String)]()
         var basicInfoValues = [(key: String, value: String)]()
         var accessConcernsValues = [(key: String, value: String)]()
@@ -94,205 +94,196 @@ struct TrailDetails {
         var technicalRatingValues = [(key: String, value: String)]()
         var userRatingValues = [(key: String, value: String)]()
         
-        let trailService = ServiceFactory.getTrailService()
-        do {
-            let trail = try trailService.getTrailById(trailId)
-            
-            // System Info
-            if let sys = trail?.systemAttributes {
-                systemInfoValues.append((key: "ID" , value: "\(sys.id)"))
-                systemInfoValues.append((key: "DownloadState" , value: "\(sys.downloadState.rawValue)"))
+        // System Info
+        if let sys = trail.systemAttributes {
+            systemInfoValues.append((key: "ID" , value: "\(sys.trailId)"))
+            systemInfoValues.append((key: "DownloadState" , value: "\(sys.downloadState.rawValue)"))
+        }
+        
+        // Trail Info
+        basicInfoValues.append((key: "Name", value: "\(trail.info.name)"))
+        
+        if let campingOptions = trail.info.campingOptions {
+            basicInfoValues.append((key: "Camping Options", value: campingOptions))
+        }
+        basicInfoValues.append((key: "Highlights", value: trail.info.highlights))
+        if let history = trail.info.history {
+            basicInfoValues.append((key: "History", value: history))
+        }
+        if let shapeType = trail.info.shapeType {
+            basicInfoValues.append((key: "Shape Type Name", value: shapeType.name))
+            basicInfoValues.append((key: "Shape Type Code", value: shapeType.code))
+            if let desc = shapeType.description {
+                basicInfoValues.append((key: "Shape Type Description", value: desc))
             }
-            
-            // Basic Info
-            if let basic = trail?.info {
-                basicInfoValues.append((key: "Name", value: "\(basic.name)"))
-                
-                if let campingOptions = basic.campingOptions {
-                    basicInfoValues.append((key: "Camping Options", value: campingOptions))
-                }
-                basicInfoValues.append((key: "Highlights", value: basic.highlights))
-                if let history = basic.history {
-                    basicInfoValues.append((key: "History", value: history))
-                }
-                if let shapeType = basic.shapeType {
-                    basicInfoValues.append((key: "Shape Type Name", value: shapeType.name))
-                    basicInfoValues.append((key: "Shape Type Code", value: shapeType.code))
-                    if let desc = shapeType.description {
-                        basicInfoValues.append((key: "Shape Type Description", value: desc))
-                    }
-                }
-                if let status = basic.status {
-                    basicInfoValues.append((key: "Status Name", value: status.name))
-                    basicInfoValues.append((key: "Status Code", value: status.code))
-                    if let desc = status.description {
-                        basicInfoValues.append((key: "Status Description", value: desc))
-                    }
-                }
-                
-                // Access Concerns
-                if let accessConcerns = basic.accessConcerns {
-                    for i in 0..<accessConcerns.count {
-                        accessConcernsValues.append((key: "Access Concern Name \(i)", value: "\(accessConcerns[i].name)"))
-                        accessConcernsValues.append((key: "Access Concern Description \(i)", value: "\(accessConcerns[i].description ?? "")"))
-                    }
-                }
-                
-                // Surface Types
-                if let surfaceTypes = basic.surfaceTypes {
-                    for i in 0..<surfaceTypes.count {
-                        surfaceTypeValues.append((key: "Surface Type Name \(i)", value: "\(surfaceTypes[i].name)"))
-                        surfaceTypeValues.append((key: "Surface Type Code \(i)", value: "\(surfaceTypes[i].code)"))
-                        if let desc = surfaceTypes[i].description {
-                            surfaceTypeValues.append((key: "Surface Type Description \(i)", value: desc))
-                        }
-                    }
-                }
-                
-                // Tags
-                if let tags = basic.tags {
-                    for i in 0..<tags.count {
-                        tagValues.append((key: "Tag Name \(i)", value: "\(tags[i].name)"))
-                        tagValues.append((key: "Tag Type \(i)", value: "\(tags[i].type.rawValue)"))
-                        if let desc = tags[i].description {
-                            tagValues.append((key: "Tag Description \(i)", value: desc))
-                        }
-                    }
-                }
-                
-                // Vehicle Requirements
-                if let requirements = basic.vehicleRequirements {
-                    for i in 0..<requirements.count {
-                        vehicleRequirementValues.append((key: "Vehicle Requirement Name \(i)", value: "\(requirements[i].name)"))
-                        vehicleRequirementValues.append((key: "Vehicle Requirement Code \(i)", value: "\(requirements[i].code)"))
-                        if let desc = requirements[i].description {
-                            vehicleRequirementValues.append((key: "Vehicle Requirement Description \(i)", value: desc))
-                        }
-                    }
+        }
+        if let status = trail.info.status {
+            basicInfoValues.append((key: "Status Name", value: status.name))
+            basicInfoValues.append((key: "Status Code", value: status.code))
+            if let desc = status.description {
+                basicInfoValues.append((key: "Status Description", value: desc))
+            }
+        }
+        
+        // Access Concerns
+        if let accessConcerns = trail.info.accessConcerns {
+            for i in 0..<accessConcerns.count {
+                accessConcernsValues.append((key: "Access Concern Name \(i)", value: "\(accessConcerns[i].name)"))
+                accessConcernsValues.append((key: "Access Concern Description \(i)", value: "\(accessConcerns[i].description ?? "")"))
+            }
+        }
+        
+        // Surface Types
+        if let surfaceTypes = trail.info.surfaceTypes {
+            for i in 0..<surfaceTypes.count {
+                surfaceTypeValues.append((key: "Surface Type Name \(i)", value: "\(surfaceTypes[i].name)"))
+                surfaceTypeValues.append((key: "Surface Type Code \(i)", value: "\(surfaceTypes[i].code)"))
+                if let desc = surfaceTypes[i].description {
+                    surfaceTypeValues.append((key: "Surface Type Description \(i)", value: desc))
                 }
             }
-            
-            // Access Info
-            if let accessInfo = trail?.accessInfo {
-                if let accessIssue = accessInfo.accessIssue {
-                    accessInfoValues.append((key: "Access Issue", value: accessIssue))
-                }
-                if let accessIssueLink = accessInfo.accessIssueLink {
-                    accessInfoValues.append((key: "Access Issue Link", value: accessIssueLink))
-                }
-                
-                accessInfoValues.append((key: "Is Permit Required", value: accessInfo.isPermitRequired ? "YES" : "NO"))
-                if let permiInfo = accessInfo.permitInformation {
-                    accessInfoValues.append((key: "Permit Information", value: permiInfo))
-                }
-                if let permiInfoLink = accessInfo.permitInformationLink {
-                    accessInfoValues.append((key: "Permit Information Link", value: permiInfoLink))
-                }
-                if let seasonalityRecommendation = accessInfo.seasonalityRecommendation {
-                    accessInfoValues.append((key: "Seasonality Recommendation", value: seasonalityRecommendation))
-                }
-                if let seasonalityRecommendationReason = accessInfo.seasonalityRecommendationReason {
-                    accessInfoValues.append((key: "Seasonality Recommendation Reason", value: seasonalityRecommendationReason))
-                }
-                
-                // Closure Periods
-                for i in 0..<accessInfo.closurePeriods.count {
-                    if let name = accessInfo.closurePeriods[i].name {
-                        closurePeriodsValues.append((key: "Closure Period \(i) Name", value: name))
-                    }
-                    closurePeriodsValues.append((key: "Closure Period \(i) From", value: "\(accessInfo.closurePeriods[i].fromDate)"))
-                    closurePeriodsValues.append((key: "Closure Period \(i) To", value: "\(accessInfo.closurePeriods[i].toDate)"))
+        }
+        
+        // Tags
+        if let tags = trail.info.tags {
+            for i in 0..<tags.count {
+                tagValues.append((key: "Tag Name \(i)", value: "\(tags[i].name)"))
+                tagValues.append((key: "Tag Type \(i)", value: "\(tags[i].type.rawValue)"))
+                if let desc = tags[i].description {
+                    tagValues.append((key: "Tag Description \(i)", value: desc))
                 }
             }
-            
-            
-            // Location Info
-            if let locationInfo = trail?.locationInfo {
-                if let countryIso3Code = locationInfo.countryIso3Code {
-                    locationInfoValues.append((key: "Country ISO3 Code", value: countryIso3Code))
-                }
-                if let countyName = locationInfo.countyName {
-                    locationInfoValues.append((key: "Country Name", value: countyName))
-                }
-                if let districtName = locationInfo.districtName {
-                    locationInfoValues.append((key: "Disctrict Name", value: districtName))
-                }
-                if let nearestTownName = locationInfo.nearestTownName {
-                    locationInfoValues.append((key: "Nearest Town Name", value: nearestTownName))
-                }
-                if let stateCode = locationInfo.stateCode {
-                    locationInfoValues.append((key: "State Code", value: stateCode))
-                }
-                if let usdaFsParkDistrict = locationInfo.usdaFsParkDistrict {
-                    locationInfoValues.append((key: "USDA Fs Park District", value: usdaFsParkDistrict))
-                }
-                if let usdaFsRoadNumber = locationInfo.usdaFsRoadNumber {
-                    locationInfoValues.append((key: "USDA Fs Road Number", value: usdaFsRoadNumber))
+        }
+        
+        // Vehicle Requirements
+        if let requirements = trail.info.vehicleRequirements {
+            for i in 0..<requirements.count {
+                vehicleRequirementValues.append((key: "Vehicle Requirement Name \(i)", value: "\(requirements[i].name)"))
+                vehicleRequirementValues.append((key: "Vehicle Requirement Code \(i)", value: "\(requirements[i].code)"))
+                if let desc = requirements[i].description {
+                    vehicleRequirementValues.append((key: "Vehicle Requirement Description \(i)", value: desc))
                 }
             }
-            
-            
-            // Navigation Info
-            if let navigationInfo = trail?.navigationInfo {
-                if let officialRoadName = navigationInfo.officialRoadName {
-                    navigationInfoValues.append((key: "Official Road Name", value: officialRoadName))
-                }
-                
-                // Trail Head
-                if let trailHead = navigationInfo.trailHead {
-                    trailHeadValues.append(contentsOf: TrailDetails.mapPointValues(trailHead))
-                }
-                
-                // Trail End
-                if let trailEnd = navigationInfo.trailEnd {
-                    trailEndValues.append(contentsOf: TrailDetails.mapPointValues(trailEnd))
-                }
-                
-                // Waypoints
-                navigationInfo.waypoints.forEach({ (waypoint) in
-                    waypoints.append(TrailDetails.mapPointValues(waypoint))
-                })
+        }
+        
+        
+        // Access Info
+        if let accessInfo = trail.accessInfo {
+            if let accessIssue = accessInfo.accessIssue {
+                accessInfoValues.append((key: "Access Issue", value: accessIssue))
+            }
+            if let accessIssueLink = accessInfo.accessIssueLink {
+                accessInfoValues.append((key: "Access Issue Link", value: accessIssueLink))
             }
             
-            // Statistics
-            if let statistics = trail?.statistics {
-                statisticsValues.append((key: "Length", value: "\(statistics.length) meters"))
-                statisticsValues.append((key: "Highest Elevation", value: "\(statistics.highestElevation) meters"))
-                statisticsValues.append((key: "Avg Estimated Duration", value: "\(statistics.estimatedDurationAvg) seconds"))
-                if let estDriveTime = statistics.estimatedDriveTimeMin {
-                    statisticsValues.append((key: "Estimated Drive Time", value: "\(estDriveTime) seconds"))
-                }
+            accessInfoValues.append((key: "Is Permit Required", value: accessInfo.isPermitRequired ? "YES" : "NO"))
+            if let permiInfo = accessInfo.permitInformation {
+                accessInfoValues.append((key: "Permit Information", value: permiInfo))
+            }
+            if let permiInfoLink = accessInfo.permitInformationLink {
+                accessInfoValues.append((key: "Permit Information Link", value: permiInfoLink))
+            }
+            if let seasonalityRecommendation = accessInfo.seasonalityRecommendation {
+                accessInfoValues.append((key: "Seasonality Recommendation", value: seasonalityRecommendation))
+            }
+            if let seasonalityRecommendationReason = accessInfo.seasonalityRecommendationReason {
+                accessInfoValues.append((key: "Seasonality Recommendation Reason", value: seasonalityRecommendationReason))
             }
             
-            // Technical Rating
-            if let technicalRating = trail?.technicalRating {
-                technicalRatingValues.append((key: "High Rating Name" , value: technicalRating.high.name))
-                technicalRatingValues.append((key: "High Rating Code" , value: technicalRating.high.code))
-                technicalRatingValues.append((key: "High Rating Level" , value: "\(technicalRating.high.level)"))
-                if let highRatingDesc = technicalRating.high.description {
-                    technicalRatingValues.append((key: "High Rating Description" , value: highRatingDesc))
+            // Closure Periods
+            for i in 0..<accessInfo.closurePeriods.count {
+                if let name = accessInfo.closurePeriods[i].name {
+                    closurePeriodsValues.append((key: "Closure Period \(i) Name", value: name))
                 }
-                
-                technicalRatingValues.append((key: "Low Rating Name" , value: technicalRating.low.name))
-                technicalRatingValues.append((key: "Low Rating Code" , value: technicalRating.low.code))
-                technicalRatingValues.append((key: "Low Rating Level" , value: "\(technicalRating.low.level)"))
-                if let lowRatingDesc = technicalRating.low.description {
-                    technicalRatingValues.append((key: "Low Rating Description" , value: lowRatingDesc))
-                }
-                
-                if let summary = technicalRating.summary {
-                    technicalRatingValues.append((key: "Summary" , value: summary))
-                }
+                closurePeriodsValues.append((key: "Closure Period \(i) From", value: "\(accessInfo.closurePeriods[i].fromDate)"))
+                closurePeriodsValues.append((key: "Closure Period \(i) To", value: "\(accessInfo.closurePeriods[i].toDate)"))
+            }
+        }
+        
+        
+        // Location Info
+        if let locationInfo = trail.locationInfo {
+            if let countryIso3Code = locationInfo.countryIso3Code {
+                locationInfoValues.append((key: "Country ISO3 Code", value: countryIso3Code))
+            }
+            if let countyName = locationInfo.countyName {
+                locationInfoValues.append((key: "Country Name", value: countyName))
+            }
+            if let districtName = locationInfo.districtName {
+                locationInfoValues.append((key: "Disctrict Name", value: districtName))
+            }
+            if let nearestTownName = locationInfo.nearestTownName {
+                locationInfoValues.append((key: "Nearest Town Name", value: nearestTownName))
+            }
+            if let stateCode = locationInfo.stateCode {
+                locationInfoValues.append((key: "State Code", value: stateCode))
+            }
+            if let usdaFsParkDistrict = locationInfo.usdaFsParkDistrict {
+                locationInfoValues.append((key: "USDA Fs Park District", value: usdaFsParkDistrict))
+            }
+            if let usdaFsRoadNumber = locationInfo.usdaFsRoadNumber {
+                locationInfoValues.append((key: "USDA Fs Road Number", value: usdaFsRoadNumber))
+            }
+        }
+        
+        
+        // Navigation Info
+        if let navigationInfo = trail.navigationInfo {
+            if let officialRoadName = navigationInfo.officialRoadName {
+                navigationInfoValues.append((key: "Official Road Name", value: officialRoadName))
             }
             
-            // User Rating
-            if let userRating = trail?.userRating {
-                userRatingValues.append((key: "Rating", value: "\(userRating.rating)"))
-                userRatingValues.append((key: "Count", value: "\(userRating.ratingCount)"))
+            // Trail Head
+            if let trailHead = navigationInfo.trailHead {
+                trailHeadValues.append(contentsOf: TrailDetails.mapPointValues(trailHead))
             }
             
-        } catch {
-            Log.e(TAG, error)
+            // Trail End
+            if let trailEnd = navigationInfo.trailEnd {
+                trailEndValues.append(contentsOf: TrailDetails.mapPointValues(trailEnd))
+            }
+            
+            // Waypoints
+            navigationInfo.waypoints.forEach({ (waypoint) in
+                waypoints.append(TrailDetails.mapPointValues(waypoint))
+            })
+        }
+        
+        // Statistics
+        if let statistics = trail.statistics {
+            statisticsValues.append((key: "Length", value: "\(statistics.length) meters"))
+            statisticsValues.append((key: "Highest Elevation", value: "\(statistics.highestElevation) meters"))
+            statisticsValues.append((key: "Avg Estimated Duration", value: "\(statistics.estimatedDurationAvg) seconds"))
+            if let estDriveTime = statistics.estimatedDriveTimeMin {
+                statisticsValues.append((key: "Estimated Drive Time", value: "\(estDriveTime) seconds"))
+            }
+        }
+        
+        // Technical Rating
+        if let technicalRating = trail.technicalRating {
+            technicalRatingValues.append((key: "High Rating Name" , value: technicalRating.high.name))
+            technicalRatingValues.append((key: "High Rating Code" , value: technicalRating.high.code))
+            technicalRatingValues.append((key: "High Rating Level" , value: "\(technicalRating.high.level)"))
+            if let highRatingDesc = technicalRating.high.description {
+                technicalRatingValues.append((key: "High Rating Description" , value: highRatingDesc))
+            }
+            
+            technicalRatingValues.append((key: "Low Rating Name" , value: technicalRating.low.name))
+            technicalRatingValues.append((key: "Low Rating Code" , value: technicalRating.low.code))
+            technicalRatingValues.append((key: "Low Rating Level" , value: "\(technicalRating.low.level)"))
+            if let lowRatingDesc = technicalRating.low.description {
+                technicalRatingValues.append((key: "Low Rating Description" , value: lowRatingDesc))
+            }
+            
+            if let summary = technicalRating.summary {
+                technicalRatingValues.append((key: "Summary" , value: summary))
+            }
+        }
+        
+        // User Rating
+        if let userRating = trail.userRating {
+            userRatingValues.append((key: "Rating", value: "\(userRating.rating)"))
+            userRatingValues.append((key: "Count", value: "\(userRating.ratingCount)"))
         }
         
         self.systemInfoValues = systemInfoValues

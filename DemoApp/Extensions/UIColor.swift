@@ -14,6 +14,14 @@ extension UIColor {
         return UIColor(red: red/255, green: green/255, blue: blue/255, alpha: 1)
     }
     
+    static var Primary: UIColor? {
+        return UIColor(named: "Primary")
+    }
+    
+    static var Accent: UIColor? {
+        return UIColor(named: "Accent")
+    }
+    
     static var Active: UIColor? {
         return UIColor(named: "Active")
     }

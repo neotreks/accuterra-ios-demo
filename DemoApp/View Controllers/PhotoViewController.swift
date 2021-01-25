@@ -10,12 +10,15 @@ import Foundation
 import UIKit
 
 class PhotoViewController : UIViewController {
-    
+
+    // MARK:- Outlets
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    
+
+    // MARK:- Properties
     var mediaLoader: MediaLoader?
-    
+
+    // MARK:- Lifecycle
     override func viewDidLoad() {
         guard let mediaLoader = self.mediaLoader else {
             return

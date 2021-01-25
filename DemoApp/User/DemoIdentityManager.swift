@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import AccuTerraSDK
 
 class DemoIdentityManager : IIdentityProvider {
     
