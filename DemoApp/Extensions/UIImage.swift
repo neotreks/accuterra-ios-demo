@@ -61,6 +61,9 @@ extension UIImage {
     static var cacheDeleteImage: UIImage? {
         return UIImage(named: "cache.delete")
     }
+    static var contextMenuImage: UIImage? {
+        return UIImage(named: "context.menu")
+    }
     
     static func ==(lhs: UIImage, rhs: UIImage) -> Bool {
         if let lhsData = lhs.pngData(), let rhsData = rhs.pngData() {

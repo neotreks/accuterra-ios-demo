@@ -83,19 +83,14 @@ class DiscoverViewController: BaseViewController {
             // Monitor network reachability changes
             NotificationCenter.default.addObserver(forName: Notification.Name.reachabilityChanged, object: nil, queue: nil) { (notification) in
                 if self.reachability.connection == .unavailable {
-                    
-                    // When network is not available we want to switch to offline style, but only if it's cached
-                    
-                    self.mapView.offlineCacheManager.getOfflineMapStatus(type: .OVERLAY, trailId: OfflineMapType.NOTRAILID) { (status, error) in
-                        if let status = status, status == .COMPLETE {
+                    self.tryOrShowError {
+                        // When network is not available we want to switch to offline style, but only if it's cached
+                        if let status = try OfflineMapManager.shared.getOverlayOfflineMap()?.status,
+                           status == .COMPLETE {
                             if self.mapView.isStyleLoaded {
                                 let currentStyle = self.styles[self.styleId]
                                 if !self.offlineStyles.contains(currentStyle) {
-                                    do {
-                                        try self.cycleStyle()
-                                    } catch {
-                                        self.showError(error)
-                                    }
+                                    try self.cycleStyle()
                                 }
                             }
                         } else {
@@ -109,10 +104,12 @@ class DiscoverViewController: BaseViewController {
         } catch {
             fatalError("\(error)")
         }
+        OfflineMapManager.shared.addProgressObserver(observer: self)
     }
     
     deinit {
         self.reachability.stopNotifier()
+        OfflineMapManager.shared.removeProgressObserver(observer: self)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -143,10 +140,8 @@ class DiscoverViewController: BaseViewController {
 
     @IBAction func layersPressed(_ sender: Any) {
         self.layersButton.isEnabled = false
-        do {
+        tryOrShowError {
             try self.cycleStyle()
-        } catch {
-            showError(error)
         }
     }
 
@@ -345,20 +340,16 @@ extension DiscoverViewController : AccuTerraMapViewDelegate {
             return
         }
         
-        do {
+        tryOrShowError {
             if try !searchPois(coordinate: coordinate) {
                 let _ = try searchTrails(coordinate: coordinate)
             }
-        } catch {
-            showError(error)
         }
     }
     
     func handleTrailMapClick(trailId: Int64?) {
-        do {
+        tryOrShowError {
             try mapView.trailLayersManager.highLightTrail(trailId: trailId)
-        } catch {
-            showError(error)
         }
         self.showTrailPOIs(trailId: trailId)
         self.trailsListView.selectTrail(trailId: trailId)
@@ -416,16 +407,14 @@ extension DiscoverViewController : AccuTerraMapViewDelegate {
         self.mapWasLoaded = true
         setLocationTracking(trackingOption: .NONE_WITH_LOCATION)
         self.zoomToDefaultExtent()
-        do {
+        tryOrShowError {
             try self.addTrailLayers()
-        } catch {
-            showError(error)
         }
         
-        self.mapView.offlineCacheManager.progressDelegate = self
-        
         if reachability.connection != .unavailable {
-            checkOverlayMapCache()
+            tryOrShowError {
+                try checkOverlayMapCache()
+            }
         }
     }
     
@@ -463,30 +452,22 @@ extension DiscoverViewController : AccuTerraMapViewDelegate {
     }
     
     /// Checks if overlay is cached and prompts user to download the overlay.
-    func checkOverlayMapCache() {
+    func checkOverlayMapCache() throws {
+        let status = try OfflineMapManager.shared.getOverlayOfflineMap()?.status ?? .NOT_CACHED
         
-        mapView.offlineCacheManager.getOfflineMapStatus(type: .OVERLAY, trailId: OfflineMapType.NOTRAILID) { (status, error) in
-            if let status = status {
-                if status == .NOT_CACHED || status == .FAILED {
-                    let estimatedBytes: Int64 = (try? self.mapView.offlineCacheManager.estimateOverlayCacheSize()) ?? 0
-                    AlertUtils.showPrompt(viewController: self, title: "Download", message: "Would you like to download Overlay map cache (~\(estimatedBytes.humanFileSize()))?", confirmHandler: {
-                        
-                        // Starts download of the OVERLAY chache. Please note that for overlay we use NOTRAILID, because
-                        // overlay is not related to trail ID
-                        
-                        self.mapView.offlineCacheManager.downloadOfflineMap(type: .OVERLAY, trailId: OfflineMapType.NOTRAILID) { (downloadError) in
-                            
-                            // When download fails the callback is called with error reason
-                            
-                            if let downloadError = downloadError {
-                                self.showError(downloadError)
-                            }
-                        }
-                    })
+        if status == .NOT_CACHED || status == .FAILED {
+            let estimatedBytes: Int64 = (try? OfflineMapManager.shared.estimateOverlayCacheSize()) ?? 0
+            AlertUtils.showPrompt(viewController: self, title: "Download", message: "Would you like to download Overlay map cache (~\(estimatedBytes.humanFileSize()))?", confirmHandler: {
+                
+                // Starts download of the OVERLAY chache.
+
+                OfflineMapManager.shared.downloadOverlayOfflineMap { (offlineMap) in
+                    // download started, the progress delegate is notified automatically
+                } errorHandler: { (error) in
+                    // When download fails the callback is called with error reason
+                    self.showError(error)
                 }
-            } else {
-                fatalError("Could not get overlay cache status: \(String(describing: error))")
-            }
+            })
         }
     }
 }
@@ -527,10 +508,8 @@ extension DiscoverViewController : MGLMapViewDelegate {
 extension DiscoverViewController : TrailListViewDelegate {
     
     func didTapTrailInfo(basicInfo: TrailBasicInfo) {
-        do {
+        tryOrShowError {
             try self.mapView.trailLayersManager.highLightTrail(trailId: basicInfo.id)
-        } catch {
-            showError(error)
         }
         self.showTrailPOIs(trailId: basicInfo.id)
         self.trailsListView.selectTrail(trailId: basicInfo.id)
@@ -542,9 +521,8 @@ extension DiscoverViewController : TrailListViewDelegate {
             try self.mapView.trailLayersManager.highLightTrail(trailId: basicInfo.id)
             self.showTrailPOIs(trailId: basicInfo.id)
             if let trailManager = self.trailService,
-                let trail = try trailManager.getTrailById(basicInfo.id),
-                let locationInfo = trail.locationInfo {
-                self.zoomToTrail(locationInfo: locationInfo)
+                let trail = try trailManager.getTrailById(basicInfo.id) {
+                self.zoomToTrail(locationInfo: trail.locationInfo)
             }
         }
         catch {
@@ -553,24 +531,19 @@ extension DiscoverViewController : TrailListViewDelegate {
     }
     
     func didSelectTrail(basicInfo: TrailBasicInfo) {
-        do {
+        tryOrShowError {
             try self.mapView.trailLayersManager.highLightTrail(trailId: basicInfo.id)
-        } catch {
-            showError(error)
         }
         self.showTrailPOIs(trailId: basicInfo.id)
     }
     
     private func showTrailPOIs(trailId: Int64?) {
         if let trailId = trailId {
-            do {
+            tryOrShowError {
                 if let trailManager = self.trailService,
                     let trail = try trailManager.getTrailById(trailId) {
                     self.mapView.trailLayersManager.showTrailPOIs(trail: trail)
                 }
-            }
-            catch {
-                Log.e(TAG, error)
             }
         } else {
             self.mapView.trailLayersManager.hideAllTrailPOIs()
@@ -634,10 +607,8 @@ extension DiscoverViewController : TrailListViewDelegate {
     }
     
     func reloadLayers() {
-        do {
+        tryOrShowError {
             try mapView.trailLayersManager.reloadLayers()
-        } catch {
-            showError(error)
         }
     }
 }
@@ -646,11 +617,6 @@ extension DiscoverViewController : TrailListViewDelegate {
 extension DiscoverViewController : TrailInfoViewDelegate {
     func didTapTrailInfoBackButton() {
         self.cacheProgressView.isHidden = true
-        self.mapView.offlineCacheManager.progressDelegate = self
-    }
-    
-    func getOfflineMapManager() -> IOfflineMapManager {
-        return self.mapView.offlineCacheManager
     }
 }
 
@@ -686,22 +652,29 @@ extension DiscoverViewController : FilterViewControllerDelegate {
 
 // MARK:- CacheProgressDelegate extension
 extension DiscoverViewController : CacheProgressDelegate {
-    func onProgressChanged(progress: Double, mapType: OfflineMapType, trailId: Int64) {
+    func onProgressChanged(offlineMap: IOfflineMap) {
         
         // This method is called when download progress changes for either trail or overlay cache
         // Progress value is from 0.0 to 1.0
+        let progress = offlineMap.progress
         
         self.cacheProgressView.isHidden = false
         self.cacheProgressView.progress = Float(progress)
-        switch mapType {
+        switch offlineMap.type {
         case .OVERLAY:
             self.cacheProgressView.text = "Downloading Overlay: \(Int(progress * 100))%"
         case .TRAIL:
-            self.cacheProgressView.text = "Downloading Trail \(trailId): \(Int(progress * 100))%"
+            if let trailId = (offlineMap as? ITrailOfflineMap)?.trailId {
+                self.cacheProgressView.text = "Downloading Trail \(trailId): \(Int(progress * 100))%"
+            }
+        case .AREA:
+            if let areaName = (offlineMap as? IAreaOfflineMap)?.areaName {
+                self.cacheProgressView.text = "Downloading Area \(areaName): \(Int(progress * 100))%"
+            }
         }
     }
     
-    func onError(error: [OfflineResourceError], mapType: OfflineMapType, trailId: Int64) {
+    func onError(error: [OfflineResourceError], offlineMap: IOfflineMap) {
         
         // When download fails the onError is called first followed by onComplete
         
@@ -712,7 +685,7 @@ extension DiscoverViewController : CacheProgressDelegate {
         self.cacheProgressView.isHidden = true
     }
     
-    func onComplete(mapType: OfflineMapType, trailId: Int64) {
+    func onComplete(offlineMap: IOfflineMap) {
         self.cacheProgressView.isHidden = true
     }
 }

@@ -8,6 +8,7 @@
 
 import UIKit
 import AccuTerraSDK
+import Mapbox
 
 // MARK:- Protocols
 protocol HomePageViewControllerDelegate: class {
@@ -51,6 +52,14 @@ class HomePageViewController: UIPageViewController {
         dataSource = self
         delegate = self
         
+        // When set to true the Mapbox SDK will append SKU to each offline download request
+        // This way the offline request is charged per user session
+        MGLNetworkConfiguration.setUseSKUForOfflineDownload(true)
+        
+        // By default Mapbox is limitting max tiles count to 6000. If you are using AccuTerra SDK to download Mapbox tiles
+        // you should get approval from Mapbox to increase this value
+        MGLOfflineStorage.shared.setMaximumAllowedMapboxTiles(UInt64(Int.max))
+        
         // Checking if DB is initialized is here just for the DEMO purpose.
         // You should not check this in real APK but call the `SdkManager.configureSdkAsync`
         // and monitor the progress and result. The TRAIL DB will be downloaded automatically
@@ -72,13 +81,11 @@ class HomePageViewController: UIPageViewController {
     }
     
     private func initSdk() {
-        guard let serviceUrl = Bundle.main.infoDictionary?["WS_BASE_URL"] as? String else {
-                fatalError("WS_BASE_URL is missing in info.plist")
-        }
-        guard let accuTerraMapStyleUrl = Bundle.main.infoDictionary?["ACCUTERRA_MAP_STYLE_URL"] as? String else {
-            fatalError("ACCUTERRA_MAP_STYLE_URL is missing in info.plist")
-        }
-        SdkManager.shared.initSdkAsync(config: SdkConfig(wsUrl: serviceUrl, accuterraMapStyleUrl: accuTerraMapStyleUrl), accessProvider: DemoAccessManager.shared, identityProvider: DemoIdentityManager.shared, delegate: self)
+        SdkManager.shared.initSdkAsync(
+            config: demoAppSdkConfig,
+            accessProvider: DemoAccessManager.shared,
+            identityProvider: DemoIdentityManager.shared,
+            delegate: self)
     }
 
     // MARK:-
@@ -221,10 +228,17 @@ extension HomePageViewController : SdkInitDelegate, DownloadViewControllerDelega
     }
     
     func onStateChanged(state: SdkInitState, detail: SdkInitStateDetail?) {
-        DispatchQueue.main.sync {
+        executeBlockOnMainThread {
             let taskBar = (self.homeDelegate as? HomeViewController)?.taskBar
             switch state {
             case .COMPLETED:
+                /// Start updating locations in case recording is active
+                let locationService = LocationService.shared
+                if locationService.requestingLocationRecording && !locationService.requestingLocationUpdates {
+                    locationService.requestingLocationUpdates = true
+                    locationService.allowBackgroundLocationUpdates = true
+                }
+                
                 taskBar?.isUserInteractionEnabled = true
                 // Initially select Discover tab
                 self.goToTrailsDiscovery()

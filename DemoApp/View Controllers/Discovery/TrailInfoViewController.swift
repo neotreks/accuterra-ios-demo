@@ -13,7 +13,6 @@ import StarryStars
 
 protocol TrailInfoViewDelegate: class {
     func didTapTrailInfoBackButton()
-    func getOfflineMapManager() -> IOfflineMapManager
 }
 
 class TrailInfoViewController: UIViewController {
@@ -87,7 +86,7 @@ class TrailInfoViewController: UIViewController {
             }
             self.trailBasicInfo = try service.getTrailBasicInfoById(trailId)
             self.trail = trail
-            self.drive = try service.getTrailDrivesById(trailId).first
+            self.drive = try service.getTrailDrives(trailId).first
             // User data
             loadTrailUserData()
             // Comments
@@ -138,23 +137,21 @@ class TrailInfoViewController: UIViewController {
             
             // Offline map status is asynchronous operation. We are hiding the downloadButton until we
             // successfully retrieve status of the trail cache
-            
-            self.delegate?.getOfflineMapManager().getOfflineMapStatus(type: .TRAIL, trailId: trailId) { (status, error) in
-                if let status = status {
-                    
-                    // Configure download button
-                    
-                    self.configureDownloadButton(mapStatus: status)
-                    
-                    // Monitor downloading progress. If the delegate is set while the download is in progress
-                    // the manager will trigger onProgressChanged immediatelly
-                    
-                    self.delegate?.getOfflineMapManager().progressDelegate = self
-                } else {
-                    fatalError("Could not get offline map status: \(String(describing: error))")
-                }
+            tryOrShowError {
+                let status = try OfflineMapManager.shared
+                    .getTrailOfflineMap(trailId: trailId)?.status ?? .NOT_CACHED
+
+                // Configure download button
+                
+                self.configureDownloadButton(mapStatus: status)
             }
         }
+        
+        OfflineMapManager.shared.addProgressObserver(observer: self)
+    }
+    
+    deinit {
+        OfflineMapManager.shared.removeProgressObserver(observer: self)
     }
     
     override func didMove(toParent parent: UIViewController?) {
@@ -188,101 +185,84 @@ class TrailInfoViewController: UIViewController {
     }
     
     @IBAction func didTapDownload(_ sender: Any) {
-        guard let offlineMapManager = delegate?.getOfflineMapManager() else {
-            fatalError("Could not get offline map manager")
-        }
         guard let trailId = trailId else {
             fatalError("TrailId not set")
         }
         
-        // Because download, delete and cancel are asynchronous we want to disable the downloadButton temporarily
-        
-        downloadButton.isEnabled = false
-        
-        offlineMapManager.getOfflineMapStatus(type: .TRAIL, trailId: trailId) { (status, error) in
-            self.downloadButton.isEnabled = true
-            if let status = status {
-                do {
-                    switch status {
-                    case .NOT_CACHED, .FAILED:
-                        // Please note the estimate is often very inaccurate!
-                        let estimateBytes = try offlineMapManager.estimateTrailCacheSize(trailId: trailId)
-                        let estimateText = estimateBytes.humanFileSize()
+        do {
+            let trailOfflineMap = try OfflineMapManager.shared.getTrailOfflineMap(trailId: trailId)
+            let status = trailOfflineMap?.status ?? .NOT_CACHED
+            
+            switch status {
+            case .NOT_CACHED, .FAILED, .CANCELED:
+                // Please note the estimate is often very inaccurate!
+                let estimateBytes = try OfflineMapManager.shared.estimateTrailCacheSize(trailId: trailId)
+                let estimateText = estimateBytes.humanFileSize()
+                
+                // For the simplification require always 200 MB of free space
+                let mb200: Int64 = 209715200
+                let freeBytes: Int64 = OfflineMapManager.shared.getFreeDiskSpace()
+                if freeBytes < mb200 {
+                    AlertUtils.showAlert(viewController: self, title: "Low Space", message: "There is not enough disk space to download the trail")
+                } else {
+                    AlertUtils.showPrompt(viewController: self, title: "Download", message: "Would you like to download trail map cache (~\(estimateText))?", confirmHandler: {
                         
-                        // For the simplification require always 200 MB of free space
-                        let mb200: Int64 = 209715200
-                        let freeBytes: Int64 = offlineMapManager.getFreeDiskSpace()
-                        if freeBytes < mb200 {
-                            AlertUtils.showAlert(viewController: self, title: "Low Space", message: "There is not enough disk space to download the trail")
-                        } else {
-                            AlertUtils.showPrompt(viewController: self, title: "Download", message: "Would you like to download trail map cache (~\(estimateText))?", confirmHandler: {
-                                
-                                self.downloadButton.isEnabled = false
-                                
-                                // Download is asynchronous. The callback is called as soon as the download starts.
-                                
-                                offlineMapManager.downloadOfflineMap(type: .TRAIL, trailId: trailId) { (error) in
-                                    self.downloadButton.isEnabled = true
-                                    if let error = error {
-                                        self.showError(error)
-                                    } else {
-                                        self.configureDownloadButton(mapStatus: .WAITING)
-                                    }
-                                }
-                            })
+                        self.downloadButton.isEnabled = false
+                        
+                        // Download is asynchronous. The callback is called as soon as the download starts.
+                        
+                        OfflineMapManager.shared.downloadTrailOfflineMap(trailId: trailId) { (offlineMap) in
+                            self.downloadButton.isEnabled = true
+                            self.configureDownloadButton(mapStatus: .WAITING)
+                        } errorHandler: { (error) in
+                            self.showError(error)
                         }
-                    case .COMPLETE:
-                        
-                        // For completed cache we show size of the cache with option to delete the cache
-                        
-                        offlineMapManager.getOfflineMapStorageSize(type: .TRAIL, trailId: trailId) { (size, error) in
-                            if let error = error {
-                                self.showError(error)
-                            } else {
-                                AlertUtils.showPrompt(viewController: self, title: "Remove Offline Cache?", message: "The trail is already cached. Cache size: \(Int64(size).humanFileSize()). Do you want to remove the cache?", confirmHandler: {
-                                    
-                                    self.downloadButton.isEnabled = false
-                                    
-                                    // Delete cache is asynchronous and can take a while for large caches
-                                    
-                                    offlineMapManager.deleteOfflineMap(type: .TRAIL, trailId: trailId) { (success, error) in
-                                        self.downloadButton.isEnabled = true
-                                        if let error = error {
-                                            self.showError(error)
-                                        } else {
-                                            self.configureDownloadButton(mapStatus: .NOT_CACHED)
-                                        }
-                                    }
-                                })
-                            }
-                        }
-                    case .WAITING, .IN_PROGRESS:
-                        
-                        // Cache can be waiting in queue or can be downloading.
-                        // The deleteOfflineCache will either remove it from the queue or cancel the download.
-                        
-                        AlertUtils.showPrompt(viewController: self, title: "Cancel Offline Cache?", message: "Downloading trail cache. Do you want to cancel?", confirmHandler: {
-                            
-                            self.downloadButton.isEnabled = false
-                            
-                            // Delete cache is asynchronous
-                            
-                            offlineMapManager.deleteOfflineMap(type: .TRAIL, trailId: trailId) { (success, error) in
-                                self.downloadButton.isEnabled = true
-                                if let error = error {
-                                    self.showError(error)
-                                } else {
-                                    self.configureDownloadButton(mapStatus: .NOT_CACHED)
-                                }
-                            }
-                        })
-                    }
-                } catch {
-                    fatalError("\(error)")
+                    })
                 }
-            } else {
-                fatalError("\(String(describing: error))")
+            case .COMPLETE:
+                
+                // For completed cache we show size of the cache with option to delete the cache
+                OfflineMapManager.shared.getOfflineMapStorageSize(offlineMapId: trailOfflineMap!.offlineMapId, completion: { (size) in
+                    AlertUtils.showPrompt(viewController: self,
+                                          title: "Remove Offline Cache?",
+                                          message: "The trail is already cached. Cache size: \(Int64(size).humanFileSize()). Do you want to remove the cache?", confirmHandler: {
+                                            
+                                            self.downloadButton.isEnabled = false
+                                            
+                                            // Delete cache is asynchronous and can take a while for large caches
+                                            
+                                            OfflineMapManager.shared.deleteOfflineMap(offlineMapId: trailOfflineMap!.offlineMapId) {
+                                                self.downloadButton.isEnabled = true
+                                                self.configureDownloadButton(mapStatus: .NOT_CACHED)
+                                            } errorHandler: { (error) in
+                                                self.showError(error)
+                                            }
+                                          })
+                }) { (error) in
+                    self.showError(error)
+                }
+            case .WAITING, .IN_PROGRESS, .PAUSED:
+                
+                // Cache can be waiting in queue or can be downloading.
+                // The deleteOfflineCache will either remove it from the queue or cancel the download.
+                
+                AlertUtils.showPrompt(viewController: self, title: "Cancel Offline Cache?",
+                                      message: "Downloading trail cache. Do you want to cancel?", confirmHandler: {
+                                        
+                                        self.downloadButton.isEnabled = false
+                                        
+                                        // Delete cache is asynchronous
+                                        
+                                        OfflineMapManager.shared.deleteOfflineMap(offlineMapId: trailOfflineMap!.offlineMapId) {
+                                            self.downloadButton.isEnabled = true
+                                            self.configureDownloadButton(mapStatus: .NOT_CACHED)
+                                        } errorHandler: { (error) in
+                                            self.showError(error)
+                                        }
+                                      })
             }
+        } catch {
+            fatalError("\(error)")
         }
     }
     
@@ -379,7 +359,7 @@ class TrailInfoViewController: UIViewController {
         self.downloadButton.alpha = 1
         
         switch mapStatus {
-        case .FAILED, .NOT_CACHED:
+        case .FAILED, .NOT_CACHED, .PAUSED, .CANCELED:
             self.downloadButton.setImage(UIImage.cacheDownloadImage, for: .normal)
             self.downloadButton.setTitle("DOWNLOAD", for: .normal)
         case .WAITING:
@@ -673,14 +653,14 @@ extension TrailInfoViewController : UITableViewDelegate, UITableViewDataSource {
 
 // MARK: - Offline Cache extension
 extension TrailInfoViewController : CacheProgressDelegate {
-    func onProgressChanged(progress: Double, mapType: OfflineMapType, trailId: Int64) {
-        if trailId == self.trailId {
-            configureDownloadButton(mapStatus: .IN_PROGRESS, progressPercents: Int(progress * 100))
+    func onProgressChanged(offlineMap: IOfflineMap) {
+        if let trailOfflineMap = offlineMap as? ITrailOfflineMap, trailOfflineMap.trailId == self.trailId {
+            configureDownloadButton(mapStatus: .IN_PROGRESS, progressPercents: Int(offlineMap.progress * 100))
         }
     }
     
-    func onError(error: [OfflineResourceError], mapType: OfflineMapType, trailId: Int64) {
-        if trailId == self.trailId {
+    func onError(error: [OfflineResourceError], offlineMap: IOfflineMap) {
+        if let trailOfflineMap = offlineMap as? ITrailOfflineMap, trailOfflineMap.trailId == self.trailId {
             let message = error.map ({ (resourceError) -> String in
                 return "\(resourceError.offlineResource.getResourceTypeName()) failed \(resourceError.error)"
             }).joined(separator: "\n")
@@ -689,8 +669,8 @@ extension TrailInfoViewController : CacheProgressDelegate {
         }
     }
     
-    func onComplete(mapType: OfflineMapType, trailId: Int64) {
-        if trailId == self.trailId {
+    func onComplete(offlineMap: IOfflineMap) {
+        if let trailOfflineMap = offlineMap as? ITrailOfflineMap, trailOfflineMap.trailId == self.trailId {
             configureDownloadButton(mapStatus: .COMPLETE)
         }
     }

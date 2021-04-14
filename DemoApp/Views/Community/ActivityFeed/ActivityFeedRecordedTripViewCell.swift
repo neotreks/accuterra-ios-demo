@@ -17,7 +17,7 @@ class ActivityFeedRecordedTripViewCell: UITableViewCell {
     @IBOutlet weak var lblDescription: UILabel!
 
     func bindView(recording: TripRecordingBasicInfo) {
-        self.lblStartDate.text = recording.startDate.toLocalDateTimeString()
+        self.lblStartDate.text = recording.startDate.toLocalDateTimeString(dateStyle: .medium, timeStyle: .none)
         self.lblName.text = recording.name.uppercased()
         self.lblStatus.text = recording.status.name
         self.lblDescription.text = recording.description
@@ -30,7 +30,7 @@ class ActivityFeedRecordedTripViewCell: UITableViewCell {
     }
     
     static func getEstimatedHeight(recording: TripRecordingBasicInfo, table: UITableView) -> CGFloat {
-        var estimatedHeight: CGFloat = 50
+        var estimatedHeight: CGFloat = 60
         guard let desc = recording.description else {
             return estimatedHeight
         }

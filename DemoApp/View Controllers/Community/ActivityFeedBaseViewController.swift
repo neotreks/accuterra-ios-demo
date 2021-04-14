@@ -9,6 +9,7 @@
 import UIKit
 import AccuTerraSDK
 import Reachability
+import ObjectMapper
 
 class ActivityFeedBaseViewController: BaseViewController {
 
@@ -114,11 +115,33 @@ extension ActivityFeedBaseViewController : UITableViewDelegate, UITableViewDataS
                 return nil
             }
             
+            // We need to load full trip and the `custom data` to distinguish
+            // between free roam and trail collection recordings
+            var isTrailCollection = false
+            do {
+                isTrailCollection = (try getTrailCollectionData(uuid: recording.uuid)) != nil
+            } catch {
+                showError(error)
+                return nil
+            }
+            
             switch recording.status {
             case .RECORDING, .PAUSED:
-                self.openRecordNewTripViewController()
+                if isTrailCollection {
+                    // Navigate to Free Roam recording activity
+                    self.openTrailCollectionViewController()
+                } else {
+                    // Navigate to Trail Collection recording activity
+                    self.openRecordNewTripViewController()
+                }
             case .FINISHED:
-                self.openSaveTripViewController(tripUuid: recording.uuid, completion: nil)
+                if isTrailCollection {
+                    // Navigate to the SAVE activity in case of finished trail collection
+                    self.openSaveTrailCollectionViewController(tripUuid: recording.uuid, completion: nil)
+                } else {
+                    // Navigate to the SAVE activity in case of finished recording
+                    self.openSaveTripViewController(tripUuid: recording.uuid, completion: nil)
+                }
             case .QUEUED, .UPLOADED:
                 self.openSaveTripViewController(tripUuid: recording.uuid, completion: nil)
             default:
@@ -130,6 +153,17 @@ extension ActivityFeedBaseViewController : UITableViewDelegate, UITableViewDataS
         return nil
     }
     
+    private func getTrailCollectionData(uuid: String) throws -> TrailCollectionData? {
+        let service = ServiceFactory.getTripRecordingService()
+        let tripRecording = try service.getTripRecordingByUUID(uuid: uuid)
+        
+        if let json = tripRecording?.extProperties.first?.data {
+            return Mapper<TrailCollectionData>().map(JSONString: json)
+        } else {
+            return nil
+        }
+    }
+    
     private func openRecordNewTripViewController() {
         if let vc = UIStoryboard(name: "Main", bundle: nil) .
             instantiateViewController(withIdentifier: "RecordNewTripVC") as? RecordNewTripViewController {
@@ -138,9 +172,27 @@ extension ActivityFeedBaseViewController : UITableViewDelegate, UITableViewDataS
         }
     }
     
+    private func openTrailCollectionViewController() {
+        if let vc = UIStoryboard(name: "Main", bundle: nil) .
+            instantiateViewController(withIdentifier: "TrailCollectionVC") as? TrailCollectionViewController {
+            vc.title = "Trail Collection Mode"
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+    }
+    
     private func openSaveTripViewController(tripUuid: String, completion: (() -> Void)?) {
         if let vc = UIStoryboard(name: "Main", bundle: nil) .
             instantiateViewController(withIdentifier: "SaveTripVC") as? SaveTripViewController {
+            vc.tripUuid = tripUuid
+            let nav = UINavigationController(rootViewController: vc)
+            nav.modalPresentationStyle = .fullScreen
+            self.present(nav, animated: true, completion: completion)
+        }
+    }
+    
+    private func openSaveTrailCollectionViewController(tripUuid: String, completion: (() -> Void)?) {
+        if let vc = UIStoryboard(name: "Main", bundle: nil) .
+            instantiateViewController(withIdentifier: "TrailSaveVC") as? TrailSaveViewController {
             vc.tripUuid = tripUuid
             let nav = UINavigationController(rootViewController: vc)
             nav.modalPresentationStyle = .fullScreen
@@ -159,6 +211,25 @@ extension ActivityFeedBaseViewController : UITableViewDelegate, UITableViewDataS
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return self.tableView(tableView, estimatedHeightForRowAt: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
+        guard let items = self.listItems, items.count > 0 else {
+            return
+        }
+        let item = items[indexPath.row]
+        guard item.type == .LOCAL_RECORDED_TRIP else {
+            return
+        }
+        guard let recording = (item as? ActivityFeedRecordedTripItem)?.data, (recording.status == .UPLOADED || recording.status == .QUEUED) else {
+            return
+        }
+        
+        if let vc = UIStoryboard(name: "Main", bundle: nil) .
+        instantiateViewController(withIdentifier: "uploadVC") as? UploadViewController {
+            vc.tripUuid = recording.uuid
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -191,8 +262,12 @@ extension ActivityFeedBaseViewController : UITableViewDelegate, UITableViewDataS
             return cell
         case .LOCAL_RECORDED_TRIP:
             let cell: ActivityFeedRecordedTripViewCell = tableView.dequeueReusableCell(withIdentifier: "activityFeedRecordedTripViewCell", for: indexPath) as! ActivityFeedRecordedTripViewCell
+            cell.accessoryType = .none
             if let recording = (item as? ActivityFeedRecordedTripItem)?.data {
                 cell.bindView(recording: recording)
+                if recording.status == .QUEUED || recording.status == .UPLOADED {
+                    cell.accessoryType = .detailButton
+                }
             }
             return cell
         }

@@ -148,7 +148,7 @@ struct TrailDetails {
         if let tags = trail.info.tags {
             for i in 0..<tags.count {
                 tagValues.append((key: "Tag Name \(i)", value: "\(tags[i].name)"))
-                tagValues.append((key: "Tag Type \(i)", value: "\(tags[i].type.rawValue)"))
+                tagValues.append((key: "Tag Type \(i)", value: "\(tags[i].pointTypeCode)"))
                 if let desc = tags[i].description {
                     tagValues.append((key: "Tag Description \(i)", value: desc))
                 }
@@ -202,28 +202,27 @@ struct TrailDetails {
         
         
         // Location Info
-        if let locationInfo = trail.locationInfo {
-            if let countryIso3Code = locationInfo.countryIso3Code {
-                locationInfoValues.append((key: "Country ISO3 Code", value: countryIso3Code))
-            }
-            if let countyName = locationInfo.countyName {
-                locationInfoValues.append((key: "Country Name", value: countyName))
-            }
-            if let districtName = locationInfo.districtName {
-                locationInfoValues.append((key: "Disctrict Name", value: districtName))
-            }
-            if let nearestTownName = locationInfo.nearestTownName {
-                locationInfoValues.append((key: "Nearest Town Name", value: nearestTownName))
-            }
-            if let stateCode = locationInfo.stateCode {
-                locationInfoValues.append((key: "State Code", value: stateCode))
-            }
-            if let usdaFsParkDistrict = locationInfo.usdaFsParkDistrict {
-                locationInfoValues.append((key: "USDA Fs Park District", value: usdaFsParkDistrict))
-            }
-            if let usdaFsRoadNumber = locationInfo.usdaFsRoadNumber {
-                locationInfoValues.append((key: "USDA Fs Road Number", value: usdaFsRoadNumber))
-            }
+        let locationInfo = trail.locationInfo
+        if let countryIso3Code = locationInfo.countryIso3Code {
+            locationInfoValues.append((key: "Country ISO3 Code", value: countryIso3Code))
+        }
+        if let countyName = locationInfo.countyName {
+            locationInfoValues.append((key: "Country Name", value: countyName))
+        }
+        if let districtName = locationInfo.districtName {
+            locationInfoValues.append((key: "Disctrict Name", value: districtName))
+        }
+        if let nearestTownName = locationInfo.nearestTownName {
+            locationInfoValues.append((key: "Nearest Town Name", value: nearestTownName))
+        }
+        if let stateCode = locationInfo.stateCode {
+            locationInfoValues.append((key: "State Code", value: stateCode))
+        }
+        if let usdaFsParkDistrict = locationInfo.usdaFsParkDistrict {
+            locationInfoValues.append((key: "USDA Fs Park District", value: usdaFsParkDistrict))
+        }
+        if let usdaFsRoadNumber = locationInfo.usdaFsRoadNumber {
+            locationInfoValues.append((key: "USDA Fs Road Number", value: usdaFsRoadNumber))
         }
         
         
@@ -323,17 +322,14 @@ struct TrailDetails {
         if let desc = mapPoint.description {
             values.append((key: "Description", value: desc))
         }
-        values.append((key: "Is Waypoint", value: mapPoint.isWaypoint ? "YES" : "NO"))
+        values.append((key: "Is Waypoint", value: mapPoint.isNavigationType() ? "YES" : "NO"))
         values.append((key: "Type Name", value: mapPoint.type.name))
         values.append((key: "Type Code", value: mapPoint.type.code))
         if let typeDescription = mapPoint.type.description {
             values.append((key: "Type Description", value: typeDescription))
         }
-        values.append((key: "Sub Type Name", value: mapPoint.subType.name))
-        values.append((key: "Sub Type Code", value: mapPoint.subType.code))
-        values.append((key: "Sub Type Parent Code", value: mapPoint.subType.parentTypeCode))
-        if let subTypeDescription = mapPoint.subType.description {
-            values.append((key: "Sub Type Description", value: subTypeDescription))
+        mapPoint.tags.forEach { tag in
+            values.append((key: "Tag", value: tag.name))
         }
         
         values.append(contentsOf: TrailDetails.locationValues(mapPoint.location))

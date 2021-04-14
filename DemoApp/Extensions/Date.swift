@@ -17,13 +17,21 @@ extension Date {
         return date
     }
     
-    func toLocalDateString() -> String {
-        let date = DateFormatter.localizedString(from: self, dateStyle: .long, timeStyle: .none)
+    func toIsoDateTimeString() -> String {
+        let df = DateFormatter()
+        df.timeZone = TimeZone(abbreviation: "UTC")
+        df.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        let date = df.string(from: self)
         return date
     }
     
-    func toLocalDateTimeString() -> String {
-       let date = DateFormatter.localizedString(from: self, dateStyle: .long, timeStyle: .long)
+    func toLocalDateString(dateStyle: DateFormatter.Style = .long) -> String {
+        let date = DateFormatter.localizedString(from: self, dateStyle: dateStyle, timeStyle: .none)
+        return date
+    }
+    
+    func toLocalDateTimeString(dateStyle: DateFormatter.Style = .long, timeStyle: DateFormatter.Style = .long) -> String {
+       let date = DateFormatter.localizedString(from: self, dateStyle: dateStyle, timeStyle: timeStyle)
        return date
     }
     

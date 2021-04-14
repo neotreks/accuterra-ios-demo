@@ -23,13 +23,27 @@ class MyTripsViewController: ActivityFeedBaseViewController {
     // MARK:- Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        NotificationCenter.default.addObserver(self, selector: #selector(onTripUploadStatusChanged(notification:)), name: TripUploadNotificationName, object: nil)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         setUpNavBar()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        loadTrips(forceReload: true)
+        super.viewDidAppear(animated)
     }
 
     // MARK:- IBActions
     @IBAction func sourceSwitchValueChanged() {
-        loadTrips(forceReload: true)
         setUpNavBar()
+        self.loadTrips(forceReload: true)
     }
 
     // MARK:- Actions
@@ -45,6 +59,8 @@ class MyTripsViewController: ActivityFeedBaseViewController {
         self.sourceSwitch.isEnabled = false
         self.refreshControl.beginRefreshing()
         if sourceSwitch.isOn {
+            self.listItems?.removeAll()
+            self.tableView.reloadData()
             do {
                 let criteria = TripRecordingSearchCriteria()
                 try self.loadRecordedTrips(criteria: criteria)
@@ -68,6 +84,7 @@ class MyTripsViewController: ActivityFeedBaseViewController {
                 }
                 
                 // Online
+                self.listItems = [ActivityFeedItem]()
                 tableView.reloadData()
                 let criteria = GetMyActivityFeedCriteria() // Default criteria
                 loadOnlineTrips(criteria: criteria) {
@@ -117,11 +134,16 @@ class MyTripsViewController: ActivityFeedBaseViewController {
     func setUpNavBar() {
         if sourceSwitch.isOn {
             let buttonAdd = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(self.buttonAddTapped))
-            buttonAdd.tintColor = UIColor.Active
             
             self.homeNavItem?.setRightBarButtonItems([buttonAdd], animated: false)
         } else {
             self.homeNavItem?.setRightBarButtonItems([], animated: false)
+        }
+    }
+    
+    @objc func onTripUploadStatusChanged(notification: Notification) {
+        if sourceSwitch.isOn {
+            self.loadTrips(forceReload: true)
         }
     }
 }

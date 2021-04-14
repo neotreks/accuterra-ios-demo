@@ -76,10 +76,6 @@ class DrivingViewController: BaseTripRecordingViewController {
         super.viewDidLoad()
         self.title = "Driving Mode"
 
-        self.navigationController?.navigationBar.barTintColor = UIColor.DrivingNavigationBarColor
-        self.navigationController?.navigationBar.tintColor = UIColor.white
-        self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
-
         let item = UIBarButtonItem(title: "Close", style: .plain, target: self, action: #selector(close))
 
         self.navigationItem.leftBarButtonItem = item
@@ -282,7 +278,7 @@ class DrivingViewController: BaseTripRecordingViewController {
     private func initializeTrailNavigator(trailId: Int64) throws {
         let trailService = ServiceFactory.getTrailService()
         // Use the first drive for now. Later allow user to select which one
-        let drive = try trailService.getTrailDrivesById(trailId).first
+        let drive = try trailService.getTrailDrives(trailId).first
         if let firstDrive = drive  {
             let service = ServiceFactory.getTrailNavigatorService()
             self.trailNavigator = try service.getTrailNavigator(trailDrive: firstDrive)

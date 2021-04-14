@@ -42,13 +42,7 @@ class DownloadViewController : BaseViewController {
     }
     
     private func initSdk() {
-        guard let serviceUrl = Bundle.main.infoDictionary?["WS_BASE_URL"] as? String else {
-                fatalError("WS_BASE_URL is missing in info.plist")
-        }
-        guard let accuTerraMapStyleUrl = Bundle.main.infoDictionary?["ACCUTERRA_MAP_STYLE_URL"] as? String else {
-            fatalError("ACCUTERRA_MAP_STYLE_URL is missing in info.plist")
-        }
-        SdkManager.shared.initSdkAsync(config: SdkConfig(wsUrl: serviceUrl, accuterraMapStyleUrl: accuTerraMapStyleUrl), accessProvider: DemoAccessManager.shared, identityProvider: DemoIdentityManager.shared, delegate: self)
+        SdkManager.shared.initSdkAsync(config: demoAppSdkConfig, accessProvider: DemoAccessManager.shared, identityProvider: DemoIdentityManager.shared, delegate: self)
     }
 }
 
@@ -74,7 +68,11 @@ extension DownloadViewController : SdkInitDelegate {
                     self.progressTitle.text = "Initializing Trail Markers Cache ... "
                 case .TRAIL_PATHS_CACHE_INIT:
                     self.progressTitle.text = "Initializing Trail Paths Cache ... "
-                default:
+                case .TRAIL_USER_DATA_UPDATE:
+                    self.progressTitle.text = "Updating User data ..."
+                case .TRAIL_DB_UPDATE:
+                    self.progressTitle.text = "Updating Trail DB ..."
+                case .TRAIL_DB_DOWNLOAD:
                     self.progressTitle.text = "Downloading ... "
                 }
             default:

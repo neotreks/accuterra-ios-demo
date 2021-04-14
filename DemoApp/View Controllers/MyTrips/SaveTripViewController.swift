@@ -269,7 +269,7 @@ class SaveTripViewController: UIViewController {
                 let userInfo = trip.userInfo.copy(userRating: Double(self.ratingStars.rating), sharingType: shareWith.type, promoteToTrail: self.promoteSwitch.isOn, personalNote: personalNote)
                 
                 // Media
-                let allMedia = SaveTripViewController.updatePositions(allMedia: media)
+                let allMedia = ApkMediaUtil.updatePositions(allMedia: media)
                 
                 if let trip = self.trip?.copy(info: tripInfo, userInfo: userInfo, media: allMedia) {
                     let _ = try tripService.updateTripRecording(tripRecording: trip)
@@ -287,23 +287,6 @@ class SaveTripViewController: UIViewController {
             Log.e(TAG, "Could not save trip. \(error.localizedDescription)")
             showError(error)
         }
-    }
-    
-    /// This is not mandatory. Media position is an optional field. If not set, then media
-    /// are ordered naturally in the same order as there were created.
-    ///
-    /// But it is possible to set the order of media to change the natural ordering.
-    private static func updatePositions(allMedia: [TripRecordingMedia]) -> [TripRecordingMedia] {
-        var position = 1
-        var ordered = [TripRecordingMedia]()
-        for media in allMedia {
-            ordered.append(
-                // Set the optional position value
-                media.copy(position: position)
-            )
-            position += 1
-        }
-        return ordered
     }
     
     /// Adds captured photo into the POI
@@ -383,7 +366,7 @@ extension SaveTripViewController : TripRecordingMediaCollectionViewCellDelegate 
     func tripMediaDeletePressed(media: TripRecordingMedia) {
         deleteMedia(media: media)
     }
-    func canEditMedia() -> Bool {
+    func canEditMedia(media: TripRecordingMedia) -> Bool {
         return canEditTrip()
     }
 }

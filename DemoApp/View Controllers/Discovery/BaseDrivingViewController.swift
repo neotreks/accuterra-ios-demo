@@ -26,7 +26,7 @@ class BaseDrivingViewController : LocationViewController {
     var reachability: Reachability!
 
     // Location tracking mode
-    private var currentTracking = TrackingOption.LOCATION
+    private(set) var currentTracking = TrackingOption.LOCATION
     private var lastGpsTracking: TrackingOption?
 
     // Available tracking options
@@ -49,6 +49,7 @@ class BaseDrivingViewController : LocationViewController {
     // MARK:- Lifecycle
     deinit {
         NotificationCenter.default.removeObserver(self)
+        OfflineMapManager.shared.removeProgressObserver(observer: self)
         self.reachability.stopNotifier()
     }
 
@@ -68,6 +69,7 @@ class BaseDrivingViewController : LocationViewController {
 
         super.viewDidLoad()
         setupMap()
+        OfflineMapManager.shared.addProgressObserver(observer: self)
     }
 
     // MARK:- IBActions
@@ -76,10 +78,8 @@ class BaseDrivingViewController : LocationViewController {
     }
 
     @IBAction func layerButtonPressed() {
-        do {
+        tryOrShowError {
             try onToggleMapStyle()
-        } catch {
-            showError(error)
         }
     }
 
@@ -121,18 +121,12 @@ class BaseDrivingViewController : LocationViewController {
     /// Called when reachability changes
     private func onReachabilityChangedNotification(notification: Notification) {
         if self.reachability.connection == .unavailable {
-
             // When network is not available we want to switch to offline style, but only if it's cached
-
-            self.mapView.offlineCacheManager.getOfflineMapStatus(type: .OVERLAY, trailId: OfflineMapType.NOTRAILID) { (status, error) in
-                if let status = status, status == .COMPLETE {
+            tryOrShowError {
+                if let status = try OfflineMapManager.shared.getOverlayOfflineMap()?.status, status == .COMPLETE {
                     if self.mapView.isStyleLoaded {
                         if !self.offlineStyles.contains(self.currentStyle) {
-                            do {
-                                try self.onToggleMapStyle()
-                            } catch {
-                                self.showError(error)
-                            }
+                            try self.onToggleMapStyle()
                         }
                     }
                 } else {
@@ -230,7 +224,6 @@ extension BaseDrivingViewController : AccuTerraMapViewDelegate {
         self.mapLoaded = true
         self.layersButton.isEnabled = true
         self.drivingModeButton.isEnabled = true
-        self.mapView.offlineCacheManager.progressDelegate = self
         checkLocationPermissions()
         startLocationUpdates()
     }
@@ -242,11 +235,11 @@ extension BaseDrivingViewController : AccuTerraMapViewDelegate {
 
 // MARK:- CacheProgressDelegate extension
 extension BaseDrivingViewController : CacheProgressDelegate {
-    func onProgressChanged(progress: Double, mapType: OfflineMapType, trailId: Int64) {
+    func onProgressChanged(offlineMap: IOfflineMap) {
         // We do not want to do anything
     }
     
-    func onError(error: [OfflineResourceError], mapType: OfflineMapType, trailId: Int64) {
+    func onError(error: [OfflineResourceError], offlineMap: IOfflineMap) {
         
         // When download fails the onError is called first followed by onComplete
         
@@ -257,7 +250,7 @@ extension BaseDrivingViewController : CacheProgressDelegate {
         showError(message.toError())
     }
     
-    func onComplete(mapType: OfflineMapType, trailId: Int64) {
+    func onComplete(offlineMap: IOfflineMap) {
         // We do not want to do anything here
     }
 }

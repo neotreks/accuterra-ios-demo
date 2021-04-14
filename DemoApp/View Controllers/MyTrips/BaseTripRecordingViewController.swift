@@ -51,6 +51,11 @@ class BaseTripRecordingViewController : BaseDrivingViewController {
     var lastLocation: CLLocation?
 
     var isTripLayersManagerLoaded: Bool = false
+    
+    /// Provide custom trip recording data to be stored with the trip recording
+    func getExtProperties() -> [ExtProperties]? {
+        return nil
+    }
 
     // MARK:- Lifecycle
     override func viewDidLoad() {
@@ -136,7 +141,7 @@ class BaseTripRecordingViewController : BaseDrivingViewController {
                 let driverId = DemoIdentityManager.shared.getUserId()
                 let vehicleId = "test_vehicle" // TODO: Load vehicle ID
                 let result: AccuTerraSDK.Result<TripStartResult> =
-                        try self.tripRecorder.startTripRecording(name: tripName, trailId: self.trailId, driverId: driverId, vehicleId: vehicleId)
+                    try self.tripRecorder.startTripRecording(name: tripName, trailId: self.trailId, driverId: driverId, vehicleId: vehicleId, extProperties: self.getExtProperties())
 
                 if result.isFailure {
                     self.showError(result.error ?? "Could not start trip recording.".toError())
@@ -383,7 +388,7 @@ class BaseTripRecordingViewController : BaseDrivingViewController {
                 throw "Trip #\(tripUuid) not found.".toError()
             }
             guard let poi = try service.getTripRecordingPoiByUuid(uuid: poiId) else {
-                throw "No POI \(poiId) found for trip #$tripUuid.".toError()
+                throw "No POI \(poiId) found for trip #\(tripUuid).".toError()
             }
             
             AlertUtils.showPrompt(viewController: self, title: "\(poi.name)", message: "Edit POI?") {
