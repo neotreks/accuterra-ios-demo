@@ -17,13 +17,12 @@ class TripPoiViewController: UIViewController {
     private var mapLocation: MapLocation?
     private var trip: TripRecording?
     private lazy var media = [TripRecordingMedia]()
+    private lazy var types = [PointType]()
     private var poi: TripRecordingPoi?
-    private lazy var subtypes = [PointSubtype]()
 
     // MARK:- Outlets
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var descriptionTextView: UITextView!
-    @IBOutlet weak var isWaypointSwitch: UISwitch!
     @IBOutlet weak var photoCollectionView: UICollectionView!
     @IBOutlet weak var poiTypeButton: UIButton!
 
@@ -43,15 +42,14 @@ class TripPoiViewController: UIViewController {
             
             self.nameTextField.text = loadedPoi.name
             self.descriptionTextView.text = loadedPoi.description
-            let type = self.subtypes.first { (type: PointSubtype) -> Bool in
-                return type.code == loadedPoi.pointSubtype.code
+            let type = self.types.first { (it: PointType) -> Bool in
+                return it.code == loadedPoi.pointType.code
             }
             self.poiTypeButton.setTitle(type?.name, for: .normal)
-            self.isWaypointSwitch.isOn = loadedPoi.isWaypoint
             
             self.photoCollectionView.reloadData()
         } else {
-            poiTypeButton.setTitle(self.subtypes.first!.name, for: .normal)
+            poiTypeButton.setTitle(self.types.first!.name, for: .normal)
             self.title = "Add POI"
             self.nameTextField.text = "Trip POI"
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(onSaveClicked))
@@ -70,8 +68,8 @@ class TripPoiViewController: UIViewController {
         self.trip = trip
         
         let enumService = ServiceFactory.getEnumService()
-        let subtypes = try enumService.getPointSubtypes()
-        self.subtypes = Array(subtypes.sorted { (a, b) -> Bool in
+        let types = try enumService.getPointTypes()
+        self.types = Array(types.sorted { (a, b) -> Bool in
             a.name.compare(b.name) == ComparisonResult.orderedAscending
         })
     }
@@ -91,8 +89,8 @@ class TripPoiViewController: UIViewController {
         self.trip = try tripService.getTripRecordingByPoiUuid(uuid: poiUuid)
         
         let enumService = ServiceFactory.getEnumService()
-        let subtypes = try enumService.getPointSubtypes()
-        self.subtypes = Array(subtypes.sorted { (a, b) -> Bool in
+        let types = try enumService.getPointTypes()
+        self.types = Array(types.sorted { (a, b) -> Bool in
             a.name.compare(b.name) == ComparisonResult.orderedAscending
         })
     }
@@ -134,29 +132,19 @@ class TripPoiViewController: UIViewController {
             // Gather POI data
             let name = nameTextField.text ?? "Trip POI"
             let description = descriptionTextView.text
-            let isWaypoint = isWaypointSwitch.isOn
-            let selectedPointSubtype = subtypes.first(where: { (t:PointSubtype) -> Bool in
+            let selectedPointType = types.first(where: { (t:PointType) -> Bool in
                 return t.name == poiTypeButton.currentTitle!
             })!
-            let pointSubtype = selectedPointSubtype
-            var pointType: PointType!
-            do {
-                pointType = try enumService.getPointTypeByCode(pointSubtype.parentTypeCode)
-            } catch {
-                showError(error)
-                return
-            }
+            let pointType = selectedPointType
 
             if let existingPoi = self.poi {
                 // Update existing Poi
-                media = TripPoiViewController.updatePositions(allMedia: media)
+                media = ApkMediaUtil.updatePositions(allMedia: media)
                 let poi = existingPoi.copy(
                     name: name,
-                    isWaypoint: isWaypoint,
                     description: description,
                     descriptionShort: nil,
                     pointType: pointType,
-                    pointSubtype: pointSubtype,
                     media: media
                 )
                 // Update POI
@@ -165,9 +153,8 @@ class TripPoiViewController: UIViewController {
                 // Build the new POI
                 let poi = try TripRecordingPoi.buildNewPoi(
                     name: name,
-                    isWaypoint: isWaypoint,
                     mapLocation: mapLocation,
-                    pointSubtypeCode: pointSubtype.code,
+                    pointTypeCode: pointType.code,
                     enumService: enumService,
                     description: description,
                     descriptionShort: nil,
@@ -216,7 +203,7 @@ class TripPoiViewController: UIViewController {
     func showTypeOptions() {
         let options = UIAlertController(title: "POI Type", message: nil, preferredStyle: .actionSheet)
 
-        for option in subtypes {
+        for option in types {
             options.addAction(UIAlertAction(title: option.name, style: .default, handler: { (action) in
                 self.poiTypeButton.setTitle(option.name, for: .normal)
             }))
@@ -229,23 +216,6 @@ class TripPoiViewController: UIViewController {
         options.view.subviews.flatMap({$0.constraints}).filter{ (one: NSLayoutConstraint)-> (Bool)  in
             return (one.constant < 0) && (one.secondItem == nil) &&  (one.firstAttribute == .width)
         }.first?.isActive = false
-    }
-
-    /// This is not mandatory. Media position is an optional field. If not set, then media
-    /// are ordered naturally in the same order as there were created.
-    ///
-    /// But it is possible to set the order of media to change the natural ordering.
-    private static func updatePositions(allMedia: [TripRecordingMedia]) -> [TripRecordingMedia] {
-        var position = 1
-        var ordered = [TripRecordingMedia]()
-        for media in allMedia {
-            ordered.append(
-                    // Set the optional position value
-                    media.copy(position: position)
-            )
-            position += 1
-        }
-        return ordered
     }
 
     // MARK:- Media
@@ -292,7 +262,7 @@ extension TripPoiViewController : TripRecordingMediaCollectionViewCellDelegate {
     func tripMediaDeletePressed(media: TripRecordingMedia) {
         deleteMedia(media: media)
     }
-    func canEditMedia() -> Bool {
+    func canEditMedia(media: TripRecordingMedia) -> Bool {
         return true
     }
 }

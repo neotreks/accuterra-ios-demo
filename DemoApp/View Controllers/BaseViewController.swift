@@ -12,6 +12,7 @@ class BaseViewController: UIViewController {
 
     // MARK:- Properties
     weak var homeNavItem: UINavigationItem?
+    @IBInspectable var navBarBackgroundTintColor: UIColor?
 
     // MARK:- Lifecycle
     override func viewDidLoad() {
@@ -28,6 +29,12 @@ class BaseViewController: UIViewController {
         self.homeNavItem?.leftBarButtonItem = nil
         self.homeNavItem?.setRightBarButtonItems(nil, animated: false)
         self.homeNavItem?.titleView = nil
+        
+        if let navBarBackgroundTintColor = navBarBackgroundTintColor {
+            self.navigationController?.navigationBar.barTintColor = navBarBackgroundTintColor
+            self.navigationController?.navigationBar.tintColor = UIColor.white
+            self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
+        }
     }
     
     var taskBar: TaskBar? {

@@ -14,28 +14,33 @@ class ProfileViewController: BaseViewController {
     // MARK:- Properties
     private let TAG = "ProfileViewController"
 
-    // MARK:- IBOutlets
-    @IBOutlet weak var textFieldUserId: UITextField!
-
     // MARK:- Lifecycle
     override func viewDidLoad() {
         self.title = "User Profile"
-        self.textFieldUserId.text = DemoIdentityManager.shared.getUserId()
         super.viewDidLoad()
     }
-}
-
-// MARK:- UITextFieldDelegate extension
-extension ProfileViewController : UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        DemoIdentityManager.shared.setUserId(userId: textFieldUserId.text)
+    
+    // MARK:- Actions
+    
+    @IBAction func didTapSettings() {
+        if let vc = UIStoryboard(name: "Main", bundle: nil) .
+        instantiateViewController(withIdentifier: "Settings") as? SettingsViewController {
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+    }
+    
+    @IBAction func didTapResetToken() {
         DemoAccessManager.shared.resetToken { (token) in
-            Log.d(self.TAG, "Access token reset finished.")
+            self.showInfo("Token reset")
         } errorHandler: { (error) in
             self.showError(error)
         }
-
-        return true
+    }
+    
+    @IBAction func didTapDownloadOfflineMaps() {
+        if let vc = UIStoryboard(name: "Main", bundle: nil) .
+        instantiateViewController(withIdentifier: "OfflineMaps") as? OfflineMapsViewController {
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
     }
 }

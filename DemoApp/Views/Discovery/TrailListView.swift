@@ -58,18 +58,19 @@ class TrailListView: UIView {
                 trailsService = ServiceFactory.getTrailService()
             }
             
-            var techRatingSearchCriteria: TechRatingSearchCriteria?
+            var techRatingSearchCriteria: ITechRatingSearchCriteria?
             if let maxDifficultyLevel = filter.maxDifficulty?.level, !hasTrailNameFilter {
-                techRatingSearchCriteria = TechRatingSearchCriteria(
+                techRatingSearchCriteria = TechRatingSearchCriteriaBuilder.build(
                     level: maxDifficultyLevel,
                     comparison: Comparison.lessEquals)
             }
             
-            var userRatingSearchCriteria: UserRatingSearchCriteria?
+            var userRatingSearchCriteria: IUserRatingSearchCriteria?
             if let minUserRating = filter.minUserRating, !hasTrailNameFilter {
-                userRatingSearchCriteria = UserRatingSearchCriteria(
-                    userRating: Double(minUserRating),
-                    comparison: .greaterEquals)
+                userRatingSearchCriteria = UserRatingSearchCriteriaBuilder.build(
+                    userRating: Float(minUserRating),
+                    comparison: .greaterEquals
+                )
             }
             
             var lengthSearchCriteria: LengthSearchCriteria?
@@ -80,23 +81,23 @@ class TrailListView: UIView {
             if let mapBounds = filter.boundingBoxFilter, !hasTrailNameFilter {
                 let searchCriteria = TrailMapBoundsSearchCriteria(
                     mapBounds: mapBounds,
-                    nameSearchString: nil,
+                    nameSearchCriteria: nil,
                     techRating: techRatingSearchCriteria,
                     userRating: userRatingSearchCriteria,
                     length: lengthSearchCriteria,
-                    orderBy: OrderBy(),
-                    limit: Int(INT32_MAX))
+                    orderBy: OrderByBuilder.build(),
+                    limit: QueryLimitBuilder.build())
                 self.trails = try trailsService!.findTrails(byMapBoundsCriteria: searchCriteria)
                 self.tableView.reloadData()
             } else {
                 let searchCriteria = TrailMapSearchCriteria(
                     mapCenter: delegate.getVisibleMapCenter(),
-                    nameSearchString: filter.trailNameFilter,
+                    nameSearchCriteria: TextSearchCriteriaBuilder.build(searchString: filter.trailNameFilter!),
                     techRating: techRatingSearchCriteria,
                     userRating: userRatingSearchCriteria,
                     length: lengthSearchCriteria,
-                    orderBy: OrderBy(),
-                    limit: Int(INT32_MAX))
+                    orderBy: OrderByBuilder.build(),
+                    limit: QueryLimitBuilder.build())
                 self.trails = try trailsService!.findTrails(byMapCriteria: searchCriteria)
                 self.tableView.reloadData()
             }

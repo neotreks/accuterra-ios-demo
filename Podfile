@@ -15,10 +15,11 @@ platform :ios, '10.0'
 use_frameworks!
 
 def shared_pods
-  pod 'AccuTerraSDK', '0.6.2'
+  pod 'AccuTerraSDK', '0.7.0'
   # UI pods
   pod 'StarryStars', '~> 1.0.0'
   pod 'Kingfisher'
+  pod 'AlignedCollectionViewFlowLayout'
 end
 
 target 'DemoApp(Develop)' do

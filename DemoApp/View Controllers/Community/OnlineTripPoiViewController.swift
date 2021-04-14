@@ -16,7 +16,6 @@ class OnlineTripPoiViewController: UIViewController {
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var typeLabel: UILabel!
-    @IBOutlet weak var isWaypointButton: UIButton!
 
     // MARK:- Properties
     var tripPoint: TripPoint!
@@ -32,7 +31,6 @@ class OnlineTripPoiViewController: UIViewController {
         self.nameLabel.text = tripPoint.name
         self.descriptionLabel.text = tripPoint.description
         self.typeLabel.text = tripPoint.pointType.name
-        self.isWaypointButton.isSelected = tripPoint.isWaypoint
         self.collectionView.reloadData()
     }
 }

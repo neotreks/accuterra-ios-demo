@@ -32,7 +32,7 @@ public class TrailInfoDisplay {
         }
         
         if let trailDistance = basicTrailInfo?.length {
-            distanceLabel.text = DistanceFormatter.formatDistance(distanceInMeters: trailDistance * 1000)
+            distanceLabel.text = DistanceFormatter.formatDistance(distanceInMeters: trailDistance)
         }
         else {
             distanceLabel.text = "-- mi"

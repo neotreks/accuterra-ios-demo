@@ -106,8 +106,6 @@ class LocationService : NSObject, MGLLocationManager {
         didSet {
             if requestingLocationUpdates {
                 locationManager.delegate = self
-                locationManager.allowsBackgroundLocationUpdates = true
-                locationManager.showsBackgroundLocationIndicator = true
                 locationManager.desiredAccuracy = kCLLocationAccuracyBest
                 locationManager.startUpdatingHeading()
                 locationManager.startUpdatingLocation()
@@ -115,6 +113,14 @@ class LocationService : NSObject, MGLLocationManager {
                 locationManager.stopUpdatingHeading()
                 locationManager.stopUpdatingLocation()
             }
+        }
+    }
+    
+    var allowBackgroundLocationUpdates: Bool = false
+    {
+        didSet {
+            locationManager.allowsBackgroundLocationUpdates = allowBackgroundLocationUpdates
+            locationManager.showsBackgroundLocationIndicator = allowBackgroundLocationUpdates
         }
     }
     

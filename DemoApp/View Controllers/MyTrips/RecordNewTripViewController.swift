@@ -19,10 +19,6 @@ class RecordNewTripViewController: BaseTripRecordingViewController {
         
         self.title = "Trip Recording"
         
-        self.navigationController?.navigationBar.barTintColor = UIColor.DrivingNavigationBarColor
-        self.navigationController?.navigationBar.tintColor = UIColor.white
-        self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
-
         let item = UIBarButtonItem(title: "Close", style: .plain, target: self, action: #selector(close))
 
         self.navigationItem.leftBarButtonItem = item

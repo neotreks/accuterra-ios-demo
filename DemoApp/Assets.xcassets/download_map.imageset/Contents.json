@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "download_map.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

@@ -13,7 +13,7 @@ class RecordNewTripChooseViewController: BaseViewController {
     // MARK:- Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         self.title = "Record New Trip"
     }
 
@@ -27,6 +27,14 @@ class RecordNewTripChooseViewController: BaseViewController {
         if let vc = UIStoryboard(name: "Main", bundle: nil) .
             instantiateViewController(withIdentifier: "RecordNewTripVC") as? RecordNewTripViewController {
             vc.title = "Record New Free Roam Trip"
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+    }
+    
+    @IBAction func buttonTrailCollectionTapped(_ sender: Any) {
+        if let vc = UIStoryboard(name: "Main", bundle: nil) .
+            instantiateViewController(withIdentifier: "TrailCollectionVC") as? TrailCollectionViewController {
+            vc.title = "Trail Collection Mode"
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }

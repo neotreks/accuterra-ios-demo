@@ -50,6 +50,7 @@ class LocationViewController : BaseViewController, LocationServiceDelegate {
     /// Start recording location changes
     func startLocationRecording() {
         LocationService.shared.requestingLocationRecording = true
+        LocationService.shared.allowBackgroundLocationUpdates = true
         // Set to prevent screen to lock - turn off - during recording
         UIApplication.shared.isIdleTimerDisabled = true
     }
@@ -57,6 +58,7 @@ class LocationViewController : BaseViewController, LocationServiceDelegate {
     /// Stops recording location changes
     func stopLocationRecording() {
         LocationService.shared.requestingLocationRecording = false
+        LocationService.shared.allowBackgroundLocationUpdates = false
         UIApplication.shared.isIdleTimerDisabled = false
     }
     

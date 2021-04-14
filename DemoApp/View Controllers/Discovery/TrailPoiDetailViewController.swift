@@ -16,7 +16,6 @@ class TrailPoiDetailViewController: UIViewController {
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var typeLabel: UILabel!
-    @IBOutlet weak var isWaypointButton: UIButton!
 
     // MARK:- Properties
     var trailDriveWaypoint: TrailDriveWaypoint!
@@ -30,7 +29,6 @@ class TrailPoiDetailViewController: UIViewController {
         self.nameLabel.text = trailDriveWaypoint.point.name
         self.descriptionLabel.text = trailDriveWaypoint.description
         self.typeLabel.text = trailDriveWaypoint.point.type.name
-        self.isWaypointButton.isSelected = trailDriveWaypoint.point.isWaypoint
         
         self.collectionView.register(UINib(nibName: TrailImageCollectionViewCell.cellXibName, bundle: nil), forCellWithReuseIdentifier: TrailImageCollectionViewCell.cellIdentifier)
         self.collectionView.reloadData()
