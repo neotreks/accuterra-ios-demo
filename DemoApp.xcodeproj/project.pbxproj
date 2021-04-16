@@ -205,6 +205,7 @@
 		57ADBBD625AB224C00E7A029 /* ActivityFeedNoRecordsViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57ADBBD425AB224C00E7A029 /* ActivityFeedNoRecordsViewCell.swift */; };
 		57ADBBD725AB224C00E7A029 /* ActivityFeedNoRecordsViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57ADBBD425AB224C00E7A029 /* ActivityFeedNoRecordsViewCell.swift */; };
 		57ADBBD825AB224C00E7A029 /* ActivityFeedNoRecordsViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57ADBBD425AB224C00E7A029 /* ActivityFeedNoRecordsViewCell.swift */; };
+		57B0FF472629939C007A838A /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 570FDE882542EF6200106E0E /* UIViewController.swift */; };
 		57B329F1247D20CB0073D994 /* UILabelledProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57B329F0247D20CB0073D994 /* UILabelledProgressView.swift */; };
 		57B329F2247D20CB0073D994 /* UILabelledProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57B329F0247D20CB0073D994 /* UILabelledProgressView.swift */; };
 		57B329F3247D20CB0073D994 /* UILabelledProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57B329F0247D20CB0073D994 /* UILabelledProgressView.swift */; };
@@ -1423,6 +1424,7 @@
 				57DA34EF25922C270019A07B /* ActivityFeedTripThumbnailItem.swift in Sources */,
 				57BB565F25A36717000E8F67 /* ActivityFeedItem.swift in Sources */,
 				57B7B54E24FF822700508616 /* MyTripsViewController.swift in Sources */,
+				57B0FF472629939C007A838A /* UIViewController.swift in Sources */,
 				D31C221D244E1D3C00B0E74E /* UIColor.swift in Sources */,
 				57B32A00247E81A30073D994 /* AlertUtils.swift in Sources */,
 				57B7B54C24FF822700508616 /* RecordNewTripViewController.swift in Sources */,
