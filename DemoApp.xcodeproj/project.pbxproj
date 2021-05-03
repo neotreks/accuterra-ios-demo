@@ -125,6 +125,14 @@
 		576E52B12539F55B00D1AA9F /* TripPoiViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576E52AE2539F55B00D1AA9F /* TripPoiViewController.swift */; };
 		576E52B22539F55B00D1AA9F /* TripPoiViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576E52AE2539F55B00D1AA9F /* TripPoiViewController.swift */; };
 		576E52B32539F55B00D1AA9F /* TripPoiViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576E52AE2539F55B00D1AA9F /* TripPoiViewController.swift */; };
+		57710AC4264017B9009B093A /* DemoDbEncryptProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57710AC3264017B9009B093A /* DemoDbEncryptProvider.swift */; };
+		57710AC5264017B9009B093A /* DemoDbEncryptProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57710AC3264017B9009B093A /* DemoDbEncryptProvider.swift */; };
+		57710AC6264017B9009B093A /* DemoDbEncryptProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57710AC3264017B9009B093A /* DemoDbEncryptProvider.swift */; };
+		57710AC7264017B9009B093A /* DemoDbEncryptProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57710AC3264017B9009B093A /* DemoDbEncryptProvider.swift */; };
+		57710AC9264017CA009B093A /* DbPasscodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57710AC8264017CA009B093A /* DbPasscodeViewController.swift */; };
+		57710ACA264017CA009B093A /* DbPasscodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57710AC8264017CA009B093A /* DbPasscodeViewController.swift */; };
+		57710ACB264017CA009B093A /* DbPasscodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57710AC8264017CA009B093A /* DbPasscodeViewController.swift */; };
+		57710ACC264017CA009B093A /* DbPasscodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57710AC8264017CA009B093A /* DbPasscodeViewController.swift */; };
 		57760DB42577AD6C007B9C0F /* BlockingProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57760DB32577AD6C007B9C0F /* BlockingProgressViewController.swift */; };
 		57760DB52577AD6C007B9C0F /* BlockingProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57760DB32577AD6C007B9C0F /* BlockingProgressViewController.swift */; };
 		57760DB62577AD6C007B9C0F /* BlockingProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57760DB32577AD6C007B9C0F /* BlockingProgressViewController.swift */; };
@@ -475,6 +483,8 @@
 		57585D8525A87D4400FC731B /* NewCommentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCommentViewController.swift; sourceTree = "<group>"; };
 		575FF6EB23FEB75800099C1B /* TrailDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrailDetails.swift; sourceTree = "<group>"; };
 		576E52AE2539F55B00D1AA9F /* TripPoiViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripPoiViewController.swift; sourceTree = "<group>"; };
+		57710AC3264017B9009B093A /* DemoDbEncryptProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DemoDbEncryptProvider.swift; sourceTree = "<group>"; };
+		57710AC8264017CA009B093A /* DbPasscodeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DbPasscodeViewController.swift; sourceTree = "<group>"; };
 		57760DB32577AD6C007B9C0F /* BlockingProgressViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockingProgressViewController.swift; sourceTree = "<group>"; };
 		577AE75C253B48CE0064C885 /* TripRecordingMediaCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripRecordingMediaCollectionViewCell.swift; sourceTree = "<group>"; };
 		577AE75D253B48CE0064C885 /* TripRecordingMediaCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TripRecordingMediaCollectionViewCell.xib; sourceTree = "<group>"; };
@@ -716,6 +726,7 @@
 		572CA63324F4F36C00338AB4 /* Security */ = {
 			isa = PBXGroup;
 			children = (
+				57710AC3264017B9009B093A /* DemoDbEncryptProvider.swift */,
 				572CA63424F4F38B00338AB4 /* AccessTokenRepo.swift */,
 				572CA63924F4F3F700338AB4 /* AccuTerraAccessToken.swift */,
 				572CA63E24F4F6BB00338AB4 /* DemoAccessManager.swift */,
@@ -879,6 +890,7 @@
 		57AD076025AA4C7B00D78C26 /* Profile */ = {
 			isa = PBXGroup;
 			children = (
+				57710AC8264017CA009B093A /* DbPasscodeViewController.swift */,
 				D320F9C023FCC3DE007814C5 /* ProfileViewController.swift */,
 			);
 			path = Profile;
@@ -1469,6 +1481,7 @@
 				57A6964D2624CBF800BE1196 /* NewOfflineMapViewController.swift in Sources */,
 				7909F8802451E06D0005C06E /* WaypointListView.swift in Sources */,
 				570AFE67240D35DB00D06312 /* FilterViewController.swift in Sources */,
+				57710AC5264017B9009B093A /* DemoDbEncryptProvider.swift in Sources */,
 				57DA352E259231140019A07B /* TripLocationInfo.swift in Sources */,
 				57B7B55624FF82B000508616 /* UserLocationButton.swift in Sources */,
 				572CA64824F4F79A00338AB4 /* AuthResponse.swift in Sources */,
@@ -1529,6 +1542,7 @@
 				A052797CA07CA2EE3ED5CE4E /* DistanceFormatter.swift in Sources */,
 				A052724EE895186E57937B04 /* ApkMediaVariantUtil.swift in Sources */,
 				A05275D3B34E1C3C7A00F5A9 /* ApkMediaVariant.swift in Sources */,
+				57710ACA264017CA009B093A /* DbPasscodeViewController.swift in Sources */,
 				A05272F90915D0C2E3043C92 /* ApkMediaUtil.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1596,6 +1610,7 @@
 				D3D92E112405C1FF008C2F2E /* BaseViewController.swift in Sources */,
 				57B7B55524FF82B000508616 /* UserLocationButton.swift in Sources */,
 				57BB565E25A36717000E8F67 /* ActivityFeedItem.swift in Sources */,
+				57710AC4264017B9009B093A /* DemoDbEncryptProvider.swift in Sources */,
 				57A6963E2624CBCF00BE1196 /* UITextView.swift in Sources */,
 				572CA64724F4F79A00338AB4 /* AuthResponse.swift in Sources */,
 				57A6964F2624CBF800BE1196 /* OfflineMapsViewController.swift in Sources */,
@@ -1656,6 +1671,7 @@
 				A0527206ED2596A453CC9271 /* ApkMediaVariantUtil.swift in Sources */,
 				A0527DB1924AEA625762FF7A /* ApkMediaVariant.swift in Sources */,
 				A0527DA3CC918A96DFA078F7 /* ApkMediaUtil.swift in Sources */,
+				57710AC9264017CA009B093A /* DbPasscodeViewController.swift in Sources */,
 				57A696012624CB7B00BE1196 /* SettingsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1685,10 +1701,12 @@
 				572CA63724F4F38B00338AB4 /* AccessTokenRepo.swift in Sources */,
 				57DA34F025922C270019A07B /* ActivityFeedTripThumbnailItem.swift in Sources */,
 				57DA35412592370C0019A07B /* ActivityFeedTripUserViewCell.swift in Sources */,
+				57710AC6264017B9009B093A /* DemoDbEncryptProvider.swift in Sources */,
 				D37F2D6123F4C10800FC036A /* UserRatingsDisplayTests.swift in Sources */,
 				57585D8825A87D4400FC731B /* NewCommentViewController.swift in Sources */,
 				57241B6C25068C4500AB85B8 /* MediaLoader.swift in Sources */,
 				57ADBBCE25AB1F5D00E7A029 /* ActivityFeedBaseViewController.swift in Sources */,
+				57710ACB264017CA009B093A /* DbPasscodeViewController.swift in Sources */,
 				57A815A5240D1DBB00CE0888 /* Synchronize.swift in Sources */,
 				572CA64924F4F79A00338AB4 /* AuthResponse.swift in Sources */,
 				57A8159B240D189300CE0888 /* TechRatingColorMapper.swift in Sources */,
@@ -1737,12 +1755,14 @@
 				57DA34D225922AF40019A07B /* ActivityFeedRecordedTripItem.swift in Sources */,
 				57A6961B2624CB9400BE1196 /* OfflineMapTableViewCell.swift in Sources */,
 				572CA63D24F4F3F700338AB4 /* AccuTerraAccessToken.swift in Sources */,
+				57710AC7264017B9009B093A /* DemoDbEncryptProvider.swift in Sources */,
 				5705E41B257F803B006EA74D /* CommentTableviewCell.swift in Sources */,
 				57DA34BB259228850019A07B /* BaseFeedItem.swift in Sources */,
 				572F938D25A7557000FE28AA /* OnlineTripCommentViewCell.swift in Sources */,
 				57D618572510EA610088B452 /* LocationViewController.swift in Sources */,
 				57B329F4247D20CB0073D994 /* UILabelledProgressView.swift in Sources */,
 				57E42919247D0FE900B1D71A /* Int64.swift in Sources */,
+				57710ACC264017CA009B093A /* DbPasscodeViewController.swift in Sources */,
 				570AFE88240E3DDB00D06312 /* TrailsFilter.swift in Sources */,
 				57B32A02247E81A30073D994 /* AlertUtils.swift in Sources */,
 				57DA351B25922DED0019A07B /* ActivityFeedTripHeaderViewCell.swift in Sources */,

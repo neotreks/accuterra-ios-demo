@@ -62,6 +62,7 @@ class NewOfflineMapViewController: BaseViewController {
         }
         
         loadMap()
+        self.mapNameTextField.autocapitalizationType = UITextAutocapitalizationType.sentences
     }
     
     deinit {

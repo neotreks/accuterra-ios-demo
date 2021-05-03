@@ -323,6 +323,7 @@ extension OfflineMapsViewController: OfflineMapTableViewCellDelegate {
         let alert = UIAlertController(title: "Rename Offline Map", message: "", preferredStyle: .alert)
         var nameTextField: UITextField? = nil
         alert.addTextField { (textField) in
+            textField.autocapitalizationType = UITextAutocapitalizationType.sentences
             nameTextField = textField
         }
         alert.addAction(UIAlertAction(title: "Rename", style: .default, handler: { (action) in

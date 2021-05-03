@@ -43,4 +43,11 @@ class ProfileViewController: BaseViewController {
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }
+    
+    @IBAction func didTapDbPasscode() {
+        if let vc = UIStoryboard(name: "Main", bundle: nil) .
+        instantiateViewController(withIdentifier: "DbPasscodeVC") as? DbPasscodeViewController {
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+    }
 }

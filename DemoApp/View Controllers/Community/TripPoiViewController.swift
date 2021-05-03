@@ -31,6 +31,8 @@ class TripPoiViewController: UIViewController {
         super.viewDidLoad()
         self.photoCollectionView.register(UINib(nibName: TripRecordingMediaCollectionViewCell.cellXibName, bundle: nil), forCellWithReuseIdentifier: TripRecordingMediaCollectionViewCell.cellIdentifier)
         
+        setupTextFields()
+        
         if let loadedPoi = self.poi {
             self.title = "Edit POI"
             var rightBarButtons = [UIBarButtonItem]()
@@ -190,6 +192,12 @@ class TripPoiViewController: UIViewController {
     private func addPoi(poi: TripRecordingPoi) throws {
         let recorder = try ServiceFactory.getTripRecorder()
         let _ = try recorder.addPoi(poi: poi)
+    }
+    
+    private func setupTextFields() {
+        let capSentences = UITextAutocapitalizationType.sentences
+        self.nameTextField.autocapitalizationType = capSentences
+        self.descriptionTextView.autocapitalizationType = capSentences
     }
 
     // MARK:- POI

@@ -56,6 +56,11 @@ class BaseTripRecordingViewController : BaseDrivingViewController {
     func getExtProperties() -> [ExtProperties]? {
         return nil
     }
+    
+    /// Provide [TelemetryModel] only if the telemetry will be recorded
+    func getTelemetryModel() -> TelemetryModel? {
+        return nil
+    }
 
     // MARK:- Lifecycle
     override func viewDidLoad() {
@@ -141,7 +146,9 @@ class BaseTripRecordingViewController : BaseDrivingViewController {
                 let driverId = DemoIdentityManager.shared.getUserId()
                 let vehicleId = "test_vehicle" // TODO: Load vehicle ID
                 let result: AccuTerraSDK.Result<TripStartResult> =
-                    try self.tripRecorder.startTripRecording(name: tripName, trailId: self.trailId, driverId: driverId, vehicleId: vehicleId, extProperties: self.getExtProperties())
+                    try self.tripRecorder.startTripRecording(
+                        name: tripName, trailId: self.trailId, driverId: driverId,
+                        vehicleId: vehicleId, extProperties: self.getExtProperties(), telemetryModel: self.getTelemetryModel())
 
                 if result.isFailure {
                     self.showError(result.error ?? "Could not start trip recording.".toError())
