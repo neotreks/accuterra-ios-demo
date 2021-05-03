@@ -60,6 +60,7 @@ class SaveTripViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
         
+        setupTextFields()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -231,6 +232,13 @@ class SaveTripViewController: UIViewController {
         let actionButton = UIBarButtonItem(title: "≡", style: .done, target: self, action: #selector(self.buttonActionTapped))
         
         self.navigationItem.leftBarButtonItem = actionButton
+    }
+    
+    private func setupTextFields() {
+        let capSentences = UITextAutocapitalizationType.sentences
+        self.txtTripName.autocapitalizationType = capSentences
+        self.txtTripDescription.autocapitalizationType = capSentences
+        self.txtPersonalNote.autocapitalizationType = capSentences
     }
     
     private func deleteTrip() {

@@ -85,7 +85,8 @@ class HomePageViewController: UIPageViewController {
             config: demoAppSdkConfig,
             accessProvider: DemoAccessManager.shared,
             identityProvider: DemoIdentityManager.shared,
-            delegate: self)
+            delegate: self,
+            dbEncryptConfigProvider: DemoDbEncryptProvider())
     }
 
     // MARK:-

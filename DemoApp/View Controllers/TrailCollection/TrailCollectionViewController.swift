@@ -72,6 +72,12 @@ class TrailCollectionViewController: BaseTripRecordingViewController {
         updateStatusLabel()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        let capSentences = UITextAutocapitalizationType.sentences
+        self.poiNameTextField.autocapitalizationType = capSentences
+        self.poiDescriptionTextView.autocapitalizationType = capSentences
+    }
+    
     deinit {
         // Set screen lock back to normal
         UIApplication.shared.isIdleTimerDisabled = false

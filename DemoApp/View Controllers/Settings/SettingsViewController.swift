@@ -23,6 +23,10 @@ class SettingsViewController: BaseViewController {
         self.textFieldUserId.text = DemoIdentityManager.shared.getUserId()
         super.viewDidLoad()
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        self.textFieldUserId.autocapitalizationType = UITextAutocapitalizationType.sentences
+    }
 }
 
 // MARK:- UITextFieldDelegate extension

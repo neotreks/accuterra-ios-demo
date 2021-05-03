@@ -42,7 +42,7 @@ class DownloadViewController : BaseViewController {
     }
     
     private func initSdk() {
-        SdkManager.shared.initSdkAsync(config: demoAppSdkConfig, accessProvider: DemoAccessManager.shared, identityProvider: DemoIdentityManager.shared, delegate: self)
+        SdkManager.shared.initSdkAsync(config: demoAppSdkConfig, accessProvider: DemoAccessManager.shared, identityProvider: DemoIdentityManager.shared, delegate: self, dbEncryptConfigProvider: DemoDbEncryptProvider())
     }
 }
 

@@ -104,6 +104,8 @@ class TrailSaveViewController: UIViewController {
             // Enable automatic cell-sizing with Auto Layout:
             concernsLayout.estimatedItemSize = .init(width: 100, height: 20)
         }
+        
+        setupInputTextFields()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -339,6 +341,29 @@ class TrailSaveViewController: UIViewController {
         let actionButton = UIBarButtonItem(image: UIImage(systemName: "arrow.left"), style: .done, target: self, action: #selector(self.buttonActionTapped))
         
         self.navigationItem.leftBarButtonItem = actionButton
+    }
+    
+    private func setupInputTextFields(){
+        let capSentences = UITextAutocapitalizationType.sentences
+        
+        self.trailNameTextField.autocapitalizationType = capSentences
+        self.trailDescriptionTextView.autocapitalizationType = capSentences
+        self.difficultyRatingTextField.autocapitalizationType = capSentences
+        self.highlightsTextField.autocapitalizationType = capSentences
+        self.historyTextField.autocapitalizationType = capSentences
+        self.campingOptionsTextField.autocapitalizationType = capSentences
+        self.permitInformationTextField.autocapitalizationType = capSentences
+        self.permitInformationLinkTextField.autocapitalizationType = capSentences
+        self.accessIssueTextField.autocapitalizationType = capSentences
+        self.accessIssueLinkTextField.autocapitalizationType = capSentences
+        self.seasonRecommendationTextField.autocapitalizationType = capSentences
+        self.seasonRecommendationReasonTextField.autocapitalizationType = capSentences
+        self.seasonSummerTextField.autocapitalizationType = capSentences
+        self.seasonFallTextField.autocapitalizationType = capSentences
+        self.seasonWinterTextField.autocapitalizationType = capSentences
+        self.recommendedClearanceTextField.autocapitalizationType = capSentences
+        self.bestDirectionTextField.autocapitalizationType = capSentences
+        self.privateNoteTextField.autocapitalizationType = capSentences
     }
     
     private func deleteTrip() {

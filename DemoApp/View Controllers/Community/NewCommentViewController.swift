@@ -27,6 +27,7 @@ class NewCommentViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "Add Comment"
+        self.textView.autocapitalizationType = UITextAutocapitalizationType.sentences
         
         setUpNavBar()
     }

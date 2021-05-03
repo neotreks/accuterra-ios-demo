@@ -10,4 +10,5 @@ class UserSettingsViewController : UIViewController {
 
     // MARK:- Static
     static let KEY_USER_SETTINGS = "user_id"
+    static let KEY_TRIP_DB_PASSCODE = "db_trip_db_passcode"
 }

@@ -169,6 +169,7 @@ class TrailInfoViewController: UIViewController {
         let alert = UIAlertController(title: "Add Comment", message: "", preferredStyle: .alert)
         var commentTextField: UITextField? = nil
         alert.addTextField { (textField) in
+            textField.autocapitalizationType = UITextAutocapitalizationType.sentences
             commentTextField = textField
         }
         alert.addAction(UIAlertAction(title: "Add", style: .default, handler: { (action) in
