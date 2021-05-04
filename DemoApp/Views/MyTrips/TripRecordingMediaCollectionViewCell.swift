@@ -29,7 +29,7 @@ class TripRecordingMediaCollectionViewCell: UICollectionViewCell {
 
     func bindView(media: TripRecordingMedia, isPreferred: Bool = false, delegate: TripRecordingMediaCollectionViewCellDelegate?) {
         self.media = media
-        self.imageView.image = UIImage(contentsOfFile: media.uri.path)
+        self.imageView.image = UIImage(contentsOfFile: media.url.path)
         self.delegate = delegate
         if delegate?.canEditMedia(media: media) ?? true {
             self.deleteButton.isHidden = false
