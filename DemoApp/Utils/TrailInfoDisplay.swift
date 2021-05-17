@@ -31,7 +31,7 @@ public class TrailInfoDisplay {
             trailTitleLabel.text = "--"
         }
         
-        if let trailDistance = basicTrailInfo?.length {
+        if let trailDistance = basicTrailInfo?.statistics.length {
             distanceLabel.text = DistanceFormatter.formatDistance(distanceInMeters: trailDistance)
         }
         else {

@@ -249,13 +249,14 @@ struct TrailDetails {
         }
         
         // Statistics
-        if let statistics = trail.statistics {
-            statisticsValues.append((key: "Length", value: "\(statistics.length) meters"))
-            statisticsValues.append((key: "Highest Elevation", value: "\(statistics.highestElevation) meters"))
-            statisticsValues.append((key: "Avg Estimated Duration", value: "\(statistics.estimatedDurationAvg) seconds"))
-            if let estDriveTime = statistics.estimatedDriveTimeMin {
-                statisticsValues.append((key: "Estimated Drive Time", value: "\(estDriveTime) seconds"))
-            }
+        
+        statisticsValues.append((key: "Length", value: "\(trail.statistics.length) meters"))
+        if let highestElevation = trail.statistics.highestElevation {
+            statisticsValues.append((key: "Highest Elevation", value: "\(highestElevation) meters"))
+        }
+        statisticsValues.append((key: "Avg Estimated Duration", value: "\(trail.statistics.estimatedDurationAvg) seconds"))
+        if let estDriveTime = trail.statistics.estimatedDriveTimeMin {
+            statisticsValues.append((key: "Estimated Drive Time", value: "\(estDriveTime) seconds"))
         }
         
         // Technical Rating

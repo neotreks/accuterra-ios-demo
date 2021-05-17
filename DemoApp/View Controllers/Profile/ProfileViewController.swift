@@ -30,10 +30,14 @@ class ProfileViewController: BaseViewController {
     }
     
     @IBAction func didTapResetToken() {
-        DemoAccessManager.shared.resetToken { (token) in
-            self.showInfo("Token reset")
+        DemoAccessManager.shared.resetToken { () in
+            executeBlockOnMainThread {
+                self.showInfo("Token reset")
+            }
         } errorHandler: { (error) in
-            self.showError(error)
+            executeBlockOnMainThread {
+                self.showError(error)
+            }
         }
     }
     
