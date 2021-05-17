@@ -1581,15 +1581,31 @@
                                     <action selector="didTapDownloadOfflineMaps" destination="IFd-w6-COh" eventType="touchUpInside" id="8cn-6Z-4nU"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zbg-tT-QlI">
+                                <rect key="frame" x="20" y="244" width="374" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="yCa-HH-176"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <state key="normal" title="TRIP RECORDING DATABASE PASSCODE">
+                                    <color key="titleColor" name="PrimaryDark"/>
+                                </state>
+                                <connections>
+                                    <action selector="didTapDbPasscode" destination="IFd-w6-COh" eventType="touchUpInside" id="c0a-To-xuZ"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="WjI-k3-eRF"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="zbg-tT-QlI" firstAttribute="top" secondItem="Akz-Ji-NRH" secondAttribute="bottom" constant="20" id="4A2-mr-pBo"/>
                             <constraint firstItem="xre-pE-6Ft" firstAttribute="top" secondItem="WjI-k3-eRF" secondAttribute="top" constant="20" id="50Y-h6-Ze3"/>
                             <constraint firstItem="WjI-k3-eRF" firstAttribute="trailing" secondItem="xre-pE-6Ft" secondAttribute="trailing" constant="20" id="8Dz-TS-940"/>
                             <constraint firstItem="Xxu-qU-BfD" firstAttribute="top" secondItem="xre-pE-6Ft" secondAttribute="bottom" constant="20" id="DIH-4j-Q94"/>
+                            <constraint firstItem="zbg-tT-QlI" firstAttribute="trailing" secondItem="Akz-Ji-NRH" secondAttribute="trailing" id="I5s-3D-or6"/>
                             <constraint firstItem="Akz-Ji-NRH" firstAttribute="trailing" secondItem="Xxu-qU-BfD" secondAttribute="trailing" id="OBP-70-5tw"/>
                             <constraint firstItem="xre-pE-6Ft" firstAttribute="leading" secondItem="WjI-k3-eRF" secondAttribute="leading" constant="20" id="Owo-rm-e54"/>
+                            <constraint firstItem="zbg-tT-QlI" firstAttribute="leading" secondItem="Akz-Ji-NRH" secondAttribute="leading" id="SzA-gj-GkW"/>
                             <constraint firstItem="Akz-Ji-NRH" firstAttribute="top" secondItem="Xxu-qU-BfD" secondAttribute="bottom" constant="20" id="UZM-5c-A0R"/>
                             <constraint firstItem="Akz-Ji-NRH" firstAttribute="leading" secondItem="Xxu-qU-BfD" secondAttribute="leading" id="mT3-0a-KOf"/>
                             <constraint firstItem="Xxu-qU-BfD" firstAttribute="leading" secondItem="xre-pE-6Ft" secondAttribute="leading" id="nne-MP-wOR"/>
@@ -6091,6 +6107,71 @@ High data standards:
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wvU-mZ-xSx" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="6852.1739130434789" y="1388.8392857142856"/>
+        </scene>
+        <!--Database Passcode-->
+        <scene sceneID="IT4-jy-IPk">
+            <objects>
+                <viewController storyboardIdentifier="DbPasscodeVC" title="Database Passcode" id="9WH-Ek-0LO" customClass="DbPasscodeViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="k08-AN-6zZ">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Current DB Passcode" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xcl-Bm-JYh">
+                                <rect key="frame" x="20" y="64" width="374" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ike-9E-rrp">
+                                <rect key="frame" x="20" y="157" width="200" height="40"/>
+                                <color key="backgroundColor" name="PrimaryDark"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="200" id="9kb-vg-bMj"/>
+                                    <constraint firstAttribute="height" constant="40" id="PoU-Db-uQa"/>
+                                </constraints>
+                                <state key="normal" title="SET PASSCODE">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="5"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="didTapSetPasscode" destination="9WH-Ek-0LO" eventType="touchUpInside" id="Uuh-3g-pDi"/>
+                                </connections>
+                            </button>
+                            <textField opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Not Encrypted" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="v6x-RT-rtB">
+                                <rect key="frame" x="20" y="105" width="374" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="R5K-AL-t0Z"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="Xcl-Bm-JYh" firstAttribute="top" secondItem="R5K-AL-t0Z" secondAttribute="top" constant="20" id="4h3-GH-YWP"/>
+                            <constraint firstItem="ike-9E-rrp" firstAttribute="top" secondItem="v6x-RT-rtB" secondAttribute="bottom" constant="18" id="JgL-Ul-gTx"/>
+                            <constraint firstItem="R5K-AL-t0Z" firstAttribute="trailing" secondItem="Xcl-Bm-JYh" secondAttribute="trailing" constant="20" id="Zho-R1-Kur"/>
+                            <constraint firstItem="v6x-RT-rtB" firstAttribute="leading" secondItem="Xcl-Bm-JYh" secondAttribute="leading" id="dvm-in-8xY"/>
+                            <constraint firstItem="R5K-AL-t0Z" firstAttribute="trailing" secondItem="v6x-RT-rtB" secondAttribute="trailing" constant="20" id="e80-qw-wYz"/>
+                            <constraint firstItem="Xcl-Bm-JYh" firstAttribute="leading" secondItem="R5K-AL-t0Z" secondAttribute="leading" constant="20" id="hBM-Hd-sPa"/>
+                            <constraint firstItem="ike-9E-rrp" firstAttribute="leading" secondItem="v6x-RT-rtB" secondAttribute="leading" id="kSA-v2-SrU"/>
+                            <constraint firstItem="v6x-RT-rtB" firstAttribute="top" secondItem="Xcl-Bm-JYh" secondAttribute="bottom" constant="20" id="w75-hb-Sz2"/>
+                        </constraints>
+                    </view>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="color" keyPath="navBarBackgroundTintColor">
+                            <color key="value" name="Active"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                    <connections>
+                        <outlet property="currentPasscodeTextField" destination="v6x-RT-rtB" id="AY3-n3-KMC"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="7rH-Wr-Vfy" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="7650.7246376811599" y="1394.8660714285713"/>
         </scene>
     </scenes>
     <resources>

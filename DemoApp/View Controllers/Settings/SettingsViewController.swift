@@ -34,10 +34,12 @@ extension SettingsViewController : UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         DemoIdentityManager.shared.setUserId(userId: textFieldUserId.text)
-        DemoAccessManager.shared.resetToken { (token) in
+        DemoAccessManager.shared.resetToken { () in
             Log.d(self.TAG, "Access token reset finished.")
         } errorHandler: { (error) in
-            self.showError(error)
+            executeBlockOnMainThread {
+                self.showError(error)
+            }
         }
 
         return true

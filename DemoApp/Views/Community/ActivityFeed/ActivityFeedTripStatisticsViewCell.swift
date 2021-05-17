@@ -19,8 +19,8 @@ class ActivityFeedTripStatisticsViewCell: UITableViewCell {
             return
         }
         // Data
-        distanceLabel.text = DistanceFormatter.formatDistance(distanceInMeters: data.trip.length)
-        durationLabel.text = DrivingTimeFormatter.formatDrivingTime(ctimeInSeconds: data.trip.drivingTime)
+        distanceLabel.text = DistanceFormatter.formatDistance(distanceInMeters: data.trip.statistics.length)
+        durationLabel.text = DrivingTimeFormatter.formatDrivingTime(ctimeInSeconds: data.trip.statistics.drivingTime)
         
         if data.trip.trailId != nil {
             typeLabel.text = "Trail Drive"

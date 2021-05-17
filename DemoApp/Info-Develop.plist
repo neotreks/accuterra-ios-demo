@@ -89,7 +89,7 @@
 	<key>WS_AUTH_CLIENT_SECRET</key>
 	<string></string>
 	<key>WS_AUTH_URL</key>
-	<string>https://dev.accuterra.com/</string>
+	<string>https://dev.accuterra.com/auth/</string>
 	<key>WS_BASE_URL</key>
 	<string>https://dev.accuterra.com:443/api/</string>
 </dict>

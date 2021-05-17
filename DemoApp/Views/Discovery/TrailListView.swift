@@ -9,7 +9,7 @@
 import UIKit
 import AccuTerraSDK
 
-protocol TrailListViewDelegate : class {
+protocol TrailListViewDelegate : AnyObject {
     func didTapTrailInfo(basicInfo: TrailBasicInfo)
     func didTapTrailMap(basicInfo: TrailBasicInfo)
     func didSelectTrail(basicInfo: TrailBasicInfo)
@@ -60,22 +60,22 @@ class TrailListView: UIView {
             
             var techRatingSearchCriteria: ITechRatingSearchCriteria?
             if let maxDifficultyLevel = filter.maxDifficulty?.level, !hasTrailNameFilter {
-                techRatingSearchCriteria = TechRatingSearchCriteriaBuilder.build(
+                techRatingSearchCriteria = try TechRatingSearchCriteriaBuilder.build(
                     level: maxDifficultyLevel,
                     comparison: Comparison.lessEquals)
             }
             
             var userRatingSearchCriteria: IUserRatingSearchCriteria?
             if let minUserRating = filter.minUserRating, !hasTrailNameFilter {
-                userRatingSearchCriteria = UserRatingSearchCriteriaBuilder.build(
+                userRatingSearchCriteria = try UserRatingSearchCriteriaBuilder.build(
                     userRating: Float(minUserRating),
                     comparison: .greaterEquals
                 )
             }
             
-            var lengthSearchCriteria: LengthSearchCriteria?
+            var lengthSearchCriteria: ILengthSearchCriteria?
             if let maxTripDistance = filter.maxTripDistance, !hasTrailNameFilter{
-                lengthSearchCriteria = LengthSearchCriteria(length: Double(maxTripDistance))
+                lengthSearchCriteria = try LengthSearchCriteriaBuilder.build(length: Double(maxTripDistance))
             }
             
             if let mapBounds = filter.boundingBoxFilter, !hasTrailNameFilter {
@@ -86,7 +86,7 @@ class TrailListView: UIView {
                     userRating: userRatingSearchCriteria,
                     length: lengthSearchCriteria,
                     orderBy: OrderByBuilder.build(),
-                    limit: QueryLimitBuilder.build())
+                    limit: try QueryLimitBuilder.build())
                 self.trails = try trailsService!.findTrails(byMapBoundsCriteria: searchCriteria)
                 self.tableView.reloadData()
             } else {
@@ -97,7 +97,7 @@ class TrailListView: UIView {
                     userRating: userRatingSearchCriteria,
                     length: lengthSearchCriteria,
                     orderBy: OrderByBuilder.build(),
-                    limit: QueryLimitBuilder.build())
+                    limit: try QueryLimitBuilder.build())
                 self.trails = try trailsService!.findTrails(byMapCriteria: searchCriteria)
                 self.tableView.reloadData()
             }
