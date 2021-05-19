@@ -18,17 +18,11 @@ var demoAppSdkConfig: ApkSdkConfig {
         guard let WS_AUTH_URL = Bundle.main.infoDictionary?["WS_AUTH_URL"] as? String else {
             fatalError("WS_AUTH_URL is missing in info.plist")
         }
-        guard let ACCUTERRA_MAP_STYLE_URL = Bundle.main.infoDictionary?["ACCUTERRA_MAP_STYLE_URL"] as? String else {
-            fatalError("ACCUTERRA_MAP_STYLE_URL is missing in info.plist")
-        }
-        guard let ACCUTERRA_MAP_API_KEY = Bundle.main.infoDictionary?["ACCUTERRA_MAP_API_KEY"] as? String else {
-            fatalError("ACCUTERRA_MAP_API_KEY is missing in info.plist")
-        }
         let sdkEndpointConfig = SdkEndpointConfig(wsUrl: WS_BASE_URL, wsAuthUrl: WS_AUTH_URL)
         return ApkSdkConfig(
             sdkEndpointConfig: sdkEndpointConfig,
             // providing nil value will load map token and style url from backend
-            accuTerraMapConfig: AccuTerraMapConfig(mapUrl: ACCUTERRA_MAP_STYLE_URL, mapToken: ACCUTERRA_MAP_API_KEY),
+            accuTerraMapConfig: nil,
             tripConfiguration: TripConfiguration(
                 // Just to demonstrate the upload network type constraint
                 uploadNetworkType: .CONNECTED,
