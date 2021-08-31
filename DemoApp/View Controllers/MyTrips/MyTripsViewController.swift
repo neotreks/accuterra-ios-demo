@@ -24,8 +24,10 @@ class MyTripsViewController: ActivityFeedBaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         NotificationCenter.default.addObserver(self, selector: #selector(onTripUploadStatusChanged(notification:)), name: TripUploadNotificationName, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector:  #selector(ontTripStatusChanged(notification:)), name: TripRecordingStatusChangeNotification.name, object: nil)
     }
-    
+
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
@@ -141,9 +143,20 @@ class MyTripsViewController: ActivityFeedBaseViewController {
         }
     }
     
+    // MARK:- Notifications
+    
     @objc func onTripUploadStatusChanged(notification: Notification) {
         if sourceSwitch.isOn {
             self.loadTrips(forceReload: true)
+        }
+    }
+    
+    @objc func ontTripStatusChanged(notification: Notification) {
+        if let statusChange = notification.userInfo?[TripRecordingStatusChangeNotification.name.rawValue] as? TripRecordingStatusChange {
+            Log.d(TAG, statusChange.compositeId.description)
+            Log.d(TAG, statusChange.status.name)
+
+            loadTrips(forceReload: true)
         }
     }
 }

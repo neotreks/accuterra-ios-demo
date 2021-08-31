@@ -148,7 +148,7 @@ struct TrailDetails {
         if let tags = trail.info.tags {
             for i in 0..<tags.count {
                 tagValues.append((key: "Tag Name \(i)", value: "\(tags[i].name)"))
-                tagValues.append((key: "Tag Type \(i)", value: "\(tags[i].pointTypeCode)"))
+                tagValues.append((key: "Tag Type \(i)", value: "\(tags[i].type.getName())"))
                 if let desc = tags[i].description {
                     tagValues.append((key: "Tag Description \(i)", value: desc))
                 }

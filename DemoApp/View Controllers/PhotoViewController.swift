@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import AccuTerraSDK
 import UIKit
 
 class PhotoViewController : UIViewController {

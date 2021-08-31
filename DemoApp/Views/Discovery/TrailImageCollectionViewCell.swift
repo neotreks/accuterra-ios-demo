@@ -17,18 +17,18 @@ class TrailImageCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var imageLoadingIndicator: UIActivityIndicatorView!
     
-    private var mediaLoader: TrailMediaLoader?
+    private var mediaLoader: MediaLoader?
 
     func bindView(media: TrailMedia) {
-        if let currentMedia = self.mediaLoader?.media, currentMedia.url == media.url {
+        if let mediaLoader = self.mediaLoader, mediaLoader.mediaUrl() == media.url {
             return //already loaded or loading the same media
         }
-        self.mediaLoader = TrailMediaLoader(media: media, variant: .THUMBNAIL)
+        self.mediaLoader = MediaLoaderFactory.trailMediaLoader(media: media, variant: .THUMBNAIL)
         self.imageView.image = nil
         self.imageLoadingIndicator.startAnimating()
         
         mediaLoader?.load(callback: { [weak self] (mediaLoader, image) in
-            if ((mediaLoader as? TrailMediaLoader) == self?.mediaLoader) {
+            if let loader = self?.mediaLoader, mediaLoader.isEqual(loader: loader) {
                 self?.imageView.image = image
                 self?.imageLoadingIndicator.stopAnimating()
             }

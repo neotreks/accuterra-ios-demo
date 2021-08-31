@@ -17,6 +17,7 @@ class UploadViewController: BaseViewController {
     
     // MARK: - Properties
     var tripUuid: String?
+    var versionUUid: String?
     var refreshControl = UIRefreshControl()
     private lazy var requests = [UploadRequest]()
     var canRefresh = true
@@ -112,7 +113,7 @@ class UploadViewController: BaseViewController {
         // Load the list
         let service = ServiceFactory.getUploadService()
         tryOrShowError {
-            self.requests = try service.getUploadRequestsForObject(objectUUID: tripUuid)
+            self.requests = try service.getUploadRequestsForObject(objectUUID: tripUuid, versionUuid: versionUUid)
         }
         reloadTableData()
     }

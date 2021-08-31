@@ -59,10 +59,10 @@ class DiscoverViewController: BaseViewController {
     var trailService: ITrailService?
     
     /// List of styles, the layers button cycles through them
-    var styles: [URL] = [AccuTerraStyle.vectorStyleURL, MGLStyle.outdoorsStyleURL, MGLStyle.satelliteStreetsStyleURL, MGLStyle.streetsStyleURL]
+    var styles: [URL] = [AccuTerraStyle.vectorStyleURL, HEREMapsURLProtocol.styleURL]
     
     /// Offline supported styles
-    var offlineStyles: [URL] = [MGLStyle.satelliteStreetsStyleURL, AccuTerraStyle.vectorStyleURL]
+    var offlineStyles: [URL] = [HEREMapsURLProtocol.styleURL, AccuTerraStyle.vectorStyleURL]
     
     /// Current style Id
     var styleId = 0

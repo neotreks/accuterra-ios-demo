@@ -24,7 +24,10 @@ class ActivityFeedRecordedTripViewCell: UITableViewCell {
         
         if (recording.status == .QUEUED || recording.status == .UPLOADED) {
             lblStatus.textColor = UIColor.Primary
-        } else {
+        } else if recording.status == .PROCESSED {
+            lblStatus.textColor = UIColor.AppGreen
+        }
+        else {
             lblStatus.textColor = UIColor.Accent
         }
     }

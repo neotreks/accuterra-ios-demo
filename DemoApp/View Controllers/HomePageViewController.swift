@@ -11,7 +11,7 @@ import AccuTerraSDK
 import Mapbox
 
 // MARK:- Protocols
-protocol HomePageViewControllerDelegate: class {
+protocol HomePageViewControllerDelegate: AnyObject {
     /// The number of pages is updated.
     ///
     /// - Parameters:
@@ -51,10 +51,6 @@ class HomePageViewController: UIPageViewController {
 
         dataSource = self
         delegate = self
-        
-        // When set to true the Mapbox SDK will append SKU to each offline download request
-        // This way the offline request is charged per user session
-        MGLNetworkConfiguration.setUseSKUForOfflineDownload(true)
         
         // By default Mapbox is limitting max tiles count to 6000. If you are using AccuTerra SDK to download Mapbox tiles
         // you should get approval from Mapbox to increase this value

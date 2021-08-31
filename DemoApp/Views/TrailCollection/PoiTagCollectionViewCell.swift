@@ -12,7 +12,7 @@ import AccuTerraSDK
 class PoiTagCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var name: UILabel!
     
-    func bindView(tag: Tag, selected: Bool) {
+    func bindView(tag: ITag, selected: Bool) {
         self.name.text = " \(tag.name) "
         self.isSelected = selected
         

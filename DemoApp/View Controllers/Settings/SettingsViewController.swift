@@ -37,9 +37,7 @@ extension SettingsViewController : UITextFieldDelegate {
         DemoAccessManager.shared.resetToken { () in
             Log.d(self.TAG, "Access token reset finished.")
         } errorHandler: { (error) in
-            executeBlockOnMainThread {
-                self.showError(error)
-            }
+            self.showError(error)
         }
 
         return true

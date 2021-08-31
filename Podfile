@@ -11,11 +11,11 @@ source 'https://github.com/neotreks/Specs/'
 #  Please ask NeoTreks to provide you these credentials. If you already have access to SDK documentation you can use the same credentials.
 #
 
-platform :ios, '10.0'
+platform :ios, '11.0'
 use_frameworks!
 
 def shared_pods
-  pod 'AccuTerraSDK', '0.9.0'
+  pod 'AccuTerraSDK', '0.11.0'
   # UI pods
   pod 'StarryStars', '~> 1.0.0'
   pod 'Kingfisher'

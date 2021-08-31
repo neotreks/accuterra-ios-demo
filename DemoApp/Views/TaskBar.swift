@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol TaskbarDelegate: class {
+protocol TaskbarDelegate: AnyObject {
     func taskSelected(task: TaskTypes)
 }
 

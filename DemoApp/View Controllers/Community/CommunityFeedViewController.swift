@@ -30,7 +30,7 @@ class CommunityFeedViewController: ActivityFeedBaseViewController {
             // Try to get the location
             location = SdkLocationUtil.shared.getLastKnownMapLocation(defaultLocation: CommunityFeedViewController.DEFAULT_LOCATION)
         }
-        if (isOnline) {
+        if isOnline {
             // Check if not already loaded
             
             if let listItems = self.listItems, listItems.contains(where: { (item) -> Bool in

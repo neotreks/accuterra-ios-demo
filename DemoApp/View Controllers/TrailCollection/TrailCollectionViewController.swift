@@ -17,8 +17,8 @@ class TrailCollectionViewController: BaseTripRecordingViewController {
     // MARK:- Properties
     private lazy var poiTypes = [PointType]()
     private lazy var poiMedia = [TripRecordingMedia]()
-    private lazy var poiTags = [Tag]()
-    private lazy var poiTypeTags = [Tag]()
+    private lazy var poiTags = [PoiTag]()
+    private lazy var poiTypeTags = [PoiTag]()
     private var editingPoi: TripRecordingPoi?
     private var selectedPoiType: PointType?
     private var backedTrackingMode: TrackingOption?
@@ -329,7 +329,7 @@ class TrailCollectionViewController: BaseTripRecordingViewController {
             if let selectedPoiType = self.selectedPoiType {
                 self.poiTypeButton.setTitle(selectedPoiType.name, for: .normal)
                 self.poiTypeTags.removeAll()
-                self.poiTypeTags.append(contentsOf: try enumService.getTags(pointType: selectedPoiType))
+                self.poiTypeTags.append(contentsOf: try enumService.getPoiTags(pointType: selectedPoiType))
             } else {
                 self.poiTypeTags.removeAll()
             }

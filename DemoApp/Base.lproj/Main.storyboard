@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="pgE-KE-uU6">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="pgE-KE-uU6">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -555,7 +555,7 @@
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="offlineMapTableViewCell" rowHeight="60" id="r4g-e0-u6w" customClass="OfflineMapTableViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="374" height="60"/>
+                                        <rect key="frame" x="0.0" y="24.5" width="374" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="r4g-e0-u6w" id="fsN-GF-HmW">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="60"/>
@@ -604,7 +604,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="offlineMapTableEmptyViewCell" rowHeight="247" id="4xQ-4c-kgT">
-                                        <rect key="frame" x="0.0" y="88" width="374" height="247"/>
+                                        <rect key="frame" x="0.0" y="84.5" width="374" height="247"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="4xQ-4c-kgT" id="fnQ-Ac-YCn">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="247"/>
@@ -811,7 +811,7 @@
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripUserViewCell" rowHeight="80" id="24D-O5-11b" customClass="ActivityFeedTripUserViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="414" height="80"/>
+                                        <rect key="frame" x="0.0" y="24.5" width="414" height="80"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="24D-O5-11b" id="RWJ-UJ-8AC">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="80"/>
@@ -855,7 +855,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripHeaderViewCell" rowHeight="93" id="4xW-a0-lel" customClass="ActivityFeedTripHeaderViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="108" width="414" height="93"/>
+                                        <rect key="frame" x="0.0" y="104.5" width="414" height="93"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="4xW-a0-lel" id="Ard-4I-cD5">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="93"/>
@@ -911,7 +911,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripStatisticsViewCell" rowHeight="60" id="uk7-m6-SQK" customClass="ActivityFeedTripStatisticsViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="201" width="414" height="60"/>
+                                        <rect key="frame" x="0.0" y="197.5" width="414" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="uk7-m6-SQK" id="WSO-bv-pnc">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="60"/>
@@ -1009,7 +1009,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripThumbnailViewCell" rowHeight="220" id="4G8-jo-M8l" customClass="ActivityFeedTripThumbnailViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="261" width="414" height="220"/>
+                                        <rect key="frame" x="0.0" y="257.5" width="414" height="220"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="4G8-jo-M8l" id="a29-F3-K0M">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="220"/>
@@ -1031,7 +1031,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripUgcFooterCell" rowHeight="40" id="vsh-lr-6rS" customClass="ActivityFeedTripUgcFooterCell" customModule="ATSDK_Develop_" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="481" width="414" height="40"/>
+                                        <rect key="frame" x="0.0" y="477.5" width="414" height="40"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="vsh-lr-6rS" id="BDj-eZ-d8X">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="40"/>
@@ -1172,7 +1172,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedNoRecordsViewCell" id="2TG-3I-7EY" customClass="ActivityFeedNoRecordsViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="521" width="414" height="44"/>
+                                        <rect key="frame" x="0.0" y="517.5" width="414" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="2TG-3I-7EY" id="u24-GI-0Vg">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
@@ -1568,8 +1568,21 @@
                                     <action selector="didTapResetToken" destination="IFd-w6-COh" eventType="touchUpInside" id="EJW-xU-sFp"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Akz-Ji-NRH">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="j1d-nh-z3L">
                                 <rect key="frame" x="20" y="184" width="374" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="j1d-tg-z3l"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <state key="normal" title="DELETE USER DATA">
+                                    <color key="titleColor" name="PrimaryDark"/>
+                                </state>
+                                <connections>
+                                    <action selector="didTapDeleteUserData" destination="IFd-w6-COh" eventType="touchUpInside" id="w3e-h4-d0T"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Akz-Ji-NRH">
+                                <rect key="frame" x="20" y="244" width="374" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="MG1-l9-hdX"/>
                                 </constraints>
@@ -1582,7 +1595,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zbg-tT-QlI">
-                                <rect key="frame" x="20" y="244" width="374" height="40"/>
+                                <rect key="frame" x="20" y="304" width="374" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="yCa-HH-176"/>
                                 </constraints>
@@ -1603,11 +1616,14 @@
                             <constraint firstItem="WjI-k3-eRF" firstAttribute="trailing" secondItem="xre-pE-6Ft" secondAttribute="trailing" constant="20" id="8Dz-TS-940"/>
                             <constraint firstItem="Xxu-qU-BfD" firstAttribute="top" secondItem="xre-pE-6Ft" secondAttribute="bottom" constant="20" id="DIH-4j-Q94"/>
                             <constraint firstItem="zbg-tT-QlI" firstAttribute="trailing" secondItem="Akz-Ji-NRH" secondAttribute="trailing" id="I5s-3D-or6"/>
-                            <constraint firstItem="Akz-Ji-NRH" firstAttribute="trailing" secondItem="Xxu-qU-BfD" secondAttribute="trailing" id="OBP-70-5tw"/>
+                            <constraint firstItem="j1d-nh-z3L" firstAttribute="trailing" secondItem="Xxu-qU-BfD" secondAttribute="trailing" id="OaN-8C-tVm"/>
                             <constraint firstItem="xre-pE-6Ft" firstAttribute="leading" secondItem="WjI-k3-eRF" secondAttribute="leading" constant="20" id="Owo-rm-e54"/>
+                            <constraint firstItem="j1d-nh-z3L" firstAttribute="leading" secondItem="Xxu-qU-BfD" secondAttribute="leading" id="Psa-Vv-z6h"/>
                             <constraint firstItem="zbg-tT-QlI" firstAttribute="leading" secondItem="Akz-Ji-NRH" secondAttribute="leading" id="SzA-gj-GkW"/>
-                            <constraint firstItem="Akz-Ji-NRH" firstAttribute="top" secondItem="Xxu-qU-BfD" secondAttribute="bottom" constant="20" id="UZM-5c-A0R"/>
-                            <constraint firstItem="Akz-Ji-NRH" firstAttribute="leading" secondItem="Xxu-qU-BfD" secondAttribute="leading" id="mT3-0a-KOf"/>
+                            <constraint firstItem="Akz-Ji-NRH" firstAttribute="leading" secondItem="j1d-nh-z3L" secondAttribute="leading" id="b6D-3M-U3u"/>
+                            <constraint firstItem="j1d-nh-z3L" firstAttribute="top" secondItem="Xxu-qU-BfD" secondAttribute="bottom" constant="20" id="cXD-Ee-Zl2"/>
+                            <constraint firstItem="Akz-Ji-NRH" firstAttribute="top" secondItem="j1d-nh-z3L" secondAttribute="bottom" constant="20" id="kNI-GM-I3w"/>
+                            <constraint firstItem="Akz-Ji-NRH" firstAttribute="trailing" secondItem="j1d-nh-z3L" secondAttribute="trailing" id="nfX-mn-8Ry"/>
                             <constraint firstItem="Xxu-qU-BfD" firstAttribute="leading" secondItem="xre-pE-6Ft" secondAttribute="leading" id="nne-MP-wOR"/>
                             <constraint firstItem="Xxu-qU-BfD" firstAttribute="trailing" secondItem="xre-pE-6Ft" secondAttribute="trailing" id="vyI-Go-iXH"/>
                         </constraints>
@@ -1705,7 +1721,7 @@
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="activityFeedRecordedTripViewCell" rowHeight="70" id="6CM-kC-5DF" userLabel="activityFeedRecordedTripViewCell" customClass="ActivityFeedRecordedTripViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="414" height="70"/>
+                                        <rect key="frame" x="0.0" y="24.5" width="414" height="70"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="6CM-kC-5DF" id="rZj-8w-gGF">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="70"/>
@@ -1761,7 +1777,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripUserViewCell" rowHeight="80" id="9lz-hX-89A" customClass="ActivityFeedTripUserViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="98" width="414" height="80"/>
+                                        <rect key="frame" x="0.0" y="94.5" width="414" height="80"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="9lz-hX-89A" id="GBh-RL-euZ">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="80"/>
@@ -1805,7 +1821,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripHeaderViewCell" rowHeight="93" id="w4S-Qg-V8h" customClass="ActivityFeedTripHeaderViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="178" width="414" height="93"/>
+                                        <rect key="frame" x="0.0" y="174.5" width="414" height="93"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="w4S-Qg-V8h" id="nn5-RF-1Cv">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="93"/>
@@ -1861,7 +1877,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripStatisticsViewCell" rowHeight="60" id="t8v-4E-hDL" customClass="ActivityFeedTripStatisticsViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="271" width="414" height="60"/>
+                                        <rect key="frame" x="0.0" y="267.5" width="414" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="t8v-4E-hDL" id="bco-ca-1aj">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="60"/>
@@ -1959,7 +1975,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripThumbnailViewCell" rowHeight="220" id="yLn-Ga-IPJ" customClass="ActivityFeedTripThumbnailViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="331" width="414" height="220"/>
+                                        <rect key="frame" x="0.0" y="327.5" width="414" height="220"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="yLn-Ga-IPJ" id="aG4-UF-HKt">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="220"/>
@@ -1981,7 +1997,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripUgcFooterCell" rowHeight="40" id="4KC-bg-kqh" customClass="ActivityFeedTripUgcFooterCell" customModule="ATSDK_Develop_" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="551" width="414" height="40"/>
+                                        <rect key="frame" x="0.0" y="547.5" width="414" height="40"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="4KC-bg-kqh" id="uLU-wl-DZZ">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="40"/>
@@ -2122,7 +2138,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedNoRecordsViewCell" id="tQy-qa-kQC" customClass="ActivityFeedNoRecordsViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="591" width="414" height="43.5"/>
+                                        <rect key="frame" x="0.0" y="587.5" width="414" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="tQy-qa-kQC" id="jHM-jE-pUY">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
@@ -3574,7 +3590,7 @@
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <prototypes>
                                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="onlineTripStatisticViewCell" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="onlineTripStatisticViewCell" rowHeight="40" id="NEh-0C-3lt" customClass="OnlineTripStatisticViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="28" width="384" height="40"/>
+                                                <rect key="frame" x="0.0" y="24.5" width="384" height="40"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="NEh-0C-3lt" id="uLR-5u-TT1">
                                                     <rect key="frame" x="0.0" y="0.0" width="384" height="40"/>
@@ -3610,7 +3626,7 @@
                                                 </connections>
                                             </tableViewCell>
                                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="onlineTripPoiViewCell" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="onlineTripPoiViewCell" id="cfw-tH-JXK" customClass="OnlineTripPoiViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="68" width="384" height="43.5"/>
+                                                <rect key="frame" x="0.0" y="64.5" width="384" height="43.5"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="cfw-tH-JXK" id="6fy-DO-PmR">
                                                     <rect key="frame" x="0.0" y="0.0" width="384" height="43.5"/>
@@ -3794,7 +3810,7 @@
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="onlineTripCommentViewCell" rowHeight="70" id="9JL-Y8-iXy" customClass="OnlineTripCommentViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="384" height="70"/>
+                                        <rect key="frame" x="0.0" y="24.5" width="384" height="70"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="9JL-Y8-iXy" id="DMy-2h-SOZ">
                                             <rect key="frame" x="0.0" y="0.0" width="384" height="70"/>
@@ -6020,7 +6036,7 @@ High data standards:
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="uploadStatusTableViewCell" rowHeight="129" id="nmX-zc-gIA" customClass="UploadStatusTableViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="374" height="129"/>
+                                        <rect key="frame" x="0.0" y="24.5" width="374" height="129"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="nmX-zc-gIA" id="5ba-Zc-wed">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="129"/>
@@ -6197,15 +6213,15 @@ High data standards:
         <image name="poi.add" width="30" height="30"/>
         <image name="scope" width="16" height="16"/>
         <image name="star" width="15" height="14"/>
-        <image name="star.fill" width="15" height="14"/>
         <image name="star.fill" catalog="system" width="128" height="116"/>
+        <image name="star.fill" width="15" height="14"/>
         <image name="star.lefthalf.fill" width="15" height="14"/>
         <image name="user_avatar" width="600" height="600"/>
         <namedColor name="Accent">
-            <color red="0.84700000286102295" green="0.10599999874830246" blue="0.37599998712539673" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.84705882352941175" green="0.10588235294117647" blue="0.37647058823529411" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="Active">
-            <color red="0.27500000596046448" green="0.75300002098083496" blue="0.91399997472763062" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.27450980392156865" green="0.75294117647058822" blue="0.9137254901960784" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="DrivingNavigationBar">
             <color red="0.070588235294117646" green="0.20000000000000001" blue="0.45882352941176469" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

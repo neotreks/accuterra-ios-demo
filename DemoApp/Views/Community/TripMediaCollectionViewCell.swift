@@ -10,7 +10,7 @@ import UIKit
 import AccuTerraSDK
 import Kingfisher
 
-protocol TripMediaCollectionViewCellDelegate : class {
+protocol TripMediaCollectionViewCellDelegate : AnyObject {
     func tripMediaDeletePressed(media: TripMedia)
     func canEditMedia() -> Bool
 }
@@ -25,14 +25,16 @@ class TripMediaCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var deleteImageView: UIImageView!
     
     weak var delegate: TripMediaCollectionViewCellDelegate?
-    private var mediaLoader: TripMediaLoader?
+    private var mediaLoader: MediaLoader?
+    private var media: TripMedia?
     
     func bindView(media: TripMedia, mediaVariant: ApkMediaVariant, delegate: TripMediaCollectionViewCellDelegate?) {
         imageView.image = nil
+        self.media = media
         
-        mediaLoader = TripMediaLoader(media: media, variant: mediaVariant)
-        mediaLoader?.load(callback: { [weak self] (loader, image) in
-            if (loader as? TripMediaLoader) == self?.mediaLoader {
+        mediaLoader = MediaLoaderFactory.tripMediaLoader(media: media, variant: mediaVariant) 
+        mediaLoader?.load(callback: { [weak self] (mediaLoader, image) in
+            if let loader = self?.mediaLoader, mediaLoader.isEqual(loader: loader) {
                 self?.imageView.image = image ?? UIImage(systemName: "bolt.horizontal.circle")
             }
         })
@@ -48,7 +50,7 @@ class TripMediaCollectionViewCell: UICollectionViewCell {
     }
     
     @IBAction func deletePressed() {
-        guard let media = self.mediaLoader?.media else {
+        guard let media = self.media else {
             return
         }
         delegate?.tripMediaDeletePressed(media: media)

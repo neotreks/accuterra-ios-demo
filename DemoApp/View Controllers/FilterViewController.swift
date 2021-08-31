@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 import AccuTerraSDK
 
-protocol FilterViewControllerDelegate: class {
+protocol FilterViewControllerDelegate: AnyObject {
     func applyFilter(trailsFilter: TrailsFilter)
 }
 

@@ -62,6 +62,9 @@ extension UIColor {
         return UIColor(named: "DrivingNavigationBarText")
     }
     
+    static var AppGreen: UIColor? {
+        return UIColor(named: "AppGreen")
+    }
 }
 
 

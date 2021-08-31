@@ -143,11 +143,10 @@ class BaseTripRecordingViewController : BaseDrivingViewController {
                     throw "Cannot start trip when there is another trip in \(activeTripStatus.name) state.".toError()
                 }
                 let tripName = "Trip \(Date().toLocalDateString())" // Default name
-                let driverId = DemoIdentityManager.shared.getUserId()
                 let vehicleId = "test_vehicle" // TODO: Load vehicle ID
                 let result: AccuTerraSDK.Result<TripStartResult> =
                     try self.tripRecorder.startTripRecording(
-                        name: tripName, trailId: self.trailId, driverId: driverId,
+                        name: tripName, trailId: self.trailId,
                         vehicleId: vehicleId, extProperties: self.getExtProperties(), telemetryModel: self.getTelemetryModel())
 
                 if result.isFailure {

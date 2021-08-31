@@ -285,7 +285,7 @@ extension OfflineMapsViewController: OfflineMapTableViewCellDelegate {
                     case .TRAIL:
                         if let trailOfflineMap = offlineMap as? ITrailOfflineMap {
                             OfflineMapManager.shared.downloadTrailOfflineMap(
-                                trailId: trailOfflineMap.trailId) { (newMap) in
+                                trailId: trailOfflineMap.trailId, includeImagery: true, downloadTrailMedia: trailOfflineMap.downloadTrailMedia) { (newMap) in
                                 
                                 executeBlockOnMainThread {
                                     progressDialog.dismiss(animated: false, completion: nil)

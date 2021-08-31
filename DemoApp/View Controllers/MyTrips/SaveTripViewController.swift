@@ -274,7 +274,7 @@ class SaveTripViewController: UIViewController {
                 let campingType = try enumService.getCampingTypeByCode(SdkCampingType.DISPERSED.rawValue)
                 
                 let tripInfo = trip.tripInfo.copy(name: name, description: description, campingTypes: [campingType])
-                let userInfo = trip.userInfo.copy(userRating: Double(self.ratingStars.rating), sharingType: shareWith.type, promoteToTrail: self.promoteSwitch.isOn, personalNote: personalNote)
+                let userInfo = trip.userInfo.copy(userRating: self.ratingStars.rating, sharingType: shareWith.type, promoteToTrail: self.promoteSwitch.isOn, personalNote: personalNote)
                 
                 // Media
                 let allMedia = ApkMediaUtil.updatePositions(allMedia: media)

@@ -39,11 +39,11 @@ class BaseDrivingViewController : LocationViewController {
     // Available online styles
     private let styles: [URL] = [
         AccuTerraStyle.vectorStyleURL,
-        MGLStyle.satelliteStreetsStyleURL]
+        HEREMapsURLProtocol.styleURL]
 
     // Available offline styles
     private let offlineStyles: [URL] = [
-        MGLStyle.satelliteStreetsStyleURL,
+        HEREMapsURLProtocol.styleURL,
         AccuTerraStyle.vectorStyleURL]
 
     // MARK:- Lifecycle
