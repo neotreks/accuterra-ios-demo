@@ -51,7 +51,7 @@ extension TrailPoiDetailViewController : UICollectionViewDelegate, UICollectionV
         let media = self.trailDriveWaypoint.point.media[indexPath.row]
         if let vc = UIStoryboard(name: "Main", bundle: nil) .
             instantiateViewController(withIdentifier: "PhotoViewController") as? PhotoViewController {
-            vc.mediaLoader = TrailMediaLoader(media: media, variant: .DEFAULT)
+            vc.mediaLoader = MediaLoaderFactory.trailMediaLoader(media: media, variant: .DEFAULT) 
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }

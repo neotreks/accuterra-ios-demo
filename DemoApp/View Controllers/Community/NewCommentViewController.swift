@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 import AccuTerraSDK
 
-protocol NewCommentViewControllerDelegate: class {
+protocol NewCommentViewControllerDelegate: AnyObject {
     func didAddNewComment(commentsCount: Int?)
 }
 

@@ -51,7 +51,7 @@ extension OnlineTripPoiViewController : UICollectionViewDelegate, UICollectionVi
         let media = self.tripPoint.media[indexPath.row]
         if let vc = UIStoryboard(name: "Main", bundle: nil) .
             instantiateViewController(withIdentifier: "PhotoViewController") as? PhotoViewController {
-            vc.mediaLoader = TripMediaLoader(media: media, variant: .DEFAULT)
+            vc.mediaLoader = MediaLoaderFactory.tripMediaLoader(media: media, variant: .DEFAULT)
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }

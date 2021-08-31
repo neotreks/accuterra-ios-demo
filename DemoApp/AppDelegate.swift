@@ -8,6 +8,7 @@
 
 import UIKit
 import AccuTerraSDK
+import Kingfisher
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

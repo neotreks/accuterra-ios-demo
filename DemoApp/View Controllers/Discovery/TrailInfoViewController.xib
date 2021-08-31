@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -22,8 +22,9 @@
                 <outlet property="trailDetailsButton" destination="GIS-TX-keK" id="lHR-ri-cow"/>
                 <outlet property="trailDetailsTableView" destination="RRy-K7-WRj" id="7NR-3e-Dhm"/>
                 <outlet property="trailDistanceLabel" destination="Ixi-Gn-5BP" id="dj9-zp-Zc5"/>
-                <outlet property="trailForecastButton" destination="LrS-Ut-qB4" id="0zH-t9-bbL"/>
                 <outlet property="trailImagesCollectionView" destination="dDm-72-ldZ" id="ZpZ-07-bio"/>
+                <outlet property="trailMapImageButton" destination="LrS-Ut-qB4" id="W2J-ad-6Rf"/>
+                <outlet property="trailMapImageView" destination="liH-zH-bV0" id="bCk-Vv-5J9"/>
                 <outlet property="trailPoisButton" destination="Wvj-Wg-mGe" id="3VL-x1-GL9"/>
                 <outlet property="trailRatingValueLabel" destination="r9R-kq-qQN" id="WEH-GF-MoW"/>
                 <outlet property="trailTitleLabel" destination="Y34-wb-lGH" id="nV8-5o-38d"/>
@@ -240,11 +241,11 @@
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="11"/>
                                     <color key="tintColor" name="Active"/>
-                                    <state key="normal" title="FORECAST">
+                                    <state key="normal" title="MAP">
                                         <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </state>
                                     <connections>
-                                        <action selector="didTapTrailForecast" destination="-1" eventType="touchUpInside" id="Kd2-cJ-F4F"/>
+                                        <action selector="didTapTrailMapIMage" destination="-1" eventType="touchUpInside" id="Xvz-hb-v4P"/>
                                     </connections>
                                 </button>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Py7-mN-6Lb">
@@ -372,21 +373,28 @@
                                         <constraint firstItem="JG0-W4-j3c" firstAttribute="leading" secondItem="z1x-oJ-RRR" secondAttribute="trailing" constant="5" id="zMi-ZX-hbo"/>
                                     </constraints>
                                 </view>
+                                <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="liH-zH-bV0">
+                                    <rect key="frame" x="0.0" y="5" width="404" height="500.5"/>
+                                </imageView>
                             </subviews>
                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             <constraints>
                                 <constraint firstAttribute="trailing" secondItem="RRy-K7-WRj" secondAttribute="trailing" id="4ce-g2-0f0"/>
+                                <constraint firstItem="liH-zH-bV0" firstAttribute="leading" secondItem="svg-t3-Scx" secondAttribute="leading" id="68V-PG-hHM"/>
                                 <constraint firstItem="cTe-Ww-VRF" firstAttribute="leading" secondItem="svg-t3-Scx" secondAttribute="leading" id="7gM-zB-GK3"/>
+                                <constraint firstAttribute="trailing" secondItem="liH-zH-bV0" secondAttribute="trailing" id="B3b-pR-IHX"/>
                                 <constraint firstAttribute="trailing" secondItem="TvA-Fl-Z0L" secondAttribute="trailing" id="GR7-nl-EWB"/>
                                 <constraint firstAttribute="bottom" secondItem="cTe-Ww-VRF" secondAttribute="bottom" constant="5" id="LUL-Ug-m7a"/>
                                 <constraint firstItem="cTe-Ww-VRF" firstAttribute="top" secondItem="svg-t3-Scx" secondAttribute="top" constant="5" id="NB9-cN-XX1"/>
                                 <constraint firstAttribute="bottom" secondItem="TvA-Fl-Z0L" secondAttribute="bottom" constant="5" id="OYP-hS-YWt"/>
+                                <constraint firstItem="liH-zH-bV0" firstAttribute="top" secondItem="svg-t3-Scx" secondAttribute="top" constant="5" id="RiG-uZ-Xe9"/>
                                 <constraint firstAttribute="trailing" secondItem="cTe-Ww-VRF" secondAttribute="trailing" id="Ti2-Cv-2Z9"/>
                                 <constraint firstItem="TvA-Fl-Z0L" firstAttribute="leading" secondItem="svg-t3-Scx" secondAttribute="leading" id="Vzg-ue-IfT"/>
                                 <constraint firstItem="RRy-K7-WRj" firstAttribute="top" secondItem="svg-t3-Scx" secondAttribute="top" constant="5" id="aOW-v3-cAo"/>
                                 <constraint firstItem="TvA-Fl-Z0L" firstAttribute="top" secondItem="svg-t3-Scx" secondAttribute="top" constant="5" id="jIE-8g-YYn"/>
                                 <constraint firstItem="RRy-K7-WRj" firstAttribute="leading" secondItem="svg-t3-Scx" secondAttribute="leading" id="mVA-9r-Boj"/>
                                 <constraint firstAttribute="bottom" secondItem="RRy-K7-WRj" secondAttribute="bottom" constant="5" id="nwQ-Rp-gOF"/>
+                                <constraint firstAttribute="bottom" secondItem="liH-zH-bV0" secondAttribute="bottom" constant="5" id="qFC-r9-wHy"/>
                             </constraints>
                         </view>
                     </subviews>

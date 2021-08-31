@@ -41,6 +41,22 @@ class ProfileViewController: BaseViewController {
         }
     }
     
+    @IBAction func didTapDeleteUserData() {
+        let actionSheet =
+            UIAlertController(
+                title: "Delete User Data?",
+                message: "User data will be deleted from this device. This operation cannot be undone.",
+                preferredStyle: .actionSheet)
+
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+
+        actionSheet.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { action in
+            self.deleteUserDataImpl()
+        }))
+
+        self.present(actionSheet, animated: true)
+    }
+    
     @IBAction func didTapDownloadOfflineMaps() {
         if let vc = UIStoryboard(name: "Main", bundle: nil) .
         instantiateViewController(withIdentifier: "OfflineMaps") as? OfflineMapsViewController {
@@ -52,6 +68,36 @@ class ProfileViewController: BaseViewController {
         if let vc = UIStoryboard(name: "Main", bundle: nil) .
         instantiateViewController(withIdentifier: "DbPasscodeVC") as? DbPasscodeViewController {
             self.navigationController?.pushViewController(vc, animated: true)
+        }
+    }
+
+    private func deleteUserDataImpl() {
+        guard let progress = AlertUtils.buildBlockingProgressValueDialog() else {
+            return
+        }
+        progress.style = .loadingIndicator
+        progress.title = "Deleting User Data"
+        present(progress, animated: false) {
+            DispatchQueue.global().async {
+                SdkManager.shared.deleteUserData(onComplete: { result in
+                    executeBlockOnMainThread {
+                        progress.dismiss(animated: false) {
+                            if result.hasErrors() {
+                                self.showError(result.toString().toError())
+                            } else {
+                                self.showInfo("User data deleted successfully")
+                            }
+                        }
+                    }
+                },
+                onError: { error in
+                    executeBlockOnMainThread {
+                        progress.dismiss(animated: false) {
+                            self.showError(error)
+                        }
+                    }
+                })
+            }
         }
     }
 }

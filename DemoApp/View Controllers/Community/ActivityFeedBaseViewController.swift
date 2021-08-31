@@ -23,16 +23,19 @@ class ActivityFeedBaseViewController: BaseViewController {
             return reachability.connection != .unavailable
         }
     }
-
     // MARK:- Outlets
     @IBOutlet weak var tableView: UITableView!
 
     // MARK:- Lifecycle
     override func viewDidLoad() {
+        do {
+            // Initialize reachability
+            self.reachability = try Reachability()
+            try self.reachability.startNotifier()
+        } catch {
+            fatalError("\(error)")
+        }
         super.viewDidLoad()
-        
-        // Reachability is used to check if internet connection is available
-        self.reachability = try! Reachability()
         
         refreshControl.addTarget(self, action: #selector(refresh(sender:)), for: .valueChanged)
         tableView.addSubview(refreshControl)
@@ -228,6 +231,7 @@ extension ActivityFeedBaseViewController : UITableViewDelegate, UITableViewDataS
         if let vc = UIStoryboard(name: "Main", bundle: nil) .
         instantiateViewController(withIdentifier: "uploadVC") as? UploadViewController {
             vc.tripUuid = recording.uuid
+            vc.versionUUid = recording.versionUuid
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }

@@ -9,7 +9,7 @@
 import UIKit
 import AccuTerraSDK
 
-protocol OfflineMapTableViewCellDelegate: class {
+protocol OfflineMapTableViewCellDelegate: AnyObject {
     func showContextMenu(offlineMapId: String)
 }
 

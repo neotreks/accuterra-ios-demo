@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol ActivityFeedTripUgcFooterCellDelegate: class {
+protocol ActivityFeedTripUgcFooterCellDelegate: AnyObject {
     func onLikeClicked(item: ActivityFeedItem)
     func onPhotosClicked(item: ActivityFeedItem)
 }

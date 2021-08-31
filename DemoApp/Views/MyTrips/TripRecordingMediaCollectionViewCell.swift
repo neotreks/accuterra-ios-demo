@@ -9,7 +9,7 @@
 import UIKit
 import AccuTerraSDK
 
-protocol TripRecordingMediaCollectionViewCellDelegate : class {
+protocol TripRecordingMediaCollectionViewCellDelegate : AnyObject {
     func tripMediaDeletePressed(media: TripRecordingMedia)
     func canEditMedia(media: TripRecordingMedia) -> Bool
 }
@@ -26,10 +26,29 @@ class TripRecordingMediaCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var favoriteIcon: UIImageView!
     weak var delegate: TripRecordingMediaCollectionViewCellDelegate?
     private var media: TripRecordingMedia?
+    private var mediaLoader: MediaLoader?
 
     func bindView(media: TripRecordingMedia, isPreferred: Bool = false, delegate: TripRecordingMediaCollectionViewCellDelegate?) {
         self.media = media
-        self.imageView.image = UIImage(contentsOfFile: media.url.path)
+
+        if media.isLocalMedia {
+            // This is case when new Media are recorded and are available locally
+            // So we display it via `TripRecordingMedia.url`
+
+            self.imageView.image = UIImage(contentsOfFile: media.url.path)
+        } else {
+            // This is an online Trip Editing case when given _original_ media
+            // are not available locally but are present on the sever.
+            // We have to display it the same way we do for `Online Trip Media`
+
+            mediaLoader = MediaLoaderFactory.tripRecordingMediaLoader(media: media, variant: .DEFAULT)
+            mediaLoader?.load(callback: { [weak self] (mediaLoader, image) in
+                if let loader = self?.mediaLoader, mediaLoader.isEqual(loader: loader) {
+                    self?.imageView.image = image ?? UIImage(systemName: "bolt.horizontal.circle")
+                }
+            })
+        }
+
         self.delegate = delegate
         if delegate?.canEditMedia(media: media) ?? true {
             self.deleteButton.isHidden = false

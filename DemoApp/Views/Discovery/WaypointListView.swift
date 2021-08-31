@@ -8,7 +8,7 @@
 import UIKit
 import AccuTerraSDK
 
-protocol WaypointListViewDelegate : class {
+protocol WaypointListViewDelegate : AnyObject {
     func didSelectWayPoint(wayPoint: TrailDriveWaypoint)
     func didPressDetailButton(cell: WaypointListTableviewCell)
 }

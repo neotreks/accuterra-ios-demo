@@ -42,7 +42,7 @@ class NewOfflineMapViewController: BaseViewController {
         [.LOCATION, .NONE_WITH_LOCATION]
     
     /// List of styles, the layers button cycles through them
-    var styles: [URL] = [AccuTerraStyle.vectorStyleURL, MGLStyle.outdoorsStyleURL, MGLStyle.satelliteStreetsStyleURL, MGLStyle.streetsStyleURL]
+    var styles: [URL] = [AccuTerraStyle.vectorStyleURL, HEREMapsURLProtocol.styleURL]
     
     /// Current style Id
     var styleId = 0

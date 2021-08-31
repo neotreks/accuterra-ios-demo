@@ -59,9 +59,10 @@ class TrailSaveViewController: UIViewController {
             return tripMedia + poiMedia
         }
     }
-    private lazy var allTags = [Tag]()
-    private lazy var selectedTags = Set<Tag>()
-    private lazy var poiTags = Set<Tag>()
+    private lazy var allTags = [TrailTag]()
+    private lazy var selectedTags = Set<TrailTag>()
+    private lazy var selectedTagsFromPois = Set<TrailTag>()
+    private lazy var poiTags = Set<PoiTag>()
     private lazy var allAccessConcerns = [AccessConcern]()
     private lazy var selectedConcerns = Set<AccessConcern>()
     private var fullScrollHeight: CGFloat = 0
@@ -309,19 +310,23 @@ class TrailSaveViewController: UIViewController {
         guard let trip = self.trip, let tripService = self.tripService else {
             return
         }
+        let enumService = ServiceFactory.getEnumService()
         tryOrShowError {
             // Load all tags
-            self.allTags = try ServiceFactory.getEnumService().getTags()
+            self.allTags = try enumService.getTrailTags()
             self.selectedTags.removeAll()
+            self.selectedTagsFromPois.removeAll()
             trip.tripInfo.tags.forEach({ (tag) in
                 self.selectedTags.insert(tag)
             })
             poiTags.removeAll()
             let tripPois = try tripService.getTripRecordingPOIs(uuid: trip.tripInfo.uuid)
-            tripPois.forEach { (poi) in
-                poi.tags.forEach { (tag) in
-                    poiTags.insert(tag)
-                    self.selectedTags.insert(tag)
+            try tripPois.forEach { (poi) in
+                try poi.tags.forEach { (tag) in
+                    if let corespondingTrailTag = try enumService.getCorrespondingTrailTag(poiTag: tag), corespondingTrailTag.type == .TRIP_AND_TRAIL {
+                        self.selectedTags.insert(corespondingTrailTag)
+                        self.selectedTagsFromPois.insert(corespondingTrailTag)
+                    }
                 }
             }
         }
@@ -410,7 +415,7 @@ class TrailSaveViewController: UIViewController {
             
             // Add dummy data for now
             var userInfo = trip.userInfo
-            let rating: Double? = nil
+            let rating: Float? = nil
             let note = privateNoteTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines)
             let sharingType = TripSharingType.PRIVATE
             let promote = true
@@ -580,7 +585,7 @@ class TrailSaveViewController: UIViewController {
             bestDirection: bestDirectionTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines),
             // Optional: Season
             seasonalityRecommendation: seasonRecommendationTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines),
-            seasonalityRecommendationReason: seasonRecommendationTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines),
+            seasonalityRecommendationReason: seasonRecommendationReasonTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines),
             seasonSpring: seasonSpringTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines),
             seasonSummer: seasonSummerTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines),
             seasonFall: seasonFallTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines),
@@ -611,7 +616,12 @@ class TrailSaveViewController: UIViewController {
             showError("Please provide a description text of at least 10 characters long.".toError())
             scrollToControl(inputControl: self.difficultyRatingTextField)
             return false
+        } else if let seasonalityRecommendationText = self.seasonRecommendationTextField.text, !seasonalityRecommendationText.isEmpty, seasonalityRecommendationText.count != 12 {
+            showError("Seasson recommendation must have exactly 12 characters (0 or 1).".toError())
+            scrollToControl(inputControl: self.seasonRecommendationTextField)
+            return false
         }
+
         return true
     }
     
@@ -685,8 +695,8 @@ extension TrailSaveViewController : UICollectionViewDelegate, UICollectionViewDa
         }
         else if collectionView == self.tripTagsCollectionView {
             let tag = self.allTags[indexPath.row]
-            if poiTags.contains(tag) {
-                // Ignore poi tags
+            if selectedTagsFromPois.contains(tag) {
+                // Ignore tags that we selected on poi screen
                 return
             }
             
