@@ -128,8 +128,6 @@
 		577AE761253B48CE0064C885 /* TripRecordingMediaCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 577AE75D253B48CE0064C885 /* TripRecordingMediaCollectionViewCell.xib */; };
 		577AE762253B48CE0064C885 /* TripRecordingMediaCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 577AE75D253B48CE0064C885 /* TripRecordingMediaCollectionViewCell.xib */; };
 		577AE763253B48CE0064C885 /* TripRecordingMediaCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 577AE75D253B48CE0064C885 /* TripRecordingMediaCollectionViewCell.xib */; };
-		577F8DDD26079F5A006B4E0C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 577F8DD926079F5A006B4E0C /* GoogleService-Info.plist */; };
-		577F8DDE26079F5A006B4E0C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 577F8DDB26079F5A006B4E0C /* GoogleService-Info.plist */; };
 		57853F8C251100F4000EC362 /* BaseDrivingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57853F8B251100F4000EC362 /* BaseDrivingViewController.swift */; };
 		57853F8D251100F4000EC362 /* BaseDrivingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57853F8B251100F4000EC362 /* BaseDrivingViewController.swift */; };
 		579AA79125718AAF007CA13D /* TrailInfoRepo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 579AA79025718AAF007CA13D /* TrailInfoRepo.swift */; };
@@ -458,8 +456,6 @@
 		57760DB32577AD6C007B9C0F /* BlockingProgressViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockingProgressViewController.swift; sourceTree = "<group>"; };
 		577AE75C253B48CE0064C885 /* TripRecordingMediaCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripRecordingMediaCollectionViewCell.swift; sourceTree = "<group>"; };
 		577AE75D253B48CE0064C885 /* TripRecordingMediaCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TripRecordingMediaCollectionViewCell.xib; sourceTree = "<group>"; };
-		577F8DD926079F5A006B4E0C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		577F8DDB26079F5A006B4E0C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		57853F8B251100F4000EC362 /* BaseDrivingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseDrivingViewController.swift; sourceTree = "<group>"; };
 		579AA79025718AAF007CA13D /* TrailInfoRepo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrailInfoRepo.swift; sourceTree = "<group>"; };
 		57A587C62603C1BE005F7545 /* NewOfflineMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewOfflineMapViewController.swift; sourceTree = "<group>"; };
@@ -630,7 +626,6 @@
 			isa = PBXGroup;
 			children = (
 				57409197267FD2D7001F4EF4 /* HEREMaps */,
-				577F8DD726079F5A006B4E0C /* Firebase */,
 				57DA34A2259228040019A07B /* Feed */,
 				57D85B98240D17E800F0B7E2 /* Trail */,
 				57D618582510F19E0088B452 /* Trip */,
@@ -726,31 +721,6 @@
 				57B251532611E38B0014F3BA /* TrailSaveViewController.swift */,
 			);
 			path = TrailCollection;
-			sourceTree = "<group>";
-		};
-		577F8DD726079F5A006B4E0C /* Firebase */ = {
-			isa = PBXGroup;
-			children = (
-				577F8DD826079F5A006B4E0C /* Test */,
-				577F8DDA26079F5A006B4E0C /* Dev */,
-			);
-			path = Firebase;
-			sourceTree = "<group>";
-		};
-		577F8DD826079F5A006B4E0C /* Test */ = {
-			isa = PBXGroup;
-			children = (
-				577F8DD926079F5A006B4E0C /* GoogleService-Info.plist */,
-			);
-			path = Test;
-			sourceTree = "<group>";
-		};
-		577F8DDA26079F5A006B4E0C /* Dev */ = {
-			isa = PBXGroup;
-			children = (
-				577F8DDB26079F5A006B4E0C /* GoogleService-Info.plist */,
-			);
-			path = Dev;
 			sourceTree = "<group>";
 		};
 		57A587C52603C19C005F7545 /* OfflineMap */ = {
@@ -1083,7 +1053,6 @@
 				5720809423E189F8008C0EDD /* Frameworks */,
 				5720809523E189F8008C0EDD /* Resources */,
 				579066CB24269C4F006A4B14 /* Insert Mapbox Access Token */,
-				577F8E102607A02B006B4E0C /* ShellScript */,
 				477332DDEE180C12C38A6D30 /* [CP] Embed Pods Frameworks */,
 				AC35CED3FE2912DDACE4B9ED /* [CP] Copy Pods Resources */,
 			);
@@ -1183,7 +1152,6 @@
 			files = (
 				571B89CD25A8DBCC00E4E7DE /* TripMediaCollectionViewCell.xib in Resources */,
 				57D6184F2510E9ED0088B452 /* TrailImageCollectionViewCell.xib in Resources */,
-				577F8DDD26079F5A006B4E0C /* GoogleService-Info.plist in Resources */,
 				577AE762253B48CE0064C885 /* TripRecordingMediaCollectionViewCell.xib in Resources */,
 				7909F8772451D6990005C06E /* WaypointListTableviewCell.xib in Resources */,
 				570AFE79240D35DB00D06312 /* LaunchScreen.storyboard in Resources */,
@@ -1210,7 +1178,6 @@
 				572080A723E189FA008C0EDD /* LaunchScreen.storyboard in Resources */,
 				D3EF3D7923EF1B7E00FFCCE7 /* TrailListTableviewCell.xib in Resources */,
 				5705E411257F8032006EA74D /* CommentTableviewCell.xib in Resources */,
-				577F8DDE26079F5A006B4E0C /* GoogleService-Info.plist in Resources */,
 				57409199267FD2F4001F4EF4 /* HERESatelliteStyle.json in Resources */,
 				D389CE23244124E9001FC32E /* Clustering.xcassets in Resources */,
 				572080D923E18AD8008C0EDD /* TrailInfoViewController.xib in Resources */,
@@ -1300,25 +1267,6 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DemoApp(Develop)/Pods-DemoApp(Develop)-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
-		};
-		577F8E102607A02B006B4E0C /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}",
-				"$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/FirebaseCrashlytics/run\"\n";
 		};
 		577F8E112607A037006B4E0C /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
