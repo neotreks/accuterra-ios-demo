@@ -8,14 +8,14 @@
 
 import UIKit
 import AccuTerraSDK
-import Reachability
 import StarryStars
+import CoreLocation
 
 protocol TrailInfoViewDelegate: AnyObject {
     func didTapTrailInfoBackButton()
 }
 
-class TrailInfoViewController: UIViewController {
+class TrailInfoViewController: LocationViewController {
 
     // MARK: - Outlets
     @IBOutlet weak var trailTitleLabel: UILabel!
@@ -59,10 +59,11 @@ class TrailInfoViewController: UIViewController {
     private var commentsCount: Int64 = 0
     private var userData: TrailUserData?
     private var trailDeveloperDetails: TrailDetails? = nil
-    private var reachability: Reachability!
     private var viewState: ViewState = .description
     private var includeMedia = false
     private var mapImageLoader: MediaLoader?
+    private var userLocation: CLLocation?
+    private var trailNavigator: ITrailNavigator?
     
     // MARK:- Enums
     private enum ViewState {
@@ -90,7 +91,10 @@ class TrailInfoViewController: UIViewController {
             }
             self.trailBasicInfo = try service.getTrailBasicInfoById(trailId)
             self.trail = trail
-            self.drive = try service.getTrailDrives(trailId).first
+            if let drive = try service.getTrailDrives(trailId).first {
+                self.drive = drive
+                self.trailNavigator = try ServiceFactory.getTrailNavigatorService().getTrailNavigator(trailDrive: drive)
+            }
             // User data
             loadTrailUserData()
             // Comments
@@ -111,41 +115,40 @@ class TrailInfoViewController: UIViewController {
             showError(error)
             return
         }
-        
-        
-        // Reachability is used to check if internet connection is available
-        self.reachability = try! Reachability()
-                
+
+        checkLocationPermissions()
+        startLocationUpdates()
+
         getThereButton.imageView?.image = UIImage.getThereImage
-        
+
         favoriteButton.imageView?.image = UIImage.bookmarkImage
-        
+
         downloadButton.imageView?.image = UIImage.cacheDownloadImage
-        
+
         startNavigationButton.imageView?.image = UIImage.startNavigationImage
-        
+
         TrailInfoDisplay.setDisplayFieldValues(trailTitleLabel: &trailTitleLabel, descriptionTextView: &trailDescriptionTextView, distanceLabel: &trailDistanceLabel, userRatings: &trailUserRatingStar, userRatingCountLabel: &trailUserRatingCountLabel, userRatingValueLabel: &trailRatingValueLabel, difficultyLabel: &difficultyLabel, basicTrailInfo: trailBasicInfo)
-        
+
         self.downloadButton.isEnabled = false
         self.downloadButton.alpha = 0
-        
+
         self.trailImagesCollectionView.register(UINib(nibName: TrailImageCollectionViewCell.cellXibName, bundle: nil), forCellWithReuseIdentifier: TrailImageCollectionViewCell.cellIdentifier)
-        
+
         self.trailDetailsTableView.register(UINib(nibName: WaypointListTableviewCell.cellXibName, bundle: nil), forCellReuseIdentifier: WaypointListTableviewCell.cellIdentifier)
-        
+
         self.trailUGCCommentsTableView.register(UINib(nibName: CommentTableviewCell.cellXibName, bundle: nil), forCellReuseIdentifier: CommentTableviewCell.cellIdentifier)
-        
+
         if let trailId = self.trailId {
-            
+
             self.trailImagesCollectionView.reloadData()
-            
+
             // Offline map status is asynchronous operation. We are hiding the downloadButton until we
             // successfully retrieve status of the trail cache
             tryOrShowError {
                 let status = try OfflineMapManager.shared.getTrailCacheStatus(trailId: trailId)
 
                 // Configure download button
-                
+
                 self.configureDownloadButton(mapStatus: status)
             }
         }
@@ -153,10 +156,10 @@ class TrailInfoViewController: UIViewController {
         OfflineMapManager.shared.addProgressObserver(observer: self)
     }
     
-    deinit {
-        OfflineMapManager.shared.removeProgressObserver(observer: self)
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
     }
-    
+
     override func didMove(toParent parent: UIViewController?) {
         super.didMove(toParent: parent)
 
@@ -173,14 +176,27 @@ class TrailInfoViewController: UIViewController {
         
         self.includeMedia = includeMedia
         
-        OfflineMapManager.shared.downloadTrailOfflineMap(trailId: trail.info.id, includeImagery: true, downloadTrailMedia: includeMedia) { offlineMap in
-            self.downloadButton.isEnabled = true
-            self.configureDownloadButton(mapStatus: .WAITING)
+        OfflineMapManager.shared.downloadTrailOfflineMap(trailId: trail.info.id, includeImagery: true, downloadTrailMedia: includeMedia) {[weak self] offlineMap in
+            self?.downloadButton.isEnabled = true
+            self?.configureDownloadButton(mapStatus: .WAITING)
         } errorHandler: { error in
             self.showError(error)
         }
     }
-    
+
+    private func isTrailNavigable() -> Bool {
+        guard let location = LocationService.shared.lastReportedLocation, let navigator = self.trailNavigator else {
+            return false
+        }
+        
+        do {
+            return try navigator.findPossibleNextWayPoints(location: location).count > 0
+        }
+        catch {
+            return false
+        }
+    }
+
     // MARK: - Actions
     
     @IBAction func didTapAddComment(_ sender: Any) {
@@ -240,16 +256,14 @@ class TrailInfoViewController: UIViewController {
             switch status {
             case .NOT_CACHED, .FAILED, .CANCELED:
                 // Please note the estimate is often very inaccurate!
-                if let size = try? OfflineMapManager.shared.estimateTrailCacheSize(trailId: trail.info.id, includeImagery: true, includeMedia: true) {
+                if let size = try? OfflineMapManager.shared.estimateTrailCacheSize(trailId: trail.info.id, includeImagery: true, includeMedia: true).totalSize {
                     handleDownload(size)
                 }
             case .COMPLETE:
                 
                 // For completed cache we show size of the cache with option to delete the cache
                 OfflineMapManager.shared.getOfflineMapStorageSize(offlineMapId: trailOfflineMap!.offlineMapId, completion: {[weak self] (size) in
-                    var totalSize = size
-                    let mediaSize = OfflineMapManager.shared.mediaStorageSize(trailId: trail.info.id)
-                    totalSize += UInt64(mediaSize)
+                    let totalSize = size?.totalSize ?? 0
                     
                     guard let self = self else {return}
                     AlertUtils.showPrompt(viewController: self,
@@ -289,6 +303,8 @@ class TrailInfoViewController: UIViewController {
                                             self.showError(error)
                                         }
                                       })
+            @unknown default:
+                return
             }
         } catch {
             fatalError("\(error)")
@@ -322,6 +338,11 @@ class TrailInfoViewController: UIViewController {
     }
     
     @IBAction func didTapStartNavigation(_ sender: Any) {
+        let simulateTrailPath = Bundle.main.infoDictionary?["SIMULATE_TRAIL_PATH"] as? Bool ?? false
+        guard simulateTrailPath || isTrailNavigable() else {
+            AlertUtils.showAlert(viewController: self, title: "Trail lost", message: "You must be closer to the trail path")
+            return
+        }
         if let vc = UIStoryboard(name: "Main", bundle: nil) .
             instantiateViewController(withIdentifier: "Driving") as? DrivingViewController {
             vc.title = "Trail Info"
@@ -400,6 +421,8 @@ class TrailInfoViewController: UIViewController {
         case .COMPLETE:
             self.downloadButton.setImage(UIImage.cacheDeleteImage, for: .normal)
             self.downloadButton.setTitle("CACHED", for: .normal)
+        @unknown default:
+            return
         }
     }
     
@@ -498,23 +521,26 @@ class TrailInfoViewController: UIViewController {
             guard let self = self else {
                 return
             }
-            if (result.isSuccess) {
-                if (result.value == nil) {
-                    self.showError("No value in trail comments result.".toError())
+            executeBlockOnMainThread {
+                if (result.isSuccess) {
+                    if (result.value == nil) {
+                        self.showError("No value in trail comments result.".toError())
+                    } else {
+                        self.comments = result.value?.comments
+                        self.commentsCount = result.value?.paging.total ?? 0
+                    }
+                    callback?(true)
                 } else {
-                    self.comments = result.value?.comments
-                    self.commentsCount = result.value?.paging.total ?? 0
+                    let reason = result.buildErrorMessage() ?? "unknown reason"
+                    let errorMessage = "Error while loading trail comments: \(trailId), \(reason)"
+                    Log.e(self.TAG, errorMessage, result.error)
+                    self.showError(errorMessage.toError())
+                    callback?(false)
+                    return
                 }
-                callback?(true)
-            } else {
-                let reason = result.buildErrorMessage() ?? "unknown reason"
-                let errorMessage = "Error while loading trail comments: \(trailId), \(reason)"
-                Log.e(self.TAG, errorMessage, result.error)
-                self.showError(errorMessage.toError())
-                callback?(false)
+                self.trailUGCCommentsLabel.text = "\(self.commentsCount) comments"
+                self.trailUGCCommentsTableView.reloadData()
             }
-            self.trailUGCCommentsLabel.text = "\(self.commentsCount) comments"
-            self.trailUGCCommentsTableView.reloadData()
         }
     }
 }

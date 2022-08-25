@@ -8,6 +8,22 @@
 
 import UIKit
 
+extension UINavigationBar {
+    func setColors(barColor: UIColor, titleColor: UIColor) {
+        // iOS 14:
+        self.barTintColor = barColor
+        self.tintColor = titleColor
+
+        // iOS 15:
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = barColor
+        appearance.titleTextAttributes = [.foregroundColor: titleColor]
+        self.standardAppearance = appearance
+        self.scrollEdgeAppearance = appearance
+    }
+}
+
 class BaseViewController: UIViewController {
 
     // MARK:- Properties
@@ -29,12 +45,13 @@ class BaseViewController: UIViewController {
         self.homeNavItem?.leftBarButtonItem = nil
         self.homeNavItem?.setRightBarButtonItems(nil, animated: false)
         self.homeNavItem?.titleView = nil
-        
+
         if let navBarBackgroundTintColor = navBarBackgroundTintColor {
-            self.navigationController?.navigationBar.barTintColor = navBarBackgroundTintColor
-            self.navigationController?.navigationBar.tintColor = UIColor.white
-            self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
+            self.navigationController?.navigationBar.setColors(barColor: navBarBackgroundTintColor, titleColor: UIColor.white)
+            self.navigationController?.navigationBar.overrideUserInterfaceStyle = .dark
         }
+
+        self.navigationController?.navigationBar.barStyle = .black
     }
     
     var taskBar: TaskBar? {

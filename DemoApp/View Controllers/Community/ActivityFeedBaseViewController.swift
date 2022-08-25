@@ -8,33 +8,19 @@
 
 import UIKit
 import AccuTerraSDK
-import Reachability
 import ObjectMapper
 
 class ActivityFeedBaseViewController: BaseViewController {
 
     // MARK:- Properties
-    private var reachability: Reachability!
     var refreshControl = UIRefreshControl()
     var listItems: [ActivityFeedItem]? = nil
     var canRefresh = true
-    var isOnline: Bool {
-        get {
-            return reachability.connection != .unavailable
-        }
-    }
     // MARK:- Outlets
     @IBOutlet weak var tableView: UITableView!
 
     // MARK:- Lifecycle
     override func viewDidLoad() {
-        do {
-            // Initialize reachability
-            self.reachability = try Reachability()
-            try self.reachability.startNotifier()
-        } catch {
-            fatalError("\(error)")
-        }
         super.viewDidLoad()
         
         refreshControl.addTarget(self, action: #selector(refresh(sender:)), for: .valueChanged)

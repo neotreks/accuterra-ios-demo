@@ -31,10 +31,6 @@ class OfflineMapsViewController: BaseViewController {
         tableView.addSubview(refreshControl)
     }
     
-    deinit {
-        OfflineMapManager.shared.removeProgressObserver(observer: self)
-    }
-    
     override func viewDidAppear(_ animated: Bool) {
         loadOfflineMaps()
     }

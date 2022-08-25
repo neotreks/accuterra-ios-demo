@@ -15,7 +15,6 @@ class SaveTripViewController: UIViewController {
     // MARK:- Outlets
     @IBOutlet weak var txtTripName: UITextField!
     @IBOutlet weak var txtTripDescription: UITextField!
-    @IBOutlet weak var txtPersonalNote: UITextField!
     @IBOutlet weak var buttonShareWith: UIButton!
     @IBOutlet weak var ratingStars: RatingView!
     @IBOutlet weak var photoCollectionView: UICollectionView!
@@ -49,7 +48,6 @@ class SaveTripViewController: UIViewController {
         
         txtTripName.delegate = self
         txtTripDescription.delegate = self
-        txtPersonalNote.delegate = self
         
         self.shareWith = shareWithOptions.first!
         self.updateShareWithButton()
@@ -156,7 +154,7 @@ class SaveTripViewController: UIViewController {
             imagePicker.sourceType = .photoLibrary
         }
         imagePicker.delegate = self
-        self.navigationController?.pushViewController(imagePicker, animated: true)
+        self.present(imagePicker, animated: true)
     }
 
     @IBAction private func onSelectImage() {
@@ -192,8 +190,6 @@ class SaveTripViewController: UIViewController {
                 updateShareWithButton()
                 
                 self.ratingStars.rating = Float(trip.userInfo.userRating ?? 0)
-                
-                self.txtPersonalNote.text = trip.userInfo.personalNote
                 
                 self.txtTripName.becomeFirstResponder()
                 
@@ -238,7 +234,6 @@ class SaveTripViewController: UIViewController {
         let capSentences = UITextAutocapitalizationType.sentences
         self.txtTripName.autocapitalizationType = capSentences
         self.txtTripDescription.autocapitalizationType = capSentences
-        self.txtPersonalNote.autocapitalizationType = capSentences
     }
     
     private func deleteTrip() {
@@ -265,29 +260,34 @@ class SaveTripViewController: UIViewController {
             return
         }
         do {
-            if let tripService = self.tripService, let trip = self.trip {
+            if let tripService = self.tripService, var trip = self.trip {
                 let name = txtTripName?.text?.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
                 let description = txtTripDescription?.text?.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
-                let personalNote = txtPersonalNote?.text?.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
                 
                 let enumService = ServiceFactory.getEnumService()
                 let campingType = try enumService.getCampingTypeByCode(SdkCampingType.DISPERSED.rawValue)
                 
-                let tripInfo = trip.tripInfo.copy(name: name, description: description, campingTypes: [campingType])
-                let userInfo = trip.userInfo.copy(userRating: self.ratingStars.rating, sharingType: shareWith.type, promoteToTrail: self.promoteSwitch.isOn, personalNote: personalNote)
+                trip.tripInfo.name = name ?? ""
+                trip.tripInfo.description = description
+                trip.tripInfo.campingTypes = [campingType]
+                
+                trip.userInfo.userRating = self.ratingStars.rating
+                trip.userInfo.sharingType = shareWith.type
+                trip.userInfo.promoteToTrail = self.promoteSwitch.isOn
                 
                 // Media
                 let allMedia = ApkMediaUtil.updatePositions(allMedia: media)
+                trip.media = allMedia
                 
-                if let trip = self.trip?.copy(info: tripInfo, userInfo: userInfo, media: allMedia) {
+                do {
                     let _ = try tripService.updateTripRecording(tripRecording: trip)
                     if doUpload {
                         try tripService.uploadTripRecordingToServer(uuid: trip.tripInfo.uuid)
                     }
                     self.dismiss(animated: true)
                 }
-                else {
-                    showError("Could not save trip.".toError())
+                catch {
+                    showError(error.localizedDescription.toError())
                 }
             }
         }
@@ -304,9 +304,11 @@ class SaveTripViewController: UIViewController {
         self.photoCollectionView.reloadData()
     }
 
-    private func deleteMedia(media: TripRecordingMedia) {
-        self.media.removeAll { (it: TripRecordingMedia) -> Bool in it.pk == media.pk }
-        self.photoCollectionView.reloadData()
+    private func deleteMedia(media: TripRecordingMedia, index: Int) {
+        if index != -1 && index < self.media.count {
+            self.media.remove(at: index)
+        }
+        photoCollectionView.reloadData()
     }
     
     private func canEditTrip() -> Bool {
@@ -365,15 +367,16 @@ extension SaveTripViewController : UICollectionViewDelegate, UICollectionViewDat
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TripRecordingMediaCollectionViewCell.cellIdentifier, for: indexPath) as! TripRecordingMediaCollectionViewCell
-        cell.bindView(media: media[indexPath.row], delegate: self)
+        cell.bindView(media: media[indexPath.row], mediaIndex: indexPath.row, delegate: self)
         return cell
     }
 }
 
 extension SaveTripViewController : TripRecordingMediaCollectionViewCellDelegate {
-    func tripMediaDeletePressed(media: TripRecordingMedia) {
-        deleteMedia(media: media)
+    func tripMediaDeletePressed(media: TripRecordingMedia, index: Int) {
+        deleteMedia(media: media, index: index)
     }
+    
     func canEditMedia(media: TripRecordingMedia) -> Bool {
         return canEditTrip()
     }

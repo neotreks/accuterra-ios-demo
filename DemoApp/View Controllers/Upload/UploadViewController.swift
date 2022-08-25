@@ -9,6 +9,7 @@
 import UIKit
 import AccuTerraSDK
 import SSZipArchive
+import Combine
 
 class UploadViewController: BaseViewController {
 
@@ -22,11 +23,17 @@ class UploadViewController: BaseViewController {
     private lazy var requests = [UploadRequest]()
     var canRefresh = true
     private var documentInteractionController: UIDocumentInteractionController?
+    private var cancellable: Cancellable?
     
     // MARK: - lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        NotificationCenter.default.addObserver(self, selector: #selector(statusChanged(notification:)), name: UploadRequestNotificationName, object: nil)
+        
+        cancellable = NotificationCenter.default
+            .publisher(for: UploadRequestNotificationName)
+            .sink() {[weak self] notification in
+                self?.statusChanged(notification: notification)
+            }
         refreshControl.addTarget(self, action: #selector(refresh(sender:)), for: .valueChanged)
         tableView.addSubview(refreshControl)
         setUpNavBar()
@@ -35,10 +42,6 @@ class UploadViewController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         loadRequests()
-    }
-    
-    deinit {
-        NotificationCenter.default.removeObserver(self)
     }
     
     func setUpNavBar() {
@@ -63,19 +66,58 @@ class UploadViewController: BaseViewController {
         tryOrShowError {
             let tempFolder = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
             let exportFolder = tempFolder.appendingPathComponent("export\(tripUuid)", isDirectory: true)
-            if !FileManager.default.fileExists(atPath: exportFolder.path) {
-                try FileManager.default.createDirectory(at: exportFolder, withIntermediateDirectories: true, attributes: nil)
+            if FileManager.default.fileExists(atPath: exportFolder.path) {
+                try FileManager.default.removeItem(atPath: exportFolder.path)
             }
-            
+            try FileManager.default.createDirectory(at: exportFolder, withIntermediateDirectories: true, attributes: nil)
             
             try requests.forEach { (request) in
                 if let dataPath = request.dataPath {
                     let fileUrl = URL(fileURLWithPath: dataPath, isDirectory: false)
-                    let tempCopy = exportFolder.appendingPathComponent(fileUrl.lastPathComponent, isDirectory: false)
-                    if FileManager.default.fileExists(atPath: tempCopy.path) {
-                        try FileManager.default.removeItem(at: tempCopy)
+                    switch request.dataType {
+                    case .TRIP:
+                        // fileUrl contains path to zip, we want to extract it into the export folder
+                        SSZipArchive.unzipFile(atPath: fileUrl.path, toDestination: exportFolder.path)
+
+                        // Copy trip db
+                        let tripDbFolder = exportFolder.appendingPathComponent("db", isDirectory: true)
+                        try FileManager.default.createDirectory(at: tripDbFolder, withIntermediateDirectories: true, attributes: nil)
+
+                        let tripDb = AccuTerraFiles.AccuTerraLibraryDirectory.appendingPathComponent("accuterra-sdk-trip.db", isDirectory: false)
+                        let tripDbShm = AccuTerraFiles.AccuTerraLibraryDirectory.appendingPathComponent("accuterra-sdk-trip.db-shm", isDirectory: false)
+                        let tripDbWal = AccuTerraFiles.AccuTerraLibraryDirectory.appendingPathComponent("accuterra-sdk-trip.db-wal", isDirectory: false)
+                        let sdkDb = AccuTerraFiles.AccuTerraLibraryDirectory.appendingPathComponent("accuterra-sdk.db", isDirectory: false)
+                        let sdkDbShm = AccuTerraFiles.AccuTerraLibraryDirectory.appendingPathComponent("accuterra-sdk.db-shm", isDirectory: false)
+                        let sdkDbWal = AccuTerraFiles.AccuTerraLibraryDirectory.appendingPathComponent("accuterra-sdk.db-wal", isDirectory: false)
+
+                        try? FileManager.default.copyItem(at: tripDb, to: tripDbFolder.appendingPathComponent("accuterra-sdk-trip.db", isDirectory: false))
+                        try? FileManager.default.copyItem(at: tripDbShm, to: tripDbFolder.appendingPathComponent("accuterra-sdk-trip.db-shm", isDirectory: false))
+                        try? FileManager.default.copyItem(at: tripDbWal, to: tripDbFolder.appendingPathComponent("accuterra-sdk-trip.db-wal", isDirectory: false))
+                        try? FileManager.default.copyItem(at: sdkDb, to: tripDbFolder.appendingPathComponent("accuterra-sdk.db", isDirectory: false))
+                        try? FileManager.default.copyItem(at: sdkDbShm, to: tripDbFolder.appendingPathComponent("accuterra-sdk.db-shm", isDirectory: false))
+                        try? FileManager.default.copyItem(at: sdkDbWal, to: tripDbFolder.appendingPathComponent("accuterra-sdk.db-wal", isDirectory: false))
+                    default:
+                        let attachmentsFolder = exportFolder.appendingPathComponent("attachments")
+                        // fileUrl contains path to attachment, we want to copy it into attachments folder, but we need to watch for multipart attachments
+
+                        if let startIndex = request.multipartStartIndex, let endIndex = request.multipartEndIndex {
+                            let fileExtension = fileUrl.pathExtension
+                            let tempFileName = "\(request.dataUuid).\(fileExtension)"
+                            let tempCopy = attachmentsFolder.appendingPathComponent(tempFileName, isDirectory: false)
+                            if FileManager.default.fileExists(atPath: tempCopy.path) {
+                                try FileManager.default.removeItem(at: tempCopy)
+                            }
+                            let multipartData: Data = try readBytes(file: fileUrl, startIndex: startIndex, endIndex: endIndex)
+                            try multipartData.write(to: tempCopy)
+                        } else {
+                            let tempCopy = attachmentsFolder.appendingPathComponent(fileUrl.lastPathComponent, isDirectory: false)
+                            if FileManager.default.fileExists(atPath: tempCopy.path) {
+                                try FileManager.default.removeItem(at: tempCopy)
+                            }
+                            try FileManager.default.copyItem(at: fileUrl, to: tempCopy)
+                        }
                     }
-                    try FileManager.default.copyItem(at: fileUrl, to: tempCopy)
+
                 }
             }
             
@@ -90,8 +132,24 @@ class UploadViewController: BaseViewController {
             self.documentInteractionController?.presentOpenInMenu(from: self.view.frame, in: self.view, animated: true)
         }
     }
+
+    /// Read file bytes from given [startIndex] to [endIndex]
+    private func readBytes(file: URL, startIndex: Int64, endIndex: Int64) throws -> Data {
+        if !FileManager.default.fileExists(atPath: file.path) {
+            throw "File does not exits: \(file.path)".toError()
+        }
+
+        guard let fileHandle: FileHandle = FileHandle(forReadingAtPath: file.path) else {
+            throw "Cannot read file \(file.path)".toError()
+        }
+
+        fileHandle.seek(toFileOffset: UInt64(startIndex))
+        let data = fileHandle.readData(ofLength: Int(1 + endIndex - startIndex))
+        fileHandle.closeFile()
+        return data
+    }
     
-    @objc func statusChanged(notification: Notification) {
+    private func statusChanged(notification: Notification) {
         if let dict = notification.userInfo, let requestUuid = dict["requestUuid"] as? String {
             if requests.contains(where: { (r) -> Bool in
                 r.uuid == requestUuid
@@ -159,7 +217,7 @@ Data UUID: \(dataUuid)
 Parent data UUID: \(parentUuid ?? "--")
 ------
 Failed attempts: \(failedAttempts)
-Last attempt date: \(lastUploadAttemptDate?.toIsoDateString() ?? "--")
+Last attempt date: \(lastUploadAttemptDate?.toIsoDateTimeString() ?? "--")
 Next attempt min. date: \(nextAttemptMinDate?.toIsoDateTimeString() ?? "--")
 Upload date: \(uploadDate?.toIsoDateTimeString() ?? "--")
 Error: \(error ?? "--")

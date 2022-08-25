@@ -37,7 +37,7 @@ class UserRatingTests: XCTestCase {
         let lowRating = TechnicalRating(code: "", name: "", description:  nil, level: 1)
         let highRating = TechnicalRating(code: "", name: "", description:  nil, level: 2)
         
-        let info = TrailBasicInfo(id:1, techRatingLow:lowRating, techRatingHigh:highRating, publishedFrom:Date.now(), name:"Test Trail", highlights: "Description of the trail", length: 1.0, userRating: userRating, distance: 1.0)
+        let info = TrailBasicInfo(id:1, techRatingLow:lowRating, techRatingHigh:highRating, publishedFrom:Date.now(), name:"Test Trail", highlights: "Description of the trail", length: 1.0, userRating: userRating, distanceFromLocation: 1.0)
 
          if let basicInfo = info {
             TrailInfoDisplay.setUserRatings(basicTrailInfo: info,  userRatingsContainer: &userRatingsImageViews!)

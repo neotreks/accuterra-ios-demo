@@ -68,7 +68,6 @@ class OnlineTripViewController: UIViewController {
     @IBOutlet weak var sharingStatusLabel: UILabel!
     @IBOutlet weak var ratingStars: RatingView!
     @IBOutlet weak var promotedImageView: UIImageView!
-    @IBOutlet weak var tripPersonalNotesLabel: UILabel!
 
     // MARK:- Lifecycle
     override func viewDidLoad() {
@@ -130,6 +129,7 @@ class OnlineTripViewController: UIViewController {
         
         let service = ServiceFactory.getTripService()
         service.getTrip(tripUuid: tripUuid, callback: { (result) in
+            self.loadingView.isHidden = true
             if result.isSuccess {
                 self.trip = result.value!
                 self.userData = SetTripLikedResult(tripUuid: self.trip!.info.uuid, userLike: self.trip!.userInfo.userLike ?? false, likes: self.trip!.likesCount)
@@ -144,7 +144,6 @@ class OnlineTripViewController: UIViewController {
                 }
                 self.tripMedia = self.trip!.media + poiMedia
                 self.tripPhotoCollection.reloadData()
-                self.loadingView.isHidden = true
             } else {
                 let errorMessage = "Error while loading trip: \(tripUuid), \(result.buildErrorMessage() ?? "unknown")}"
                 self.showError(errorMessage.toError())
@@ -218,8 +217,6 @@ class OnlineTripViewController: UIViewController {
             ratingStars.rating = Float(rating)
         }
         promotedImageView.image = UIImage(named: trip.userInfo.promoteToTrail ? "checkmark.square.fill" : "checkmark.square")
-                    
-        tripPersonalNotesLabel.text = trip.userInfo.personalNote
         
         // Statistics
         
@@ -311,16 +308,16 @@ class OnlineTripViewController: UIViewController {
         options.addAction(UIAlertAction(title: "Promote to Trail", style: .default, handler: { (action) in
             self.onPromoteTrip()
         }))
+        options.addAction(UIAlertAction(title: "Edit Trip", style: .default, handler: { (action) in
+            self.editTrip()
+        }))
         options.addAction(UIAlertAction(title: "Delete Trip", style: .destructive, handler: { (action) in
             self.onDeleteTrip()
         }))
+       
         options.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         
         present(options, animated: false)
-        // prevent constraings bug in iOS
-        options.view.subviews.flatMap({$0.constraints}).filter{ (one: NSLayoutConstraint)-> (Bool)  in
-          return (one.constant < 0) && (one.secondItem == nil) &&  (one.firstAttribute == .width)
-        }.first?.isActive = false
     }
 
     // MARK:- Promote
@@ -363,6 +360,31 @@ class OnlineTripViewController: UIViewController {
         AlertUtils.showPrompt(viewController: self, title: "Delete Trip?", message: "Do you really want to delete \(tripName)?") {
             self.deleteTrip()
         } cancelHandler: {
+        }
+    }
+    
+    // MARK:- Edit
+    private func editTrip() {
+        guard let trip = trip else {
+            return
+        }
+        
+        do {
+            let _ = try ServiceFactory.getTripRecordingService().startTripEditing(trip: trip)
+            showTripEditVC(tripUuid: trip.info.uuid)
+        }
+        catch {
+            showError(error)
+        }
+    }
+    
+    private func showTripEditVC(tripUuid: String) {
+        if let vc = UIStoryboard(name: "Main", bundle: nil) .
+            instantiateViewController(withIdentifier: "SaveTripVC") as? SaveTripViewController {
+            vc.tripUuid = tripUuid
+            let nav = UINavigationController(rootViewController: vc)
+            nav.modalPresentationStyle = .fullScreen
+            present(nav, animated: true, completion: nil)
         }
     }
     
@@ -486,6 +508,15 @@ extension OnlineTripViewController : NewCommentViewControllerDelegate {
 
 // MARK:- AccuTerraMapViewDelegate extension
 extension OnlineTripViewController : AccuTerraMapViewDelegate {
+
+    func onMapLoadFailed(error: Error) {
+        showError(error)
+    }
+
+    func onStyleChangeFailed(error: Error) {
+        showError(error)
+    }
+    
     func didTapOnMap(coordinate: CLLocationCoordinate2D) {
         // nothing to do
     }

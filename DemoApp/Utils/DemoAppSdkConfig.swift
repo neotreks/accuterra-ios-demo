@@ -18,26 +18,21 @@ var demoAppSdkConfig: ApkSdkConfig = {
         fatalError("WS_AUTH_URL is missing in info.plist")
     }
     let sdkEndpointConfig = SdkEndpointConfig(wsUrl: WS_BASE_URL, wsAuthUrl: WS_AUTH_URL)
-    URLProtocol.registerClass(HEREMapsURLProtocol.self)
     return ApkSdkConfig(
         sdkEndpointConfig: sdkEndpointConfig,
         mapConfig: MapConfig(
             // providing nil value will load map token and style url from backend
-            accuTerraMapConfig: nil,
-            // custom imagery style
-            imageryMapConfig: ImageryMapConfig(styleURL: HEREMapsURLProtocol.styleURL)),
+            accuTerraMapConfig: nil),
         tripConfiguration: TripConfiguration(
             // Just to demonstrate the upload network type constraint
-            uploadNetworkType: .CONNECTED,
-            // Let's keep the trip recording on the device for development reasons,
-            // otherwise it should be deleted
-            deleteRecordingAfterUpload: false),
+            uploadNetworkType: .CONNECTED),
         trailConfiguration: TrailConfiguration(
             // Update trail DB during SDK initialization
-            updateTrailDbDuringSdkInit: true,
+            updateTrailDbDuringSdkInit: NetworkTypeConstraint.UNMETERED.isMet,
             // Update trail User Data during SDK initialization
-            updateTrailUserDataDuringSdkInit: true
-        ),
-        mapRequestInterceptor: HEREMapsURLProtocol.self
+            updateTrailUserDataDuringSdkInit: NetworkTypeConstraint.UNMETERED.isMet,
+            // Update trail Dynamic Data during SDK initialization (ratings, reported closed dates, etc.)
+            updateTrailDynamicDataDuringSdkInit: NetworkTypeConstraint.UNMETERED.isMet
+        )
     )
 }()

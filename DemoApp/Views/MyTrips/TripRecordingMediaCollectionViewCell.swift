@@ -10,7 +10,7 @@ import UIKit
 import AccuTerraSDK
 
 protocol TripRecordingMediaCollectionViewCellDelegate : AnyObject {
-    func tripMediaDeletePressed(media: TripRecordingMedia)
+    func tripMediaDeletePressed(media: TripRecordingMedia, index: Int)
     func canEditMedia(media: TripRecordingMedia) -> Bool
 }
 
@@ -26,11 +26,13 @@ class TripRecordingMediaCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var favoriteIcon: UIImageView!
     weak var delegate: TripRecordingMediaCollectionViewCellDelegate?
     private var media: TripRecordingMedia?
+    private var mediaIndex: Int?
     private var mediaLoader: MediaLoader?
-
-    func bindView(media: TripRecordingMedia, isPreferred: Bool = false, delegate: TripRecordingMediaCollectionViewCellDelegate?) {
+    
+    func bindView(media: TripRecordingMedia, mediaIndex: Int, isPreferred: Bool = false, delegate: TripRecordingMediaCollectionViewCellDelegate?) {
         self.media = media
-
+        self.mediaIndex = mediaIndex
+        
         if media.isLocalMedia {
             // This is case when new Media are recorded and are available locally
             // So we display it via `TripRecordingMedia.url`
@@ -61,6 +63,6 @@ class TripRecordingMediaCollectionViewCell: UICollectionViewCell {
     }
     
     @IBAction func deletePressed() {
-        delegate?.tripMediaDeletePressed(media: self.media!)
+        delegate?.tripMediaDeletePressed(media: self.media!, index: self.mediaIndex ?? -1)
     }
 }

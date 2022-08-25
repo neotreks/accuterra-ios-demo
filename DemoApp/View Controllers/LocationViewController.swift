@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import CoreLocation
+import AccuTerraSDK
 
 ///
 /// Basic class for view controllers used for tracking GPS locations
@@ -20,46 +21,53 @@ class LocationViewController : BaseViewController, LocationServiceDelegate {
     private var locationManager = CLLocationManager()
     private var userAuthorizedBgLocations: Bool?
     private var userIgnoredBgLocations: Bool?
-
+    var simulateTrailPath = false
+    
     // MARK:- Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-    }
-    
-    deinit {
-        LocationService.shared.removeHeadingUpdateObserver(observer: self)
-        LocationService.shared.removeLocationUpdateObserver(observer: self)
     }
 
     // MARK:-
 
     /// Start reporting location changes.
     func startLocationUpdates() {
-        LocationService.shared.addHeadingUpdateObserver(observer: self)
-        LocationService.shared.addLocationUpdateObserver(observer: self)
-        LocationService.shared.requestingLocationUpdates = true
+        if simulateTrailPath, let trailDrive = getTrailDrive() {
+            
+            //stop location service in case it's running as it will interfere with
+            //the simulation
+            LocationService.shared.requestingLocationUpdates = false
+            
+            LocationService.shared.updateLocationSimulator(with: TrailPathLocationSimulator(trailDrive: trailDrive, delegate: self))
+            LocationService.shared.startLocationSimulation()
+        }
+        else {
+            LocationService.shared.addHeadingUpdateObserver(observer: self)
+            LocationService.shared.addLocationUpdateObserver(observer: self)
+            LocationService.shared.requestingLocationUpdates = true
+        }
     }
 
     /// Stops reporting location changes.
     func stopLocationUpdates() {
-        LocationService.shared.removeLocationUpdateObserver(observer: self)
-        LocationService.shared.removeHeadingUpdateObserver(observer: self)
-        LocationService.shared.requestingLocationUpdates = false
+        if simulateTrailPath {
+            LocationService.shared.stopLocationSimulation()
+        }
+        else {
+            LocationService.shared.requestingLocationUpdates = false
+        }
     }
 
     /// Start recording location changes
     func startLocationRecording() {
         LocationService.shared.requestingLocationRecording = true
         LocationService.shared.allowBackgroundLocationUpdates = true
-        // Set to prevent screen to lock - turn off - during recording
-        UIApplication.shared.isIdleTimerDisabled = true
     }
 
     /// Stops recording location changes
     func stopLocationRecording() {
         LocationService.shared.requestingLocationRecording = false
         LocationService.shared.allowBackgroundLocationUpdates = false
-        UIApplication.shared.isIdleTimerDisabled = false
     }
     
     /// Returns the current state of the location permissions needed.
@@ -70,6 +78,11 @@ class LocationViewController : BaseViewController, LocationServiceDelegate {
         default:
             return true
         }
+    }
+    
+    //Base class needs to implement
+    func getTrailDrive() -> TrailDrive? {
+        return nil
     }
 
     /// Check if application has locations permissions

@@ -235,9 +235,11 @@ class TripPoiViewController: UIViewController {
         self.photoCollectionView.reloadData()
     }
 
-    private func deleteMedia(media: TripRecordingMedia) {
-        self.media.removeAll { (it: TripRecordingMedia) -> Bool in it.pk == media.pk }
-        self.photoCollectionView.reloadData()
+    private func deleteMedia(media: TripRecordingMedia, index: Int) {
+        if index != -1 && index < self.media.count {
+            self.media.remove(at: index)
+        }
+        photoCollectionView.reloadData()
     }
 }
 
@@ -260,16 +262,17 @@ extension TripPoiViewController : UICollectionViewDelegate, UICollectionViewData
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TripRecordingMediaCollectionViewCell.cellIdentifier, for: indexPath) as! TripRecordingMediaCollectionViewCell
-        cell.bindView(media: media[indexPath.row], delegate: self)
+        cell.bindView(media: media[indexPath.row], mediaIndex: indexPath.row, delegate: self)
         return cell
     }
 }
 
 // MARK:- TripRecordingMediaCollectionViewCellDelegate extension
 extension TripPoiViewController : TripRecordingMediaCollectionViewCellDelegate {
-    func tripMediaDeletePressed(media: TripRecordingMedia) {
-        deleteMedia(media: media)
+    func tripMediaDeletePressed(media: TripRecordingMedia, index: Int) {
+        deleteMedia(media: media, index: index)
     }
+    
     func canEditMedia(media: TripRecordingMedia) -> Bool {
         return true
     }
@@ -284,6 +287,9 @@ extension TripPoiViewController : UIImagePickerControllerDelegate, UINavigationC
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else {
             return
+        }
+        if picker.sourceType == .camera {
+            UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
         }
         do {
             try addMedia(image: image)

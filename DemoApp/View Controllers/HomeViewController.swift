@@ -1,10 +1,14 @@
 import UIKit
+import AccuTerraSDK
 
 class HomeViewController: UIViewController {
 
     // MARK:- Outlets
     @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var taskBar: TaskBar!
+
+
+    private var timer: Timer!
 
     // MARK:- Properties
     var homePageViewController: HomePageViewController? {
@@ -21,6 +25,27 @@ class HomeViewController: UIViewController {
 
         navigationController?.navigationBar.backgroundColor = .white
         navigationController?.navigationBar.isTranslucent = false
+
+        timer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true, block: { timer in
+
+            guard SdkManager.shared.isInitialized else {
+                return
+            }
+
+            if (try? ServiceFactory.getTripRecorder())?.hasActiveTripRecording() == true {
+                UIApplication.shared.isIdleTimerDisabled = true
+                return
+            }
+
+
+            let queuedRecordings = try? ServiceFactory.getTripRecordingService().findTripRecordings(criteria: TripRecordingSearchCriteria(name: nil, status: .QUEUED, orderBy: TripOrderBy.init(property: .NAME, order: .ascending), limit: 1))
+            if (queuedRecordings?.count ?? 0) > 0 {
+                UIApplication.shared.isIdleTimerDisabled = true
+                return
+            }
+
+            UIApplication.shared.isIdleTimerDisabled = false
+        })
     }
 
     // MARK:-
@@ -45,6 +70,10 @@ extension HomeViewController: HomePageViewControllerDelegate {
     
     func homePageViewController(homePageViewController: HomeViewController, didUpdatePageIndex index: Int) {
         //
+    }
+    
+    func updateSelection(task: TaskTypes) {
+        taskBar.updateSelection(task: task)
     }
 }
 

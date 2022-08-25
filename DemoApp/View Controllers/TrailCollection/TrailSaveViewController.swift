@@ -19,7 +19,7 @@ class TrailSaveViewController: UIViewController {
     @IBOutlet weak var trailNameTextField: UITextField!
     @IBOutlet weak var trailDescriptionTextView: UITextView!
     @IBOutlet weak var difficultyRatingButton: UIButton!
-    @IBOutlet weak var difficultyRatingTextField: UITextField!
+    @IBOutlet weak var difficultyRatingTextView: UITextView!
     @IBOutlet weak var tripTagsCollectionView: UICollectionView!
     @IBOutlet weak var showMoreButton: UIButton!
     @IBOutlet weak var moreView: UIView!
@@ -71,6 +71,7 @@ class TrailSaveViewController: UIViewController {
     private var preferredImageUuid: String?
     private lazy var technicalRatings = [TechnicalRating]()
     private var isKeyboardPresent = false
+    private var savingTrailDialog: BlockingProgressViewController?
     
     // MARK:- Lifecycle
     override func viewDidLoad() {
@@ -93,6 +94,8 @@ class TrailSaveViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
         
         self.trailDescriptionTextView.extendToolbar()
+        self.difficultyRatingTextView.extendToolbar()
+        self.difficultyRatingTextView.text = ""
         
         if let tagsLayout = (tripTagsCollectionView.collectionViewLayout as? AlignedCollectionViewFlowLayout) {
             tagsLayout.horizontalAlignment = .left
@@ -254,13 +257,13 @@ class TrailSaveViewController: UIViewController {
 
     @IBAction private func onAddImage() {
         let imagePicker = UIImagePickerController()
-        if !UIImagePickerController.isSourceTypeAvailable(.camera) {
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
             imagePicker.sourceType = .camera
         } else {
             imagePicker.sourceType = .photoLibrary
         }
         imagePicker.delegate = self
-        self.navigationController?.pushViewController(imagePicker, animated: true)
+        self.present(imagePicker, animated: true)
     }
 
     @IBAction private func onSelectImage() {
@@ -353,7 +356,7 @@ class TrailSaveViewController: UIViewController {
         
         self.trailNameTextField.autocapitalizationType = capSentences
         self.trailDescriptionTextView.autocapitalizationType = capSentences
-        self.difficultyRatingTextField.autocapitalizationType = capSentences
+        self.difficultyRatingTextView.autocapitalizationType = capSentences
         self.highlightsTextField.autocapitalizationType = capSentences
         self.historyTextField.autocapitalizationType = capSentences
         self.campingOptionsTextField.autocapitalizationType = capSentences
@@ -390,6 +393,15 @@ class TrailSaveViewController: UIViewController {
         }
     }
     
+    private func showTrailSavingDialog() {
+        if let dialog = AlertUtils.buildBlockingProgressValueDialog() {
+            dialog.title = "Saving trail..."
+            dialog.style = .loadingIndicator
+            self.present(dialog, animated: false, completion: nil)
+            savingTrailDialog = dialog
+        }
+    }
+    
     private func saveTrip(doUpload: Bool) {
         guard var trip = self.trip, let tripService = self.tripService else {
             return
@@ -399,61 +411,100 @@ class TrailSaveViewController: UIViewController {
             return
         }
         
+        showTrailSavingDialog()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            self.handleTrailUploadAndSave(doUpload: doUpload, trip: &trip, tripService: tripService)
+        }
+    }
+    
+    private func requestNotificationAuthorization(handler: @escaping ((Bool)->Void)) {
+        let authOptions = UNAuthorizationOptions.init(arrayLiteral: .alert, .badge, .sound)
+        
+        let userNotificationCenter = UNUserNotificationCenter.current()
+        userNotificationCenter.requestAuthorization(options: authOptions) { (success, error) in
+            DispatchQueue.main.async {
+                handler(error == nil)
+            }
+        }
+    }
+    
+    private func handleTrailUploadAndSave(doUpload: Bool, trip: inout TripRecording, tripService: ITripRecordingService) {
         do {
-            // Load one fo the camping types
+            // Load one for the camping types
             let enumService = ServiceFactory.getEnumService()
             let campingType = try enumService.getCampingTypeByCode(SdkCampingType.DISPERSED.rawValue)
             
             // Update the trip with gathered data
-            var tripInfo = trip.tripInfo
-            tripInfo = tripInfo.copy(
-                name: trailNameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines),
-                description: trailDescriptionTextView.text.trimmingCharacters(in: .whitespacesAndNewlines),
-                campingTypes: [campingType],
-                tags: Array(selectedTags)
-            )
+            trip.tripInfo.name = trailNameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            trip.tripInfo.description = trailDescriptionTextView.text.trimmingCharacters(in: .whitespacesAndNewlines)
+            trip.tripInfo.campingTypes = [campingType]
+            trip.tripInfo.tags = Array(selectedTags)
+            if let techRating = techRating, let technicalRating = technicalRatings.filter({ $0.level == techRating.level }).first {
+                trip.tripInfo.technicalRating = TripTechRating(low: nil, high: technicalRating, summary: technicalRating.description)
+            }
             
             // Add dummy data for now
-            var userInfo = trip.userInfo
             let rating: Float? = nil
-            let note = privateNoteTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines)
             let sharingType = TripSharingType.PRIVATE
             let promote = true
-            userInfo = userInfo.copy(
-                userRating: rating,
-                sharingType: sharingType,
-                promoteToTrail: promote,
-                personalNote: note
-            )
+            
+            trip.userInfo.userRating = rating
+            trip.userInfo.sharingType = sharingType
+            trip.userInfo.promoteToTrail = promote
             
             guard let trailCollectionData = buildTrailCollectionData() else {
                 throw "Could not build trail collection data".toError()
             }
-            
+
             // Media
             let tripMedia = ApkMediaUtil.updatePositions(allMedia: self.tripMedia)
             
             // Copy gathered data
-            trip = trip.copy(
-                info: tripInfo,
-                userInfo: userInfo,
-                media: tripMedia,
-                extProperties: ExtPropertiesBuilder.buildList(value: trailCollectionData)
-            )
+            trip.media = tripMedia
+            trip.extProperties = ExtPropertiesBuilder.buildList(value: trailCollectionData)
             
             // Safe Trip Data into the DB
             
             trip = try tripService.updateTripRecording(tripRecording: trip)
-            // Trigger upload the recorded trip to the server
-            if doUpload {
-                try tripService.uploadTripRecordingToServer(uuid: trip.tripInfo.uuid)
-            }
             
-            dismiss(animated: true, completion: nil)
+            savingTrailDialog?.dismiss(animated: false, completion: {[weak self] in
+                self?.savingTrailDialog = nil
+            })
+            
+            let tripUUid = trip.tripInfo.uuid
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                if doUpload {
+                    self.requestNotificationAuthorization(handler: {_ in
+                        // Upload the recorded trip to the server
+                        try? self.uploadTrail(uuid: tripUUid, handler: {
+                            self.dismiss(animated: true, completion: nil)
+                        })
+                    })
+                }
+                else {
+                    self.dismiss(animated: true, completion: nil)
+                }
+            }
         }
         catch {
             Log.e(TAG, "Could not save trail. \(error.localizedDescription)")
-            showError(error)
+            savingTrailDialog?.dismiss(animated: false, completion: {[weak self] in
+                self?.savingTrailDialog = nil
+                self?.showError(error)
+            })
+        }
+    }
+    
+    private func uploadTrail(uuid: String, handler: @escaping (()->Void)) throws {
+        guard let service = self.tripService else {
+            return
+        }
+        try service.uploadTripRecordingToServer(uuid: uuid)
+        if NetworkUtils.shared.isOnline() {
+            showInfo("The collected trail was saved on device and will be uploaded to the server. Please keep the application running.", handler)
+        }
+        else {
+            showInfo("The collected trail was saved on device and will be uploaded to the server when internet connection is available.", handler)
         }
     }
     
@@ -464,9 +515,11 @@ class TrailSaveViewController: UIViewController {
         self.photoCollectionView.reloadData()
     }
 
-    private func deleteMedia(media: TripRecordingMedia) {
-        self.tripMedia.removeAll { (it: TripRecordingMedia) -> Bool in it.pk == media.pk }
-        self.photoCollectionView.reloadData()
+    private func deleteMedia(media: TripRecordingMedia, index: Int) {
+        if index != -1 && index < tripMedia.count {
+            tripMedia.remove(at: index)
+        }
+        photoCollectionView.reloadData()
     }
     
     private func canEditTrip() -> Bool {
@@ -497,7 +550,7 @@ class TrailSaveViewController: UIViewController {
                 difficultyRatingButton.setTitle(ratingName, for: .normal)
             }
             
-            difficultyRatingTextField.text = trailCollectionData.difficultyDescription
+            difficultyRatingTextView.text = trailCollectionData.difficultyDescription
             
             // Optional: Basic
             highlightsTextField.text = trailCollectionData.highlights
@@ -541,7 +594,6 @@ class TrailSaveViewController: UIViewController {
                 }
                 
                 bestDirectionTextField.text = trailCollectionData.bestDirection
-                privateNoteTextField.text = trip.userInfo.personalNote
                 // Preferred image
                 preferredImageUuid = trailCollectionData.preferredImageUuid
             }
@@ -566,7 +618,7 @@ class TrailSaveViewController: UIViewController {
             // Mandatory
             // For Trail collection we gather just one value and not low/high values
             difficultyRating: technicalRating.level,
-            difficultyDescription: difficultyRatingTextField.text,
+            difficultyDescription: difficultyRatingTextView.text,
             // Optional: Basic
             highlights: highlightsTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines),
             history: historyTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines),
@@ -612,9 +664,9 @@ class TrailSaveViewController: UIViewController {
         } else if trailCollectionData == nil {
             showError("cannot load trail collection data.".toError())
             return false
-        } else if difficultyRatingTextField.text?.count ?? 0 < 10 {
+        } else if difficultyRatingTextView.text?.count ?? 0 < 10 {
             showError("Please provide a description text of at least 10 characters long.".toError())
-            scrollToControl(inputControl: self.difficultyRatingTextField)
+            scrollToControl(inputControl: self.difficultyRatingTextView)
             return false
         } else if let seasonalityRecommendationText = self.seasonRecommendationTextField.text, !seasonalityRecommendationText.isEmpty, seasonalityRecommendationText.count != 12 {
             showError("Seasson recommendation must have exactly 12 characters (0 or 1).".toError())
@@ -626,7 +678,7 @@ class TrailSaveViewController: UIViewController {
     }
     
     private func scrollToControl(inputControl: UIView) {
-        scrollView.contentOffset = getScrollOffset(inputControl: inputControl)
+        scrollView.setContentOffset(getScrollOffset(inputControl: inputControl), animated: true)
     }
     
     private func getScrollOffset(inputControl: UIView) -> CGPoint {
@@ -660,7 +712,7 @@ extension TrailSaveViewController : UICollectionViewDelegate, UICollectionViewDa
         if collectionView == photoCollectionView {
             let media = allMedia[indexPath.row]
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TripRecordingMediaCollectionViewCell.cellIdentifier, for: indexPath) as! TripRecordingMediaCollectionViewCell
-            cell.bindView(media: media, isPreferred: media.uuid == self.preferredImageUuid, delegate: self)
+            cell.bindView(media: media, mediaIndex: indexPath.row, isPreferred: media.uuid == self.preferredImageUuid, delegate: self)
             return cell
         } else if collectionView == tripTagsCollectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "poiTagCell", for: indexPath) as! PoiTagCollectionViewCell
@@ -722,8 +774,8 @@ extension TrailSaveViewController : UICollectionViewDelegate, UICollectionViewDa
 }
 
 extension TrailSaveViewController : TripRecordingMediaCollectionViewCellDelegate {
-    func tripMediaDeletePressed(media: TripRecordingMedia) {
-        deleteMedia(media: media)
+    func tripMediaDeletePressed(media: TripRecordingMedia, index: Int) {
+        deleteMedia(media: media, index: index)
     }
     
     func canEditMedia(media: TripRecordingMedia) -> Bool {
@@ -743,6 +795,10 @@ extension TrailSaveViewController : UIImagePickerControllerDelegate, UINavigatio
             return
         }
         
+        if picker.sourceType == .camera {
+            UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+        }
+        
         do {
             try addMedia(image: image)
         } catch {
@@ -752,7 +808,7 @@ extension TrailSaveViewController : UIImagePickerControllerDelegate, UINavigatio
     }
 }
 
-extension TrailSaveViewController : UITextFieldDelegate, UITextViewDelegate {
+extension TrailSaveViewController : UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         
@@ -761,11 +817,17 @@ extension TrailSaveViewController : UITextFieldDelegate, UITextViewDelegate {
         }
         return true
     }
+}
+
+
+extension TrailSaveViewController: UITextViewDelegate {
     
     func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
         textView.resignFirstResponder()
-        if let nextControl = textView.superview?.viewWithTag(textView.tag + 1), nextControl.canBecomeFirstResponder {
-            nextControl.becomeFirstResponder()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            if let nextControl = textView.superview?.viewWithTag(textView.tag + 1), nextControl.canBecomeFirstResponder {
+                nextControl.becomeFirstResponder()
+            }
         }
         return true
     }

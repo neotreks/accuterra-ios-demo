@@ -9,13 +9,17 @@
 import UIKit
 import AccuTerraSDK
 import Kingfisher
+import Combine
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
+    private var cancellableRefs = [AnyCancellable]()
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Set log level to debug
         Log.level = .debug
+        listenForTrailUploadNotification()
         return true
     }
 
@@ -31,6 +35,55 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the user discards a scene session.
         // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
+    }
+    
+    private func listenForTrailUploadNotification() {
+        NotificationCenter.default
+            .publisher(for: TripRecordingStatusChangeNotification.name)
+            .receive(on: DispatchQueue.main)
+            .sink() { [weak self] notification in
+                self?.onTripStatusChanged(notification: notification)
+            }
+            .store(in: &cancellableRefs)
+    }
+    
+    private func onTripStatusChanged(notification: Notification) {
+        if let userInfo = notification.userInfo as? [String: Any] {
+            if let statusChange = userInfo[TripRecordingStatusChangeNotification.name.rawValue] as? TripRecordingStatusChange {
+                if statusChange.status == .UPLOADED {
+                    sendNotification(trailName: statusChange.name ?? "")
+                }
+            }
+        }
+    }
+    
+    private func sendNotification(trailName: String) {
+        let notificationContent = UNMutableNotificationContent()
+        notificationContent.body = "Uploaded trail: \(trailName)"
+        
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.2,
+                                                        repeats: false)
+        let request = UNNotificationRequest(identifier: "TrailUploadNotification",
+                                            content: notificationContent,
+                                            trigger: trigger)
+        
+        let userNotificationCenter = UNUserNotificationCenter.current()
+        userNotificationCenter.add(request) { (error) in
+            if let error = error {
+                print("Notification Error: ", error)
+            }
+        }
+        userNotificationCenter.delegate = self
+    }
+}
+
+extension AppDelegate: UNUserNotificationCenterDelegate {
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        completionHandler()
+    }
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.alert, .badge, .sound])
     }
 }
 

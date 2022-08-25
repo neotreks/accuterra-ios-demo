@@ -32,7 +32,7 @@ class TaskBar: UIView {
         ]
     }
     
-    var delegate:TaskbarDelegate?
+    weak var delegate:TaskbarDelegate?
 
     lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -59,7 +59,12 @@ class TaskBar: UIView {
         addConstraintsWithFormat("V:|[v0]|", views: collectionView)
         
         // Initially select tab Discover
-        let selectedIndexPath = IndexPath(item: UIUtils.getIndexFromTask(task: .discover), section: 0)
+        let selectedIndexPath = UserDefaults.standard.bool(forKey: SettingsViewController.trailCollectionModeKey) ? IndexPath(item: UIUtils.getIndexFromTask(task: .mytrips), section: 0) : IndexPath(item: UIUtils.getIndexFromTask(task: .discover), section: 0)
+        collectionView.selectItem(at: selectedIndexPath, animated: false, scrollPosition: .bottom)
+    }
+    
+    func updateSelection(task: TaskTypes) {
+        let selectedIndexPath = IndexPath(item: UIUtils.getIndexFromTask(task: task), section: 0)
         collectionView.selectItem(at: selectedIndexPath, animated: false, scrollPosition: .bottom)
     }
 }

@@ -14,9 +14,16 @@ class ProfileViewController: BaseViewController {
     // MARK:- Properties
     private let TAG = "ProfileViewController"
 
+    @IBOutlet weak var versionLabel: UILabel!
+
     // MARK:- Lifecycle
     override func viewDidLoad() {
         self.title = "User Profile"
+
+        if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String, let environment = Bundle.main.infoDictionary?["AccuTerraEnvironment"] as? String {
+            self.versionLabel.text = "\(version) - \(environment)"
+        }
+
         super.viewDidLoad()
     }
     
@@ -30,7 +37,7 @@ class ProfileViewController: BaseViewController {
     }
     
     @IBAction func didTapResetToken() {
-        DemoAccessManager.shared.resetToken { () in
+        DemoCredentialsAccessManager.shared.resetToken { () in
             executeBlockOnMainThread {
                 self.showInfo("Token reset")
             }

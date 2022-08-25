@@ -35,24 +35,25 @@ class RecordNewTripViewController: BaseTripRecordingViewController {
         
         setupMap()
     }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        tripRecorder.removeObserver(observer: self)
-    }
-    
-    deinit {
-        // Set screen lock back to normal
-        UIApplication.shared.isIdleTimerDisabled = false
-    }
 
     // MARK:- Actions
     @objc func close() {
-        guard !tripRecorder.hasActiveTripRecording() else {
-            showError("Cannot exit while recording a trip".toError())
-            return
+        do {
+            if let activeRecording = try tripRecorder.getActiveTripRecording() {
+                if activeRecording.recordingInfo.status == .RECORDING {
+                    showError("Cannot exit while recording a trip".toError())
+                    return
+                } else {
+                    AlertUtils.showPrompt(viewController: self, title: "Cancel recording", message: "Do you want to cancel trip recording?") {
+                        try? self.tripRecorder.cancelTripRecording()
+                        self.navigationController?.popToRootViewController(animated: true)
+                    }
+                }
+            }
+        } catch {
+            showError(error)
         }
-        self.navigationController?.popToRootViewController(animated: true)
+
     }
     
     override func getTelemetryModel() -> TelemetryModel? {

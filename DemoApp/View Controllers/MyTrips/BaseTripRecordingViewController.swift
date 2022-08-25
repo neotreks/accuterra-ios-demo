@@ -190,6 +190,9 @@ class BaseTripRecordingViewController : BaseDrivingViewController {
                     self.tripUuid = nil
                     self.navigationController?.popToRootViewController(animated: false)
                 }
+            } catch let error as InvalidTripGeometryError {
+                Log.e(self.TAG, "finishTrip() Error: \(error)")
+                self.showError(error)
             } catch {
                 Log.e(self.TAG, "finishTrip() Error: \(error)")
                 self.showError(error)

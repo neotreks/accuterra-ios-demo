@@ -11,20 +11,23 @@ import AccuTerraSDK
 import Mapbox
 import CoreLocation
 import AlignedCollectionViewFlowLayout
+import Combine
 
 class TrailCollectionViewController: BaseTripRecordingViewController {
     
     // MARK:- Properties
     private lazy var poiTypes = [PointType]()
-    private lazy var poiMedia = [TripRecordingMedia]()
+    @Published private var poiMedia = [TripRecordingMedia]()
     private lazy var poiTags = [PoiTag]()
     private lazy var poiTypeTags = [PoiTag]()
     private var editingPoi: TripRecordingPoi?
     private var selectedPoiType: PointType?
     private var backedTrackingMode: TrackingOption?
+    private var cancellable: Cancellable?
     
     // MARK:- Outlets
     @IBOutlet weak var trailCollectionStatusLabel: UILabel!
+    @IBOutlet weak var poiViewHeaderLabel: UILabel!
     @IBOutlet weak var trailCollectionCrossHairImageView: UIImageView!
     @IBOutlet weak var statsViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var poiView: UIView!
@@ -38,7 +41,9 @@ class TrailCollectionViewController: BaseTripRecordingViewController {
     @IBOutlet weak var poiDescriptionTextView: UITextView!
     @IBOutlet weak var poiScrollView: UIScrollView!
     @IBOutlet var inputControls: [UIView] = [UIView]()
-
+    @IBOutlet weak var poiDeleteButton: UIButton!
+    @IBOutlet weak var poiImagesCollectionViewHeightConstraint: NSLayoutConstraint!
+    
     // MARK:- Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -70,6 +75,14 @@ class TrailCollectionViewController: BaseTripRecordingViewController {
         }
             
         updateStatusLabel()
+        cancellable = $poiMedia
+            .sink { completion in
+            } receiveValue: { val in
+                self.poiImagesCollectionViewHeightConstraint.constant = val.isEmpty ? 0 : 100
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    self.poiPhotosCollectionView.reloadData()
+                }
+            }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -79,16 +92,13 @@ class TrailCollectionViewController: BaseTripRecordingViewController {
     }
     
     deinit {
-        // Set screen lock back to normal
-        UIApplication.shared.isIdleTimerDisabled = false
-        self.tripRecorder.removeObserver(observer: self)
         NotificationCenter.default.removeObserver(self)
     }
 
     // MARK:- Actions
     @objc func close() {
         guard !tripRecorder.hasActiveTripRecording() else {
-            showError("Cannot exit while recording a trip".toError())
+            cancelRecordingButtonPressed()
             return
         }
         self.navigationController?.popToRootViewController(animated: true)
@@ -97,6 +107,13 @@ class TrailCollectionViewController: BaseTripRecordingViewController {
     @IBAction func infoButtonPressed() {
         let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "TrailCollectionGuideVC")
         self.navigationController?.pushViewController(vc, animated: true)
+    }
+
+    @IBAction func cancelRecordingButtonPressed() {
+        AlertUtils.showPrompt(viewController: self, title: "Cancel recording", message: "Do you want to cancel trip recording?") {
+            try? self.tripRecorder.cancelTripRecording()
+            self.navigationController?.popToRootViewController(animated: true)
+        }
     }
     
     @IBAction func poiSaveButtonPressed() {
@@ -159,6 +176,19 @@ class TrailCollectionViewController: BaseTripRecordingViewController {
         }
     }
     
+    @IBAction func poiDeleteButtonPressed(_ sender: Any) {
+        if let poi = self.editingPoi {
+            do {
+                try deletePOI(poi: poi)
+                // Close the dialog
+                closePoiDialog()
+            }
+            catch {
+                showError(error)
+            }
+        }
+    }
+    
     /// Add the newly created POI to the trip recording
     private func addPoi(poi: TripRecordingPoi) throws {
         let recorder = try ServiceFactory.getTripRecorder()
@@ -169,6 +199,12 @@ class TrailCollectionViewController: BaseTripRecordingViewController {
     private func updatePoi(poi: TripRecordingPoi) throws {
         let recorder = try ServiceFactory.getTripRecorder()
         let _ = try recorder.updatePoi(poi: poi)
+    }
+    
+    /// Deletes existing poi
+    private func deletePOI(poi: TripRecordingPoi) throws {
+        let recorder = try ServiceFactory.getTripRecorder()
+        let _ = try recorder.deletePoi(poiUuid: poi.uuid)
     }
     
     @IBAction func poiCancelButtonPressed() {
@@ -263,8 +299,8 @@ class TrailCollectionViewController: BaseTripRecordingViewController {
         } else if poiDescriptionTextView.text.count < 10 {
             showError("Please provide a description text of at least 10 characters long.".toError())
             return false
-        } else if poiMedia.count < 3 {
-            showError("Please provide at least 3 photos.".toError())
+        } else if poiMedia.count < 1 {
+            showError("Please provide at least 1 photo.".toError())
             return false
         } else if poiTags.count == 0 {
             showError("Please select at least 1 tag.".toError())
@@ -311,15 +347,25 @@ class TrailCollectionViewController: BaseTripRecordingViewController {
             })
             self.poiMedia = editPoi.media
             self.poiTags.append(contentsOf: editPoi.tags)
+            poiViewHeaderLabel.text = "Edit POI"
+            poiDeleteButton.isHidden = false
         } else {
             self.poiNameTextField.text = nil
             self.poiDescriptionTextView.text = nil
+            poiViewHeaderLabel.text = "Add New POI"
+            poiDeleteButton.isHidden = true
         }
         self.poiPhotosCollectionView.reloadData()
         
         updateTags()
         self.backedTrackingMode = self.currentTracking
         exitDrivingMode()
+        if let lastLocation = self.lastLocation, editPoi == nil {
+            mapView.setCenter(lastLocation.coordinate, animated: false)
+        }
+        else if let editPoi = editPoi {
+            mapView.setCenter(CLLocationCoordinate2D(latitude: editPoi.mapLocation.latitude, longitude: editPoi.mapLocation.longitude), animated: true)
+        }
     }
     
     private func updateTags() {
@@ -334,6 +380,9 @@ class TrailCollectionViewController: BaseTripRecordingViewController {
                 self.poiTypeTags.removeAll()
             }
             poiTagsCollectionView.reloadData()
+            if self.poiTypeTags.count > 0 {
+                poiTagsCollectionView.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+            }
         }
     }
     
@@ -362,9 +411,11 @@ class TrailCollectionViewController: BaseTripRecordingViewController {
         self.poiPhotosCollectionView.reloadData()
     }
 
-    private func deleteMedia(media: TripRecordingMedia) {
-        self.poiMedia.removeAll { (it: TripRecordingMedia) -> Bool in it.pk == media.pk }
-        self.poiPhotosCollectionView.reloadData()
+    private func deleteMedia(media: TripRecordingMedia, index: Int) {
+        if index != -1 && index < poiMedia.count {
+            poiMedia.remove(at: index)
+        }
+        poiPhotosCollectionView.reloadData()
     }
 }
 
@@ -436,7 +487,7 @@ extension TrailCollectionViewController : UICollectionViewDelegate, UICollection
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == self.poiPhotosCollectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TripRecordingMediaCollectionViewCell.cellIdentifier, for: indexPath) as! TripRecordingMediaCollectionViewCell
-            cell.bindView(media: poiMedia[indexPath.row], delegate: self)
+            cell.bindView(media: poiMedia[indexPath.row], mediaIndex: indexPath.row, delegate: self)
             return cell
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "poiTagCell", for: indexPath) as! PoiTagCollectionViewCell
@@ -466,9 +517,10 @@ extension TrailCollectionViewController : UICollectionViewDelegate, UICollection
 
 // MARK:- TripRecordingMediaCollectionViewCellDelegate extension
 extension TrailCollectionViewController : TripRecordingMediaCollectionViewCellDelegate {
-    func tripMediaDeletePressed(media: TripRecordingMedia) {
-        deleteMedia(media: media)
+    func tripMediaDeletePressed(media: TripRecordingMedia, index: Int) {
+        deleteMedia(media: media, index: index)
     }
+
     func canEditMedia(media: TripRecordingMedia) -> Bool {
         return true
     }
@@ -484,6 +536,11 @@ extension TrailCollectionViewController : UIImagePickerControllerDelegate, UINav
         guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else {
             return
         }
+        
+        if picker.sourceType == .camera {
+            UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+        }
+        
         do {
             try addMedia(image: image)
         } catch {

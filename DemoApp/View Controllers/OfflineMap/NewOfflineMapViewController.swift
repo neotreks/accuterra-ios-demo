@@ -9,7 +9,6 @@
 import UIKit
 import Mapbox
 import AccuTerraSDK
-import Reachability
 
 class NewOfflineMapViewController: BaseViewController {
     
@@ -42,7 +41,7 @@ class NewOfflineMapViewController: BaseViewController {
         [.LOCATION, .NONE_WITH_LOCATION]
     
     /// List of styles, the layers button cycles through them
-    var styles: [URL] = [AccuTerraStyle.vectorStyleURL, HEREMapsURLProtocol.styleURL]
+    var styles: [URL] = [AccuTerraStyle.vectorStyleURL, MGLStyle.satelliteStreetsStyleURL]
     
     /// Current style Id
     var styleId = 0
@@ -116,7 +115,7 @@ class NewOfflineMapViewController: BaseViewController {
                 includeImagery: includeImagry
             ) {
                 // Check max size
-                guard size <= MAX_DOWNLOAD_SIZE_BYTES else {
+                guard size.totalSize <= MAX_DOWNLOAD_SIZE_BYTES else {
                     showError("Download size must be less than \(MAX_DOWNLOAD_SIZE_BYTES.humanFileSize())".toError())
                     return
                 }
@@ -192,7 +191,7 @@ class NewOfflineMapViewController: BaseViewController {
                 bounds: mapBounds,
                 includeImagery: includeImagerySwitch.isOn
             ) {
-                self.estimateLabel.text = "Estimated Download Size \(size.humanFileSize())"
+                self.estimateLabel.text = "Estimated Download Size \(size.totalSize.humanFileSize())"
             }
         }
     }
@@ -233,6 +232,15 @@ class NewOfflineMapViewController: BaseViewController {
 
 // MARK:- AccuTerraMapViewDelegate extension
 extension NewOfflineMapViewController : AccuTerraMapViewDelegate {
+    
+    func onMapLoadFailed(error: Error) {
+        showError(error)
+    }
+
+    func onStyleChangeFailed(error: Error) {
+        showError(error)
+    }
+
     func didTapOnMap(coordinate: CLLocationCoordinate2D) {
     }
     

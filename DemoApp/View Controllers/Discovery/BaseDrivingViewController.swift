@@ -11,6 +11,7 @@ import UIKit
 import AccuTerraSDK
 import Mapbox
 import Reachability
+import Combine
 
 class BaseDrivingViewController : LocationViewController {
 
@@ -22,13 +23,11 @@ class BaseDrivingViewController : LocationViewController {
     // MARK:- Properties
     private var mapLoaded: Bool = false
 
-    // Used to check if internet connection is available
-    var reachability: Reachability!
-
     // Location tracking mode
     private(set) var currentTracking = TrackingOption.LOCATION
     private var lastGpsTracking: TrackingOption?
-
+    private var cancellableRefs = [AnyCancellable]()
+    
     // Available tracking options
     private let trackingOptions: [TrackingOption] =
             [.LOCATION, .DRIVING]
@@ -39,37 +38,29 @@ class BaseDrivingViewController : LocationViewController {
     // Available online styles
     private let styles: [URL] = [
         AccuTerraStyle.vectorStyleURL,
-        HEREMapsURLProtocol.styleURL]
+        MGLStyle.satelliteStreetsStyleURL]
 
     // Available offline styles
     private let offlineStyles: [URL] = [
-        HEREMapsURLProtocol.styleURL,
+        MGLStyle.satelliteStreetsStyleURL,
         AccuTerraStyle.vectorStyleURL]
 
-    // MARK:- Lifecycle
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-        OfflineMapManager.shared.removeProgressObserver(observer: self)
-        self.reachability.stopNotifier()
-    }
-
     override func viewDidLoad() {
-        do {
-            // Initialize reachability
-            self.reachability = try Reachability()
-            try self.reachability.startNotifier()
-
-            // Monitor network reachability changes
-            NotificationCenter.default.addObserver(forName: Notification.Name.reachabilityChanged, object: nil, queue: nil) { (notification) in
-                self.onReachabilityChangedNotification(notification: notification)
+        // Monitor network reachability changes
+        NotificationCenter.default
+            .publisher(for: Notification.Name.reachabilityChanged)
+            .compactMap({$0.object as? Reachability})
+            .sink() { [weak self] reachability in
+                self?.onReachabilityChanged(reachability: reachability)
             }
-        } catch {
-            fatalError("\(error)")
-        }
+            .store(in: &cancellableRefs)
 
         super.viewDidLoad()
         setupMap()
         OfflineMapManager.shared.addProgressObserver(observer: self)
+        if simulateTrailPath {
+            mapView.locationManager = LocationService.shared
+        }
     }
 
     // MARK:- IBActions
@@ -95,7 +86,7 @@ class BaseDrivingViewController : LocationViewController {
         self.drivingModeButton.isEnabled = false
 
         self.currentStyle = UIUtils.loopNextElement(array: styles, currentElement: self.currentStyle)
-        if reachability.connection == .unavailable && !offlineStyles.contains(self.currentStyle) {
+        if !NetworkUtils.shared.isOnline() && !offlineStyles.contains(self.currentStyle) {
 
             // If this style is not available offline, cycle to next
 
@@ -119,8 +110,8 @@ class BaseDrivingViewController : LocationViewController {
     }
 
     /// Called when reachability changes
-    private func onReachabilityChangedNotification(notification: Notification) {
-        if self.reachability.connection == .unavailable {
+    private func onReachabilityChanged(reachability: Reachability) {
+        if reachability.connection == .unavailable {
             // When network is not available we want to switch to offline style, but only if it's cached
             tryOrShowError {
                 if let status = try OfflineMapManager.shared.getOverlayOfflineMap()?.status, status == .COMPLETE {
@@ -171,13 +162,16 @@ class BaseDrivingViewController : LocationViewController {
     /// Set location tracking, changes icon of my location button.
     /// Triggers permission request if permission is required
     func setLocationTracking(trackingOption: TrackingOption) {
-        currentTracking = trackingOption
+        let topPadding = trackingOption == .DRIVING ? mapView.frame.height * 0.3 : 0
+        mapView.automaticallyAdjustsContentInset = trackingOption != .DRIVING
+        mapView.setContentInset(UIEdgeInsets(top: topPadding, left: 0, bottom: 0, right: 0), animated: false, completionHandler: nil)
+        self.currentTracking = trackingOption
         if trackingOption.isTrackingOption {
-            lastGpsTracking = trackingOption
+            self.lastGpsTracking = trackingOption
         }
 
-        if (hasLocationPermissions()) {
-            mapView.setTracking(mode: trackingOption)
+        if (self.hasLocationPermissions()) {
+            self.mapView.setTracking(mode: trackingOption)
         }
     }
 
@@ -206,6 +200,14 @@ extension BaseDrivingViewController : MGLMapViewDelegate {
 
 // MARK:- AccuTerraMapViewDelegate extension
 extension BaseDrivingViewController : AccuTerraMapViewDelegate {
+    func onMapLoadFailed(error: Error) {
+        showError(error)
+    }
+
+    func onStyleChangeFailed(error: Error) {
+        showError(error)
+    }
+
     func onStyleChanged() {
         self.layersButton.isEnabled = true
         self.drivingModeButton.isEnabled = true

@@ -42,7 +42,7 @@ class DownloadViewController : BaseViewController {
     }
     
     private func initSdk() {
-        SdkManager.shared.initSdkAsync(config: demoAppSdkConfig, accessProvider: DemoAccessManager.shared, identityProvider: DemoIdentityManager.shared, delegate: self, dbEncryptConfigProvider: DemoDbEncryptProvider())
+        SdkManager.shared.initSdkAsync(config: demoAppSdkConfig, accessProvider: DemoCredentialsAccessManager.shared, identityProvider: DemoIdentityManager.shared, delegate: self, dbEncryptConfigProvider: DemoDbEncryptProvider())
     }
 }
 
@@ -70,6 +70,8 @@ extension DownloadViewController : SdkInitDelegate {
                     self.progressTitle.text = "Initializing Trail Paths Cache ... "
                 case .TRAIL_USER_DATA_UPDATE:
                     self.progressTitle.text = "Updating User data ..."
+                case .TRAIL_DYNAMIC_DATA_UPDATE:
+                    self.progressTitle.text = "Updating Trail Dynamic Data"
                 case .TRAIL_DB_UPDATE:
                     self.progressTitle.text = "Updating Trail DB ..."
                 case .TRAIL_DB_DOWNLOAD:

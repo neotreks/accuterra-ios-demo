@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>AccuTerraEnvironment</key>
+	<string>Test</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -18,10 +20,6 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
-	<key>HERE_APPCODE</key>
-	<string></string>
-	<key>HERE_APPID</key>
-	<string></string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MGLMapboxMetricsEnabledSettingShownInApp</key>
@@ -90,6 +88,8 @@
 	<string></string>
 	<key>WS_AUTH_URL</key>
 	<string>https://test.accuterra.com/auth/</string>
+	<key>MGLMapboxAccessToken</key>
+	<string></string>
 	<key>WS_BASE_URL</key>
 	<string>https://test.accuterra.com:443/api/</string>
 </dict>

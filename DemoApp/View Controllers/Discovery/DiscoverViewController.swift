@@ -10,6 +10,7 @@ import UIKit
 import Mapbox
 import AccuTerraSDK
 import Reachability
+import Combine
 
 // MARK:- Enums
 enum TrailListSliderMode: Int {
@@ -56,33 +57,34 @@ class DiscoverViewController: BaseViewController {
     private let trackingOptions: [TrackingOption] =
         [.LOCATION, .NONE_WITH_LOCATION]
     
+    private var cancellableRefs = [AnyCancellable]()
+    
     var trailService: ITrailService?
     
     /// List of styles, the layers button cycles through them
-    var styles: [URL] = [AccuTerraStyle.vectorStyleURL, HEREMapsURLProtocol.styleURL]
+    var styles: [URL] = [AccuTerraStyle.vectorStyleURL, MGLStyle.satelliteStreetsStyleURL]
     
     /// Offline supported styles
-    var offlineStyles: [URL] = [HEREMapsURLProtocol.styleURL, AccuTerraStyle.vectorStyleURL]
+    var offlineStyles: [URL] = [MGLStyle.satelliteStreetsStyleURL, AccuTerraStyle.vectorStyleURL]
     
     /// Current style Id
     var styleId = 0
-    
-    /// Used to check if internet connection is available
-    var reachability: Reachability!
 
     // MARK:- Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         goToTrailsDiscovery()
         
-        do {
-            // Initialize reachability
-            self.reachability = try Reachability()
-            try self.reachability.startNotifier()
-            
-            // Monitor network reachability changes
-            NotificationCenter.default.addObserver(forName: Notification.Name.reachabilityChanged, object: nil, queue: nil) { (notification) in
-                if self.reachability.connection == .unavailable {
+        // Monitor network reachability changes
+        NotificationCenter.default
+            .publisher(for: Notification.Name.reachabilityChanged)
+            .compactMap({$0.object as? Reachability})
+            .receive(on: DispatchQueue.main)
+            .sink() { [weak self] reachability in
+                guard let self = self else {
+                    return
+                }
+                if reachability.connection == .unavailable {
                     self.tryOrShowError {
                         // When network is not available we want to switch to offline style, but only if it's cached
                         if let status = try OfflineMapManager.shared.getOverlayOfflineMap()?.status,
@@ -101,17 +103,10 @@ class DiscoverViewController: BaseViewController {
                     self.layersButton.isEnabled = true
                 }
             }
-        } catch {
-            fatalError("\(error)")
-        }
+            .store(in: &cancellableRefs)
         OfflineMapManager.shared.addProgressObserver(observer: self)
     }
-    
-    deinit {
-        self.reachability.stopNotifier()
-        OfflineMapManager.shared.removeProgressObserver(observer: self)
-    }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setUpSearchBar()
@@ -198,7 +193,7 @@ class DiscoverViewController: BaseViewController {
             styleId = 0
         }
         let style = styles[styleId]
-        if reachability.connection == .unavailable && !offlineStyles.contains(style) {
+        if !NetworkUtils.shared.isOnline() && !offlineStyles.contains(style) {
             
             // If this style is not available offline, cycle to next
             
@@ -329,6 +324,14 @@ class DiscoverViewController: BaseViewController {
 
 // MARK:- AccuTerraMapViewDelegate extension
 extension DiscoverViewController : AccuTerraMapViewDelegate {
+
+    func onMapLoadFailed(error: Error) {
+        showError(error)
+    }
+
+    func onStyleChangeFailed(error: Error) {
+        showError(error)
+    }
     
     func onTrackingModeChanged(mode: TrackingOption) {
         let icon = UIUtils.getLocationTrackingIcon(trackingOption: mode)
@@ -411,7 +414,7 @@ extension DiscoverViewController : AccuTerraMapViewDelegate {
             try self.addTrailLayers()
         }
         
-        if reachability.connection != .unavailable {
+        if NetworkUtils.shared.isOnline() {
             tryOrShowError {
                 try checkOverlayMapCache()
             }
@@ -456,7 +459,7 @@ extension DiscoverViewController : AccuTerraMapViewDelegate {
         let status = try OfflineMapManager.shared.getOverlayOfflineMap()?.status ?? .NOT_CACHED
         
         if status == .NOT_CACHED || status == .FAILED {
-            let estimatedBytes: Int64 = (try? OfflineMapManager.shared.estimateOverlayCacheSize()) ?? 0
+            let estimatedBytes: Int64 = (try? OfflineMapManager.shared.estimateOverlayCacheSize().totalSize) ?? 0
             AlertUtils.showPrompt(viewController: self, title: "Download", message: "Would you like to download Overlay map cache (~\(estimatedBytes.humanFileSize()))?", confirmHandler: {
                 
                 // Starts download of the OVERLAY chache.
@@ -506,6 +509,9 @@ extension DiscoverViewController : MGLMapViewDelegate {
 
 // MARK:- TrailListViewDelegate extension
 extension DiscoverViewController : TrailListViewDelegate {
+    func showInfo(_ text: String) {
+        
+    }
     
     func didTapTrailInfo(basicInfo: TrailBasicInfo) {
         tryOrShowError {

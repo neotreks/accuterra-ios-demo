@@ -10,8 +10,9 @@ import Foundation
 import CoreLocation
 import AccuTerraSDK
 import Mapbox
+import Combine
 
-protocol LocationServiceDelegate {
+@objc protocol LocationServiceDelegate {
     func onLocationUpdated(location: CLLocation)
     func onHeadingUpdated(heading: CLHeading)
 }
@@ -21,10 +22,11 @@ protocol LocationServiceDelegate {
 /// and broadcasting these via the default NotificationCenter
 class LocationService : NSObject, MGLLocationManager {
 
-    var delegate: MGLLocationManagerDelegate?
+    weak var delegate: MGLLocationManagerDelegate?
     private let TAG = "LocationService"
     private let KEY_REQUESTING_LOCATION_RECORDING = "KEY_REQUESTING_LOCATION_RECORDING"
-
+    private var trailPathSimulator: TrailPathLocationSimulator?
+    
     var authorizationStatus: CLAuthorizationStatus {
         CLLocationManager.authorizationStatus()
     }
@@ -41,10 +43,22 @@ class LocationService : NSObject, MGLLocationManager {
         requestingLocationUpdates = true
     }
 
+    func updateLocationSimulator(with simulator: TrailPathLocationSimulator) {
+        trailPathSimulator = simulator
+    }
+    
+    func startLocationSimulation() {
+        trailPathSimulator?.start()
+    }
+    
     func stopUpdatingLocation() {
         requestingLocationUpdates = false
     }
 
+    func stopLocationSimulation() {
+        trailPathSimulator?.stop()
+    }
+    
     var headingOrientation: CLDeviceOrientation {
         get {
             locationManager.headingOrientation
@@ -70,35 +84,35 @@ class LocationService : NSObject, MGLLocationManager {
 
     private let notificationCenter = NotificationCenter.default
 
-    private var lastReportedLocation: CLLocation?
-    private var lastReportedHeading: CLHeading?
+    public private(set) var lastReportedLocation: CLLocation?
+    public private(set) var lastReportedHeading: CLHeading?
 
     private(set) var recorder: ITripRecorder!
-
+    
+    private var cancellableRefs = [AnyCancellable]()
+    
     // MARK:- NOTIFICATIONS
 
     public func addLocationUpdateObserver(observer: LocationServiceDelegate) {
-        notificationCenter.addObserver(forName: LocationUpdatedNotification.Name, object: self, queue: nil) { notification in
-            if let notification: LocationUpdatedNotification = notification.getLocationServiceNotification() {
-                observer.onLocationUpdated(location: notification.location)
+        notificationCenter
+            .publisher(for: LocationUpdatedNotification.Name)
+            .sink() { [weak observer] notification in
+                if let notification: LocationUpdatedNotification = notification.getLocationServiceNotification() {
+                    observer?.onLocationUpdated(location: notification.location)
+                }
             }
-        }
-    }
-
-    public func removeLocationUpdateObserver(observer: LocationServiceDelegate) {
-        notificationCenter.removeObserver(observer, name: LocationUpdatedNotification.Name, object: self)
+            .store(in: &cancellableRefs)
     }
 
     public func addHeadingUpdateObserver(observer: LocationServiceDelegate) {
-        notificationCenter.addObserver(forName: HeadingUpdatedNotification.Name, object: self, queue: nil) { notification in
-            if let notification: HeadingUpdatedNotification = notification.getLocationServiceNotification() {
-                observer.onHeadingUpdated(heading: notification.heading)
+        notificationCenter
+            .publisher(for: HeadingUpdatedNotification.Name)
+            .sink() { [weak observer] notification in
+                if let notification: HeadingUpdatedNotification = notification.getLocationServiceNotification() {
+                    observer?.onHeadingUpdated(heading: notification.heading)
+                }
             }
-        }
-    }
-
-    public func removeHeadingUpdateObserver(observer: LocationServiceDelegate) {
-        notificationCenter.removeObserver(observer, name: HeadingUpdatedNotification.Name, object: self)
+            .store(in: &cancellableRefs)
     }
     
     var requestingLocationUpdates: Bool = false
@@ -140,6 +154,13 @@ class LocationService : NSObject, MGLLocationManager {
     private override init() {
         super.init()
         recorder = try! ServiceFactory.getTripRecorder()
+    }
+    
+    public func lastReportedLocationOlderThan(seconds: TimeInterval) -> Bool {
+        guard let lastLocation = lastReportedLocation else {
+            return true
+        }
+        return Date().timeIntervalSince(lastLocation.timestamp) > seconds
     }
 }
 

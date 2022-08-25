@@ -10,6 +10,7 @@ import UIKit
 import AccuTerraSDK
 import SSZipArchive
 import Reachability
+import Combine
 
 class MyTripsViewController: ActivityFeedBaseViewController {
 
@@ -18,33 +19,46 @@ class MyTripsViewController: ActivityFeedBaseViewController {
 
     // MARK:- Properties
     private let TAG = "MyTripsViewController"
+    private var cancellableRefs = [AnyCancellable]()
+    private var requiresReload = false
+    private var reloadTimer: Timer?
     var tripService: ITripRecordingService?
 
     // MARK:- Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        NotificationCenter.default.addObserver(self, selector: #selector(onTripUploadStatusChanged(notification:)), name: TripUploadNotificationName, object: nil)
         
-        NotificationCenter.default.addObserver(self, selector:  #selector(ontTripStatusChanged(notification:)), name: TripRecordingStatusChangeNotification.name, object: nil)
-    }
-
-    deinit {
-        NotificationCenter.default.removeObserver(self)
+        NotificationCenter.default
+            .publisher(for: TripUploadNotificationName)
+            .receive(on: DispatchQueue.main)
+            .sink() { [weak self] notification in
+                self?.onTripUploadStatusChanged(notification: notification)
+            }
+            .store(in: &cancellableRefs)
+        
+        NotificationCenter.default
+            .publisher(for: TripRecordingStatusChangeNotification.name)
+            .receive(on: DispatchQueue.main)
+            .sink() { [weak self] notification in
+                self?.onTripUploadStatusChanged(notification: notification)
+            }
+            .store(in: &cancellableRefs)
+        
+        reloadTimer = Timer.scheduledTimer(timeInterval: 30, target: self, selector: #selector(reloadTripsOnTimer), userInfo: nil, repeats: true)
+        self.loadTrips(forceReload: true)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setUpNavBar()
     }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        loadTrips(forceReload: true)
-        super.viewDidAppear(animated)
-    }
 
+    deinit {
+        reloadTimer?.invalidate()
+    }
+    
     // MARK:- IBActions
     @IBAction func sourceSwitchValueChanged() {
-        setUpNavBar()
         self.loadTrips(forceReload: true)
     }
 
@@ -53,6 +67,13 @@ class MyTripsViewController: ActivityFeedBaseViewController {
         if let vc = UIStoryboard(name: "Main", bundle: nil) .
         instantiateViewController(withIdentifier: "RecordNewTripChooseVC") as? RecordNewTripChooseViewController {
             self.navigationController?.pushViewController(vc, animated: true)
+        }
+    }
+    
+    @objc func reloadTripsOnTimer() {
+        if sourceSwitch.isOn && requiresReload {
+            self.loadTrips(forceReload: true)
+            requiresReload = false
         }
     }
 
@@ -74,7 +95,7 @@ class MyTripsViewController: ActivityFeedBaseViewController {
             self.sourceSwitch.isEnabled = true
             reloadTableData()
         } else {
-            if (isOnline) {
+            if NetworkUtils.shared.isOnline() {
                 // Check if not already loaded
                 
                 if let listItems = self.listItems, listItems.contains(where: { (item) -> Bool in
@@ -88,10 +109,10 @@ class MyTripsViewController: ActivityFeedBaseViewController {
                 // Online
                 self.listItems = [ActivityFeedItem]()
                 tableView.reloadData()
-                let criteria = GetMyActivityFeedCriteria() // Default criteria
-                loadOnlineTrips(criteria: criteria) {
-                    self.reloadTableData()
-                    self.sourceSwitch.isEnabled = true
+                let criteria = GetMyActivityFeedCriteria(includeExtProperties: true, workflowStatus: [.PUBLISHED]) // Default criteria
+                loadOnlineTrips(criteria: criteria) {[weak self] in
+                    self?.reloadTableData()
+                    self?.sourceSwitch.isEnabled = true
                 }
             } else {
                 self.listItems = [ActivityFeedItem]()
@@ -134,24 +155,18 @@ class MyTripsViewController: ActivityFeedBaseViewController {
     }
     
     func setUpNavBar() {
-        if sourceSwitch.isOn {
-            let buttonAdd = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(self.buttonAddTapped))
-            
-            self.homeNavItem?.setRightBarButtonItems([buttonAdd], animated: false)
-        } else {
-            self.homeNavItem?.setRightBarButtonItems([], animated: false)
-        }
+        let buttonAdd = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(self.buttonAddTapped))
+        
+        self.homeNavItem?.setRightBarButtonItems([buttonAdd], animated: false)
     }
     
     // MARK:- Notifications
     
-    @objc func onTripUploadStatusChanged(notification: Notification) {
-        if sourceSwitch.isOn {
-            self.loadTrips(forceReload: true)
-        }
+    private func onTripUploadStatusChanged(notification: Notification) {
+        requiresReload = true
     }
     
-    @objc func ontTripStatusChanged(notification: Notification) {
+    private func ontTripStatusChanged(notification: Notification) {
         if let statusChange = notification.userInfo?[TripRecordingStatusChangeNotification.name.rawValue] as? TripRecordingStatusChange {
             Log.d(TAG, statusChange.compositeId.description)
             Log.d(TAG, statusChange.status.name)

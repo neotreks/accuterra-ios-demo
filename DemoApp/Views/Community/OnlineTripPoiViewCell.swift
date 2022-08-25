@@ -17,7 +17,12 @@ class OnlineTripPoiViewCell: UITableViewCell {
     
     func bindView(tripPoint: TripPoint) {
         self.poiTypeLabel.text = tripPoint.pointType.code.uppercased()
-        self.poiNameLabel.text = tripPoint.name
+        if let distanceMarker = tripPoint.distanceMarker, distanceMarker > 0 {
+            self.poiNameLabel.text = (tripPoint.name  ?? "") + " [\(DistanceFormatter.formatDistance(distanceInMeters: distanceMarker))]"
+        }
+        else {
+            self.poiNameLabel.text = tripPoint.name
+        }
         self.poiDescriptionLabel.text = tripPoint.description
     }
 

@@ -50,7 +50,7 @@ class DrivingViewController: BaseTripRecordingViewController {
             case .NAVIGATING:
                 showNextWayPointLabels(situation: navigatorStatus.nextWayPoint!)
                 do {
-                    try mapView.trailLayersManager.highlightPOI(poiId: navigatorStatus.nextWayPoint!.trailPOI?.id)
+                    try mapView.trailLayersManager.highlightPOI(poiId: navigatorStatus.nextWayPoint!.trailPOI.id)
                 } catch {
                     showError(error)
                 }
@@ -64,8 +64,9 @@ class DrivingViewController: BaseTripRecordingViewController {
         }
     }
 
-    var trailNavigator: ITrailNavigator?
-
+    private var trailNavigator: ITrailNavigator?
+    private var trailDrive: TrailDrive?
+    
     private lazy var sortedWayPoints = [TrailDriveWaypoint]()
     private var nextExpectedWayPoint: TrailDriveWaypoint? = nil
     var waypointsListView: WaypointListView = UIView.fromNib()
@@ -73,7 +74,6 @@ class DrivingViewController: BaseTripRecordingViewController {
 
     // MARK:- Lifecycle
     override func viewDidLoad() {
-        super.viewDidLoad()
         self.title = "Driving Mode"
 
         let item = UIBarButtonItem(title: "Close", style: .plain, target: self, action: #selector(close))
@@ -91,9 +91,10 @@ class DrivingViewController: BaseTripRecordingViewController {
         self.wrongDirectionLabel.isHidden = true
         self.contentView.isHidden = true
         self.expandButton.isSelected = false
-
+        simulateTrailPath =  Bundle.main.infoDictionary?["SIMULATE_TRAIL_PATH"] as? Bool ?? false
+        
         super.viewDidLoad()
-
+    
         setupMap()
     }
 
@@ -129,6 +130,15 @@ class DrivingViewController: BaseTripRecordingViewController {
         waypointsListView.delegate = self
     }
 
+    override func getTrailDrive() -> TrailDrive? {
+        guard let trailId = trailId else {
+            return nil
+        }
+        let trailService = ServiceFactory.getTrailService()
+        // Use the first drive for now. Later allow user to select which one
+        return try? trailService.getTrailDrives(trailId).first
+    }
+    
     private func showNextWayPointLabels(situation: NextWayPoint) {
 
         var direction: TrailNavigator.Direction? = nil
@@ -142,12 +152,12 @@ class DrivingViewController: BaseTripRecordingViewController {
             distance = situation.distance
         }
 
-        showNextWayPointToolbar(direction: direction, distance: distance, title: situation.trailPOI?.point.name ?? "End")
+        showNextWayPointToolbar(direction: direction, distance: distance, title: situation.trailPOI.point.name ?? "End")
         displayNextNextPoiInfo(situation: situation)
     }
 
     private func showNavigationFinishedLabels(situation: NextWayPoint) {
-        showNextWayPointToolbar(direction: TrailNavigator.Direction.AT_POINT, distance: nil, title: situation.trailPOI?.point.name ?? "End")
+        showNextWayPointToolbar(direction: TrailNavigator.Direction.AT_POINT, distance: nil, title: situation.trailPOI.point.name ?? "End")
     }
 
     private func showNextWayPointToolbar(direction: TrailNavigator.Direction?,
@@ -162,7 +172,8 @@ class DrivingViewController: BaseTripRecordingViewController {
                 self.directionImageView.image = UIImage(systemName: "arrow.up")
             case .BACKWARD:
                 self.directionImageView.image = UIImage(systemName: "arrow.down")
-
+            @unknown default:
+                return
             }
         } else {
             self.directionImageView.image = nil
@@ -185,7 +196,7 @@ class DrivingViewController: BaseTripRecordingViewController {
         }
         // Scroll to nex position if possible
         guard let selectedIndex = waypoints.firstIndex(where: { (wp) -> Bool in
-            return wp.id == situation.trailPOI?.id
+            return wp.id == situation.trailPOI.id
         }) else {
             // Nothing is selected -> nothing to display
             nextNextNextPoiDistanceLabel.text = ""
@@ -274,23 +285,32 @@ class DrivingViewController: BaseTripRecordingViewController {
             showError(error)
         }
     }
-    
     private func initializeTrailNavigator(trailId: Int64) throws {
         let trailService = ServiceFactory.getTrailService()
         // Use the first drive for now. Later allow user to select which one
         let drive = try trailService.getTrailDrives(trailId).first
         if let firstDrive = drive  {
             let service = ServiceFactory.getTrailNavigatorService()
-            self.trailNavigator = try service.getTrailNavigator(trailDrive: firstDrive)
+            var navigator = try service.getTrailNavigator(trailDrive: firstDrive)
+            self.trailNavigator = navigator
             self.trailNavigator?.delegate = self
+            if let lastKnownLocation = LocationService.shared.lastReportedLocation {
+                if let nextWaypoint = try navigator.findPossibleNextWayPoints(location: lastKnownLocation).first {
+                    navigator.nextExpectedWayPoint = nextWaypoint
+                }
+            }
+
             self.waypointsListView.loadWaypoints(trailDrive: firstDrive)
             if let nextExpectedWayPoint = self.trailNavigator?.nextExpectedWayPoint {
                 // restore the navigator
                 self.nextExpectedWayPoint = nextExpectedWayPoint
             }
-        }
-        else {
-            throw "Trail path not found".toError()
+            else {
+                throw "Trail path not found".toError()
+            }
+            if let lastKnownLocation = LocationService.shared.lastReportedLocation {
+                try trailNavigator?.evaluateLocation(location: lastKnownLocation)
+            }
         }
     }
 
@@ -330,11 +350,11 @@ extension DrivingViewController {
         self.navigatorStatus = status
 
         if let nextWaypoint = status.nextWayPoint {
-            let isNewWayPoint = self.nextExpectedWayPoint?.id != status.nextWayPoint?.trailPOI?.id
+            let isNewWayPoint = self.nextExpectedWayPoint?.id != status.nextWayPoint?.trailPOI.id
             self.nextExpectedWayPoint = status.nextWayPoint?.trailPOI
 
             if (isNewWayPoint && waypointListSliderMode != .minimum) {
-                waypointsListView.selectWaypointPoint(waypointId: nextWaypoint.trailPOI?.id)
+                waypointsListView.selectWaypointPoint(waypointId: nextWaypoint.trailPOI.id)
             }
         }
     }
@@ -391,6 +411,4 @@ extension DrivingViewController : WaypointListViewDelegate {
             }
         }
     }
-    
 }
-

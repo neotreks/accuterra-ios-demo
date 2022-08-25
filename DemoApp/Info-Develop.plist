@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>AccuTerraEnvironment</key>
+	<string>Develop</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -18,12 +20,6 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
-	<key>HERE_APPCODE</key>
-	<string></string>
-	<key>HERE_APPID</key>
-	<string></string>
-	<key>LSApplicationCategoryType</key>
-	<string></string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MGLMapboxMetricsEnabledSettingShownInApp</key>
@@ -36,6 +32,8 @@
 	<string>The AccuTerra Demo App needs your location to display it on the map.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Add images to your trip.</string>
+	<key>SIMULATE_TRAIL_PATH</key>
+	<false/>
 	<key>UIAppFonts</key>
 	<array>
 		<string>fa-regular-400.ttf</string>
@@ -92,6 +90,8 @@
 	<string></string>
 	<key>WS_AUTH_URL</key>
 	<string>https://dev.accuterra.com/auth/</string>
+	<key>MGLMapboxAccessToken</key>
+	<string></string>
 	<key>WS_BASE_URL</key>
 	<string>https://dev.accuterra.com:443/api/</string>
 </dict>

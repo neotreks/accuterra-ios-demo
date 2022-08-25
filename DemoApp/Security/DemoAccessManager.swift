@@ -11,14 +11,12 @@ import ObjectMapper
 import AccuTerraSDK
 
 /**
-* Class for managing access to AccuTerra services
-*/
-class DemoAccessManager : IAccessProvider {
-    private var clientCredentials: ClientCredentials
+ * Class for managing access to AccuTerra services using credentials
+ */
+class DemoCredentialsAccessManager : ICredentialsAccessProvider {
+    private(set) var clientCredentials: ClientCredentials
     
-    public static var shared: DemoAccessManager = {
-        DemoAccessManager()
-    }()
+    public static let shared = DemoCredentialsAccessManager()
     
     private init() {
         guard let WS_AUTH_CLIENT_ID = Bundle.main.infoDictionary?["WS_AUTH_CLIENT_ID"] as? String, WS_AUTH_CLIENT_ID.count > 0 else {
@@ -32,11 +30,20 @@ class DemoAccessManager : IAccessProvider {
         clientCredentials = ClientCredentials(clientId: WS_AUTH_CLIENT_ID, clientSecret: WS_AUTH_CLIENT_SECRET)
     }
     
-    func getClientLogin() -> ClientCredentials {
-        return clientCredentials
-    }
-    
     func resetToken(callback: @escaping () -> Void, errorHandler: @escaping (Error) -> Void) {
         SdkManager.shared.resetAccessToken(callback: callback, errorHandler: errorHandler)
+    }
+}
+
+/**
+ * Class for managing access to AccuTerra services by providing the token
+ */
+class DemoTokenAccessManager : ITokenAccessProvider {
+    func getAccessToken(completion: (String?) -> Void) {
+        fatalError("getAccessToken not implemented")
+    }
+    
+    func refreshAccessToken(completion: (String?) -> Void) {
+        fatalError("refreshAccessToken not implemented")
     }
 }

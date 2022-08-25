@@ -35,9 +35,12 @@ extension UIViewController {
         Log.e("", "\(error)")
     }
     
-    func showInfo(_ text: String) {
+    func showInfo(_ text: String, _ handler: (() -> Void)? = nil) {
         let alert = UIAlertController(title: text, message: "", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {
+            action in
+            handler?()
+        }))
         self.present(alert, animated: false, completion: nil)
     }
 }

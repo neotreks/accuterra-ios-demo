@@ -52,12 +52,14 @@ class OfflineMapTableViewCell: UITableViewCell {
 
         var description = ""
         switch offlineMap.status {
-            case .COMPLETE:
-               description = "\(size) - \(styles)"
+        case .COMPLETE:
+            description = "\(size) - \(styles)"
         case .FAILED:
-                description = "Download Error"
+            description = "Download Error"
         case .PAUSED:
-                description = "Paused"
+            description = "Paused"
+        case .WAITING:
+            description = "Queued"
         default:
             description = "Downloading \(Int(offlineMap.progress * 100))%"
         }

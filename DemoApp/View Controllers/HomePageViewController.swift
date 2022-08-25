@@ -27,6 +27,8 @@ protocol HomePageViewControllerDelegate: AnyObject {
     ///   - index: the index of the currently visible page.
     func homePageViewController(homePageViewController: HomeViewController,
                                 didUpdatePageIndex index: Int)
+    
+    func updateSelection(task: TaskTypes)
 }
 
 // MARK:- Class
@@ -35,6 +37,7 @@ class HomePageViewController: UIPageViewController {
     // MARK:- Properties
     weak var homeDelegate: HomePageViewControllerDelegate?
     weak var homeNavItem: UINavigationItem?
+    var checkingForUpdatesDialog: BlockingProgressViewController?
     
     private(set) lazy var orderedViewControllers: [UIViewController] = {
         return [
@@ -51,7 +54,14 @@ class HomePageViewController: UIPageViewController {
 
         dataSource = self
         delegate = self
-        
+        handleLaunchMode()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+    }
+    
+    private func load() {
         // By default Mapbox is limitting max tiles count to 6000. If you are using AccuTerra SDK to download Mapbox tiles
         // you should get approval from Mapbox to increase this value
         MGLOfflineStorage.shared.setMaximumAllowedMapboxTiles(UInt64(Int.max))
@@ -66,20 +76,26 @@ class HomePageViewController: UIPageViewController {
             self.goToDownload()
         } else {
             // Init the SDK. Since DB was downloaded already there will be no download now.
+
+            if NetworkUtils.shared.isOnline() {
+                if let dialog = AlertUtils.buildBlockingProgressValueDialog() {
+                    dialog.title = "Checking for updates"
+                    dialog.style = .loadingIndicator
+                    self.present(dialog, animated: false, completion: nil)
+                    self.checkingForUpdatesDialog = dialog
+                }
+            }
+
             self.initSdk()
         }
         
         self.isPagingEnabled = false
     }
-
-    required init?(coder: NSCoder) {
-        super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-    }
     
     private func initSdk() {
         SdkManager.shared.initSdkAsync(
             config: demoAppSdkConfig,
-            accessProvider: DemoAccessManager.shared,
+            accessProvider: DemoCredentialsAccessManager.shared,
             identityProvider: DemoIdentityManager.shared,
             delegate: self,
             dbEncryptConfigProvider: DemoDbEncryptProvider())
@@ -96,11 +112,44 @@ class HomePageViewController: UIPageViewController {
     }
     
     func goToTrailsDiscovery() {
-        EnumUtil.cacheEnums()
         let initialViewController = orderedViewControllers[UIUtils.getIndexFromTask(task: .discover)]
         scrollToViewController(viewController: initialViewController)
     }
 
+    func goToTrailCollectionScreen() {
+        let initialViewController = orderedViewControllers[UIUtils.getIndexFromTask(task: .mytrips)]
+        scrollToViewController(viewController: initialViewController)
+        if let vc = UIStoryboard(name: "Main", bundle: nil) .
+            instantiateViewController(withIdentifier: "TrailCollectionVC") as? TrailCollectionViewController {
+            vc.title = "Trail Collection Mode"
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+    }
+    
+    private func handleLaunchMode() {
+        if UserDefaults.standard.object(forKey: SettingsViewController.trailCollectionModeKey) == nil {
+            AlertUtils.showPrompt(viewController: self, title: "", message: "Would you like to launch the app in trail collection mode? You can change the mode at any time under Profile -> Settings.", confirmHandler: {
+                self.load()
+                self.homeDelegate?.updateSelection(task: .mytrips)
+                UserDefaults.standard.set(true, forKey: SettingsViewController.trailCollectionModeKey)
+            }, cancelHandler: {
+                self.load()
+                self.homeDelegate?.updateSelection(task: .discover)
+                UserDefaults.standard.set(false, forKey: SettingsViewController.trailCollectionModeKey)
+            })
+        }
+        else {
+            self.load()
+            let launchInCollectionMode = (UserDefaults.standard.object(forKey: SettingsViewController.trailCollectionModeKey) as? Bool) ?? false
+            if launchInCollectionMode {
+                homeDelegate?.updateSelection(task: .mytrips)
+            }
+            else {
+                homeDelegate?.updateSelection(task: .discover)
+            }
+        }
+    }
+    
     /// Scrolls to the view controller at the given index. Automatically calculates the direction.
     ///
     /// - Parameter newIndex: the new index to scroll to
@@ -237,15 +286,24 @@ extension HomePageViewController : SdkInitDelegate, DownloadViewControllerDelega
                 }
                 
                 taskBar?.isUserInteractionEnabled = true
-                // Initially select Discover tab
-                self.goToTrailsDiscovery()
+            
+                if UserDefaults.standard.bool(forKey: SettingsViewController.trailCollectionModeKey) {
+                    self.goToTrailCollectionScreen()
+                }
+                else {
+                    self.goToTrailsDiscovery()
+                }
                 
                 let service = ServiceFactory.getUploadService()
                 service.resumeUploadQueue()
+                self.checkingForUpdatesDialog?.dismiss(animated: false, completion: nil)
+                self.checkingForUpdatesDialog = nil
                 
             case .FAILED(let error):
                 taskBar?.isUserInteractionEnabled = true
                 self.displaySdkInitError(error)
+                self.checkingForUpdatesDialog?.dismiss(animated: false, completion: nil)
+                self.checkingForUpdatesDialog = nil
             case .IN_PROGRESS:
                 taskBar?.isUserInteractionEnabled = false
             default:

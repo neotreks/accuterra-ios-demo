@@ -86,7 +86,8 @@ class TrailListView: UIView {
                     userRating: userRatingSearchCriteria,
                     length: lengthSearchCriteria,
                     orderBy: OrderByBuilder.build(),
-                    limit: try QueryLimitBuilder.build())
+                    limit: try QueryLimitBuilder.build(),
+                    trailSearchType: .BY_TRAIL_BOUNDS)
                 self.trails = try trailsService!.findTrails(byMapBoundsCriteria: searchCriteria)
                 self.tableView.reloadData()
             } else {
