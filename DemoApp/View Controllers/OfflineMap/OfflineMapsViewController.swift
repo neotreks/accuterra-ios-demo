@@ -239,65 +239,66 @@ extension OfflineMapsViewController: OfflineMapTableViewCellDelegate {
     
     /// Removes current offline map and creates it again
     private func updateOfflineMap(offlineMap: IOfflineMap) {
-        tryOrShowError {
-            let progressDialog = AlertUtils.buildBlockingProgressValueDialog()!
-            progressDialog.style = .loadingIndicator
-            progressDialog.title = "Updating Offline Map"
-            
-            self.present(progressDialog, animated: false) {
-                OfflineMapManager.shared.deleteOfflineMap(offlineMapId: offlineMap.offlineMapId) {
-                    // Download it again
-                    switch offlineMap.type {
-                    case .AREA:
-                        if let areaOfflineMap = offlineMap as? IAreaOfflineMap {
-                            OfflineMapManager.shared.downloadAreaOfflineMap(
-                                bounds: areaOfflineMap.bounds,
-                                areaName: areaOfflineMap.areaName,
-                                includeImagery: areaOfflineMap.containsImagery) { (newMap) in
-                                
+        let progressDialog = AlertUtils.buildBlockingProgressValueDialog()!
+        progressDialog.style = .loadingIndicator
+        progressDialog.title = "Updating Offline Map"
+
+        self.present(progressDialog, animated: false) {
+            OfflineMapManager.shared.deleteOfflineMap(offlineMapId: offlineMap.offlineMapId) { error in
+                if let error = error {
+                    progressDialog.dismiss(animated: false, completion: nil)
+                    self.showError(error)
+                    return
+                }
+                // Download it again
+                switch offlineMap.type {
+                case .AREA:
+                    if let areaOfflineMap = offlineMap as? IAreaOfflineMap {
+                        OfflineMapManager.shared.downloadAreaOfflineMap(
+                            bounds: areaOfflineMap.bounds,
+                            areaName: areaOfflineMap.areaName,
+                            includeImagery: areaOfflineMap.containsImagery) { result in
                                 executeBlockOnMainThread {
-                                    progressDialog.dismiss(animated: false, completion: nil)
-                                    self.loadOfflineMaps()
-                                }
-                            } errorHandler: { (error) in
-                                executeBlockOnMainThread {
-                                    progressDialog.dismiss(animated: false, completion: nil)
-                                    self.showError(error)
+                                    switch result {
+                                    case .success(_):
+                                        progressDialog.dismiss(animated: false, completion: nil)
+                                        self.loadOfflineMaps()
+                                    case .failure(let error):
+                                        progressDialog.dismiss(animated: false, completion: nil)
+                                        self.showError(error)
+                                    }
                                 }
                             }
-                        }
-                    case .OVERLAY:
-                        OfflineMapManager.shared.downloadOverlayOfflineMap { (newMap) in
-                            executeBlockOnMainThread {
+                    }
+                case .OVERLAY:
+                    OfflineMapManager.shared.downloadOverlayOfflineMap(includeImagery: true) { result in
+                        executeBlockOnMainThread {
+                            switch result {
+                            case .success(_):
                                 progressDialog.dismiss(animated: false, completion: nil)
                                 self.loadOfflineMaps()
-                            }
-                        } errorHandler: { (error) in
-                            executeBlockOnMainThread {
+                            case .failure(let error):
                                 progressDialog.dismiss(animated: false, completion: nil)
                                 self.showError(error)
                             }
                         }
-                    case .TRAIL:
-                        if let trailOfflineMap = offlineMap as? ITrailOfflineMap {
-                            OfflineMapManager.shared.downloadTrailOfflineMap(
-                                trailId: trailOfflineMap.trailId, includeImagery: true, downloadTrailMedia: trailOfflineMap.downloadTrailMedia) { (newMap) in
-                                
+                    }
+                case .TRAIL:
+                    if let trailOfflineMap = offlineMap as? ITrailOfflineMap {
+                        OfflineMapManager.shared.downloadTrailOfflineMap(
+                            trailId: trailOfflineMap.trailId, includeImagery: true, downloadTrailMedia: trailOfflineMap.downloadTrailMedia) { result in
                                 executeBlockOnMainThread {
-                                    progressDialog.dismiss(animated: false, completion: nil)
-                                    self.loadOfflineMaps()
-                                }
-                            } errorHandler: { (error) in
-                                executeBlockOnMainThread {
-                                    progressDialog.dismiss(animated: false, completion: nil)
-                                    self.showError(error)
+                                    switch result {
+                                    case .success(_):
+                                        progressDialog.dismiss(animated: false, completion: nil)
+                                        self.loadOfflineMaps()
+                                    case .failure(let error):
+                                        progressDialog.dismiss(animated: false, completion: nil)
+                                        self.showError(error)
+                                    }
                                 }
                             }
-                        }
                     }
-                } errorHandler: { (error) in
-                    progressDialog.dismiss(animated: false, completion: nil)
-                    self.showError(error)
                 }
             }
         }
@@ -369,14 +370,16 @@ extension OfflineMapsViewController: OfflineMapTableViewCellDelegate {
         progressDialog.style = .loadingIndicator
         progressDialog.title = "Canceling Download"
         self.present(progressDialog, animated: false) {
-            OfflineMapManager.shared.deleteOfflineMap(offlineMapId: offlineMapId) {
+            OfflineMapManager.shared.deleteOfflineMap(offlineMapId: offlineMapId) { error in
                 executeBlockOnMainThread {
-                    self.loadOfflineMaps()
-                    progressDialog.dismiss(animated: false, completion: nil)
+                    if let error = error {
+                        progressDialog.dismiss(animated: false, completion: nil)
+                        self.showError(error)
+                    } else {
+                        self.loadOfflineMaps()
+                        progressDialog.dismiss(animated: false, completion: nil)
+                    }
                 }
-            } errorHandler: { (error) in
-                progressDialog.dismiss(animated: false, completion: nil)
-                self.showError(error)
             }
         }
     }

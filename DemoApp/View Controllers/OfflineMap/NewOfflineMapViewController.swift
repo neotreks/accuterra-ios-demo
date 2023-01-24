@@ -132,23 +132,27 @@ class NewOfflineMapViewController: BaseViewController {
                     OfflineMapManager.shared.downloadAreaOfflineMap(
                         bounds: mapBounds,
                         areaName: name,
-                        includeImagery: includeImagry) { (offlineMap) in
-                    
-                        // Return to OfflineMaps activity
-                        self.navigationController?.popViewController(animated: true)
-                    } errorHandler: { (error) in
-                        self.showError(error)
-                        self.downloadButton.isEnabled = true
-                    }
+                        includeImagery: includeImagry) { result in
+                            switch result {
+                            case .success(_):
+                                // Return to OfflineMaps activity
+                                self.navigationController?.popViewController(animated: true)
+                            case .failure(let error):
+                                self.showError(error)
+                                self.downloadButton.isEnabled = true
+                            }
+                        }
                 }
                 
                 // If this is edit, then delete the previous map
                 if let editOfflineMapId = self.editOfflineMapId {
-                    OfflineMapManager.shared.deleteOfflineMap(offlineMapId: editOfflineMapId) {
-                        downloadInternal()
-                    } errorHandler: { (error) in
-                        self.showError(error)
-                        self.downloadButton.isEnabled = true
+                    OfflineMapManager.shared.deleteOfflineMap(offlineMapId: editOfflineMapId) { error in
+                        if let error = error {
+                            self.showError(error)
+                            self.downloadButton.isEnabled = true
+                        } else {
+                            downloadInternal()
+                        }
                     }
                 } else {
                     downloadInternal()

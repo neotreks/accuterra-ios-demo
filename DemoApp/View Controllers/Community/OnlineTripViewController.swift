@@ -128,10 +128,11 @@ class OnlineTripViewController: UIViewController {
         }
         
         let service = ServiceFactory.getTripService()
-        service.getTrip(tripUuid: tripUuid, callback: { (result) in
+        service.getTrip(tripUuid: tripUuid, completion: { result in
             self.loadingView.isHidden = true
-            if result.isSuccess {
-                self.trip = result.value!
+            switch result {
+            case .success(let value):
+                self.trip = value
                 self.userData = SetTripLikedResult(tripUuid: self.trip!.info.uuid, userLike: self.trip!.userInfo.userLike ?? false, likes: self.trip!.likesCount)
                 self.fillTripData()
                 self.setUpNavBar()
@@ -144,7 +145,7 @@ class OnlineTripViewController: UIViewController {
                 }
                 self.tripMedia = self.trip!.media + poiMedia
                 self.tripPhotoCollection.reloadData()
-            } else {
+            case .failure(_):
                 let errorMessage = "Error while loading trip: \(tripUuid), \(result.buildErrorMessage() ?? "unknown")}"
                 self.showError(errorMessage.toError())
             }
@@ -158,15 +159,12 @@ class OnlineTripViewController: UIViewController {
         do {
             let service = ServiceFactory.getTripService()
             let criteria = try GetTripCommentsCriteriaBuilder.build(tripUuid: tripUuid)
-            service.getTripComments(criteria: criteria) { (result) in
-                if result.isSuccess {
-                    if let value = result.value {
-                        self.comments = value.comments
-                    } else {
-                        self.showError("No value in trip comments result.".toError())
-                    }
+            service.getTripComments(criteria: criteria) { result in
+                switch result {
+                case .success(let value):
+                    self.comments = value.comments
                     self.tripCommentsTableView.reloadData()
-                } else {
+                case .failure(_):
                     let errorMessage = "Error while loading trip comments: \(tripUuid), \(result.buildErrorMessage() ?? "unknown")"
                     self.showError(errorMessage.toError())
                 }
@@ -342,11 +340,12 @@ class OnlineTripViewController: UIViewController {
         self.present(dialog, animated: false)
 
         let service = ServiceFactory.getTripService()
-        service.promoteTripToTrail(tripUuid: tripUuid, callback: { (result) in
+        service.promoteTripToTrail(tripUuid: tripUuid, completion: { result in
             dialog.dismiss(animated: false, completion: nil)
-            if (result.isSuccess) {
-                self.showInfo("Trip trip was promoted to state: \(result.value?.promotionState.getName() ?? "Unknown")")
-            } else {
+            switch result {
+            case .success(let value):
+                self.showInfo("Trip trip was promoted to state: \(value.promotionState.getName())")
+            case .failure(_):
                 self.showError((result.buildErrorMessage() ?? "Unknown error").toError())
             }
         })
@@ -399,7 +398,7 @@ class OnlineTripViewController: UIViewController {
         self.present(dialog, animated: false)
 
         let service = ServiceFactory.getTripService()
-        service.deleteTrip(tripUuid: tripUuid, callback: { (result) in
+        service.deleteTrip(tripUuid: tripUuid, completion: { result in
             dialog.dismiss(animated: false, completion: nil)
             if (result.isSuccess) {
                 // Close the screen

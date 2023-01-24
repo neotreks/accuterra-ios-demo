@@ -65,10 +65,11 @@ class NewCommentViewController: UIViewController {
         let service = ServiceFactory.getTripService()
         service.postTripComment(commentRequest: commentRequest) { (result) in
             dialog.dismiss(animated: false, completion: nil)
-            if (result.isSuccess) {
-                self.delegate?.didAddNewComment(commentsCount: result.value?.commentsCount)
+            switch result {
+            case .success(let value):
+                self.delegate?.didAddNewComment(commentsCount: value.commentsCount)
                 self.navigationController?.popViewController(animated: true)
-            } else {
+            case .failure(_):
                 self.showError(("Cannot add a comment because of: \(result.buildErrorMessage() ?? "unknown")").toError())
             }
         }

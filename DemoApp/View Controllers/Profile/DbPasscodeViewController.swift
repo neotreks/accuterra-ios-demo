@@ -74,21 +74,23 @@ class DbPasscodeViewController: BaseViewController {
                 dbDomain: .TRIP,
                 oldPasscode: oldPasscode.data(using: .utf8) ?? Data(),
                 dbEncryptConfigProvider: passcodeProvider,
-                callback: { () in
-                    progress.dismiss(animated: false) {
-                        AlertUtils.showAlert(viewController: self, title: "New Passcode Set", message: "")
-                        // Save passcode - this is just demo so we can save it into preferences
-                        UserDefaults.standard.set(newPasscode, forKey: UserSettingsViewController.KEY_TRIP_DB_PASSCODE)
-                        
-                        // Now remove the temporary passcode from the provider so the passcode is not visible for anyone else
-                        passcodeProvider.discardPassword()
-                        
-                        self.refreshPasscode()
-                    }
-                },
-                errorHandler: { (error) in
-                    progress.dismiss(animated: false) {
-                        self.showError(error)
+                completion: { result in
+                    switch result {
+                    case .success(_):
+                        progress.dismiss(animated: false) {
+                            AlertUtils.showAlert(viewController: self, title: "New Passcode Set", message: "")
+                            // Save passcode - this is just demo so we can save it into preferences
+                            UserDefaults.standard.set(newPasscode, forKey: UserSettingsViewController.KEY_TRIP_DB_PASSCODE)
+
+                            // Now remove the temporary passcode from the provider so the passcode is not visible for anyone else
+                            passcodeProvider.discardPassword()
+
+                            self.refreshPasscode()
+                        }
+                    case .failure(let error):
+                        progress.dismiss(animated: false) {
+                            self.showError(error)
+                        }
                     }
                 })
         }

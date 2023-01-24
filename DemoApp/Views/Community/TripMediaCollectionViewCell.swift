@@ -33,9 +33,11 @@ class TripMediaCollectionViewCell: UICollectionViewCell {
         self.media = media
         
         mediaLoader = MediaLoaderFactory.tripMediaLoader(media: media, variant: mediaVariant) 
-        mediaLoader?.load(callback: { [weak self] (mediaLoader, image) in
-            if let loader = self?.mediaLoader, mediaLoader.isEqual(loader: loader) {
-                self?.imageView.image = image ?? UIImage(systemName: "bolt.horizontal.circle")
+        mediaLoader?.load(completion: { [weak self] result in
+            if case let .success(value) = result {
+                if let loader = self?.mediaLoader, loader.isEqual(loader: value.0) {
+                    self?.imageView.image = value.1 ?? UIImage(systemName: "bolt.horizontal.circle")
+                }
             }
         })
         

@@ -144,27 +144,28 @@ class TrailListView: UIView {
         
         let service = ServiceFactory.getTrailService()
         do {
-            try service.updateTrailDb { (progress) in
+            service.updateTrailDb { (progress) in
                 dialog.progress = Float(progress.fractionCompleted)
-            } callback: { result in
-                if result.value?.hasChangeActions() == true {
+            } completion: { result in
+                switch result {
+                case .success(_):
                     delegate.reloadLayers()
                     delegate.handleMapViewChanged()
-                }
-                dialog.dismiss(animated: false, completion: nil)
-                if result.isSuccess {
-                    if result.value?.hasChangeActions() == true {
-                        delegate.showInfo("Trail DB updated (\(result.value?.changedTrailsCount() ?? 0)).")
+                    dialog.dismiss(animated: false, completion: nil)
+                    if case let .success(value) = result {
+                        if value.hasChangeActions() {
+                            delegate.showInfo("Trail DB updated (\(value.changedTrailsCount())).")
+                        } else {
+                            delegate.showInfo("There were no updates of the Trail DB.")
+                        }
                     } else {
-                        delegate.showInfo("There were no updates of the Trail DB.")
+                        delegate.showError("Trails update failed. \(result.buildErrorMessage() ?? "unknown")".toError())
                     }
-                } else {
-                    delegate.showError("Trails update failed. \(result.buildErrorMessage() ?? "unknown")".toError())
+                case .failure(let error):
+                    dialog.dismiss(animated: false, completion: nil)
+                    delegate.showError(error)
                 }
             }
-        } catch {
-            dialog.dismiss(animated: false, completion: nil)
-            delegate.showError(error)
         }
     }
 }

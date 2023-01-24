@@ -55,7 +55,7 @@ class CommunityFeedViewController: ActivityFeedBaseViewController {
     private func loadCommunityTrips(criteria: GetCommunityFeedCriteria, callback: @escaping () -> Void) {
         let service = ServiceFactory.getTripService()
         service.getCommunityFeed(criteria: criteria) { result in
-            if let value = result.value, result.isSuccess {
+            if case let .success(value) = result {
                 let trips = self.convertToFeedItem(trips: value.entries)
                 self.listItems = trips
                 callback()

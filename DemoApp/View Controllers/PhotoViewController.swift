@@ -26,9 +26,11 @@ class PhotoViewController : UIViewController {
         }
         
         activityIndicator.startAnimating()
-        mediaLoader.load { [weak self] (mediaLoader, image) in
-            self?.activityIndicator.stopAnimating()
-            self?.imageView.image = image
+        mediaLoader.load { [weak self] result in
+            if case let .success(value) = result {
+                self?.activityIndicator.stopAnimating()
+                self?.imageView.image = value.1
+            }
         }
     }
 }
