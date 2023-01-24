@@ -457,18 +457,20 @@ extension DiscoverViewController : AccuTerraMapViewDelegate {
     /// Checks if overlay is cached and prompts user to download the overlay.
     func checkOverlayMapCache() throws {
         let status = try OfflineMapManager.shared.getOverlayOfflineMap()?.status ?? .NOT_CACHED
-        
+
         if status == .NOT_CACHED || status == .FAILED {
             let estimatedBytes: Int64 = (try? OfflineMapManager.shared.estimateOverlayCacheSize().totalSize) ?? 0
             AlertUtils.showPrompt(viewController: self, title: "Download", message: "Would you like to download Overlay map cache (~\(estimatedBytes.humanFileSize()))?", confirmHandler: {
-                
+
                 // Starts download of the OVERLAY chache.
 
-                OfflineMapManager.shared.downloadOverlayOfflineMap { (offlineMap) in
-                    // download started, the progress delegate is notified automatically
-                } errorHandler: { (error) in
-                    // When download fails the callback is called with error reason
-                    self.showError(error)
+                OfflineMapManager.shared.downloadOverlayOfflineMap(includeImagery: true) { result in
+                    if case let .failure(error) = result {
+                        // When download fails the callback is called with error reason
+                        self.showError(error)
+                    } else {
+                        // download started, the progress delegate is notified automatically
+                    }
                 }
             })
         }

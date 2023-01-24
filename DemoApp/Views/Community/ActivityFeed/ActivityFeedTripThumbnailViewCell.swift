@@ -34,8 +34,8 @@ class ActivityFeedTripThumbnailViewCell: UITableViewCell {
                 }
 
                 ServiceFactory.getTripMediaService().getMediaFile(url: url, avoidCache: false) { result in
-                    if result.isSuccess {
-                        displayThumbnailInternal(result.value)
+                    if case let .success(value) = result {
+                        displayThumbnailInternal(value)
                     } else {
                         displayThumbnailInternal(nil)
                     }

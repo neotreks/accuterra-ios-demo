@@ -310,10 +310,8 @@ extension ActivityFeedBaseViewController : ActivityFeedTripUgcFooterCellDelegate
             let liked = !(footerItem.data?.trip.userLike ?? false)
             service.setTripLiked(tripUuid: item.tripUUID, liked: liked) { (result) in
                 dialog.dismiss(animated: false, completion: nil)
-                if result.isSuccess {
-                    if let likesResult = result.value {
-                        self.onLikesChanged(likesResult: likesResult)
-                    }
+                if case let .success(likesResult) = result {
+                    self.onLikesChanged(likesResult: likesResult)
                 } else {
                     self.showError((result.buildErrorMessage() ?? "unknown error").toError())
                 }

@@ -11,18 +11,18 @@ source 'https://github.com/neotreks/Specs/'
 #  Please ask NeoTreks to provide you these credentials. If you already have access to SDK documentation you can use the same credentials.
 #
 
-platform :ios, '13.0'
+platform :ios, '14.0'
 use_frameworks!
 
 def shared_pods
-  pod 'AccuTerraSDK', '~> 0.25.2'
+  pod 'AccuTerraSDK', '~> 0.26.1'
   # UI pods
   pod 'StarryStars', '~> 1.0.0'
   pod 'AlignedCollectionViewFlowLayout'
-  pod 'Kingfisher', '~> 5.0'
+  pod 'Kingfisher', '7.4.1'
   # Analytics
-  pod 'Firebase/Crashlytics', '8.7.0'
-  pod 'Firebase/Analytics', '8.7.0'
+  pod 'Firebase/Crashlytics', '10.2.0'
+  pod 'Firebase/Analytics', '10.2.0'
 end
 
 target 'DemoApp(Develop)' do

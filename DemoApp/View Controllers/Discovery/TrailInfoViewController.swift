@@ -176,11 +176,14 @@ class TrailInfoViewController: LocationViewController {
         
         self.includeMedia = includeMedia
         
-        OfflineMapManager.shared.downloadTrailOfflineMap(trailId: trail.info.id, includeImagery: true, downloadTrailMedia: includeMedia) {[weak self] offlineMap in
-            self?.downloadButton.isEnabled = true
-            self?.configureDownloadButton(mapStatus: .WAITING)
-        } errorHandler: { error in
-            self.showError(error)
+        OfflineMapManager.shared.downloadTrailOfflineMap(trailId: trail.info.id, includeImagery: true, downloadTrailMedia: includeMedia) {[weak self] result in
+            switch result {
+            case .success(_):
+                self?.downloadButton.isEnabled = true
+                self?.configureDownloadButton(mapStatus: .WAITING)
+            case .failure(let error):
+                self?.showError(error)
+            }
         }
     }
 
@@ -262,28 +265,33 @@ class TrailInfoViewController: LocationViewController {
             case .COMPLETE:
                 
                 // For completed cache we show size of the cache with option to delete the cache
-                OfflineMapManager.shared.getOfflineMapStorageSize(offlineMapId: trailOfflineMap!.offlineMapId, completion: {[weak self] (size) in
-                    let totalSize = size?.totalSize ?? 0
-                    
-                    guard let self = self else {return}
-                    AlertUtils.showPrompt(viewController: self,
-                                          title: "Remove Offline Cache?",
-                                          message: "The trail is already cached. Cache size: \(Int64(totalSize).humanFileSize()). Do you want to remove the cache?", confirmHandler: {
-                                            
-                                            self.downloadButton.isEnabled = false
-                                            
-                                            // Delete cache is asynchronous and can take a while for large caches
-                                            
-                                            OfflineMapManager.shared.deleteOfflineMap(offlineMapId: trailOfflineMap!.offlineMapId) {
-                                                self.downloadButton.isEnabled = true
-                                                self.configureDownloadButton(mapStatus: .NOT_CACHED)
-                                            } errorHandler: { (error) in
-                                                self.showError(error)
-                                            }
-                                          })
-                }) { (error) in
-                    self.showError(error)
-                }
+                OfflineMapManager.shared.getOfflineMapStorageSize(offlineMapId: trailOfflineMap!.offlineMapId, completion: {[weak self] result in
+                    switch result {
+                    case .success(let size):
+                        let totalSize = size?.totalSize ?? 0
+
+                        guard let self = self else {return}
+                        AlertUtils.showPrompt(viewController: self,
+                                              title: "Remove Offline Cache?",
+                                              message: "The trail is already cached. Cache size: \(Int64(totalSize).humanFileSize()). Do you want to remove the cache?", confirmHandler: {
+
+                            self.downloadButton.isEnabled = false
+
+                            // Delete cache is asynchronous and can take a while for large caches
+
+                            OfflineMapManager.shared.deleteOfflineMap(offlineMapId: trailOfflineMap!.offlineMapId) { error in
+                                if let error = error {
+                                    self.showError(error)
+                                } else {
+                                    self.downloadButton.isEnabled = true
+                                    self.configureDownloadButton(mapStatus: .NOT_CACHED)
+                                }
+                            }
+                        })
+                    case .failure(let error):
+                        self?.showError(error)
+                    }
+                })
             case .WAITING, .IN_PROGRESS, .PAUSED:
                 
                 // Cache can be waiting in queue or can be downloading.
@@ -291,18 +299,20 @@ class TrailInfoViewController: LocationViewController {
                 
                 AlertUtils.showPrompt(viewController: self, title: "Cancel Offline Cache?",
                                       message: "Downloading trail cache. Do you want to cancel?", confirmHandler: {
-                                        
-                                        self.downloadButton.isEnabled = false
-                                        
-                                        // Delete cache is asynchronous
-                                        
-                                        OfflineMapManager.shared.deleteOfflineMap(offlineMapId: trailOfflineMap!.offlineMapId) {
-                                            self.downloadButton.isEnabled = true
-                                            self.configureDownloadButton(mapStatus: .NOT_CACHED)
-                                        } errorHandler: { (error) in
-                                            self.showError(error)
-                                        }
-                                      })
+
+                    self.downloadButton.isEnabled = false
+
+                    // Delete cache is asynchronous
+
+                    OfflineMapManager.shared.deleteOfflineMap(offlineMapId: trailOfflineMap!.offlineMapId) { error in
+                        if let error = error {
+                            self.showError(error)
+                        } else {
+                            self.downloadButton.isEnabled = true
+                            self.configureDownloadButton(mapStatus: .NOT_CACHED)
+                        }
+                    }
+                })
             @unknown default:
                 return
             }
@@ -323,10 +333,10 @@ class TrailInfoViewController: LocationViewController {
         // Toggle value
         let toggleFavorite = !(userData.favorite ?? false)
         let service = ServiceFactory.getTrailService()
-        service.setTrailFavorite(trailId: trailId, favorite: toggleFavorite) { (result) in
-            if result.isSuccess {
+        service.setTrailFavorite(trailId: trailId, favorite: toggleFavorite) { result in
+            if case let .success(value) = result {
                 // Update the value also in the View
-                self.userData = self.userData?.copyWithFavorite(favorite: result.value?.favorite ?? false)
+                self.userData = self.userData?.copyWithFavorite(favorite: value.favorite)
                 self.favoriteButton.isSelected = toggleFavorite
             } else {
                 self.showError("Trail update failed: \(result.buildErrorMessage() ?? "unknown reason")".toError())
@@ -470,9 +480,11 @@ class TrailInfoViewController: LocationViewController {
                     self.trailMapImageView.kf.indicatorType = .activity
                     self.trailMapImageView.kf.indicator?.startAnimatingView()
 
-                    self.mapImageLoader?.load(callback: { [weak self] (mediaLoader, image) in
-                        self?.trailMapImageView.image = image
-                        self?.trailMapImageView.stopAnimating()
+                    self.mapImageLoader?.load(completion: { [weak self] result in
+                        if case let .success(value) = result {
+                            self?.trailMapImageView.image = value.1
+                            self?.trailMapImageView.stopAnimating()
+                        }
                     })
                 }
             }
@@ -488,17 +500,13 @@ class TrailInfoViewController: LocationViewController {
         guard let trailId = self.trailId else {
             return
         }
-        let result = TrailInfoRepo.loadTrailUserData(trailId: trailId)
-        if (result.isSuccess) {
-            if (result.value == nil) {
-                showError("No value in trail user data result.".toError())
-            } else {
-                self.userData = result.value
-            }
-        } else {
-            let reason = result.buildErrorMessage() ?? "unknown reason"
+        do {
+            let result = try TrailInfoRepo.loadTrailUserData(trailId: trailId)
+            self.userData = result
+        } catch {
+            let reason = error.localizedDescription
             let errorMessage = "Error while loading trail user data: \(trailId), \(reason)"
-            Log.e(TAG, errorMessage, result.error)
+            Log.e(TAG, errorMessage, error)
             showError(errorMessage.toError())
         }
         self.favoriteButton.isSelected = self.userData?.favorite ?? false
@@ -522,14 +530,11 @@ class TrailInfoViewController: LocationViewController {
                 return
             }
             executeBlockOnMainThread {
-                if (result.isSuccess) {
-                    if (result.value == nil) {
-                        self.showError("No value in trail comments result.".toError())
-                    } else {
-                        self.comments = result.value?.comments
-                        self.commentsCount = result.value?.paging.total ?? 0
-                    }
-                    callback?(true)
+                if case let .success(value) = result {
+                    self.comments = value.comments
+                    self.commentsCount = value.paging.total
+                callback?(true)
+
                 } else {
                     let reason = result.buildErrorMessage() ?? "unknown reason"
                     let errorMessage = "Error while loading trail comments: \(trailId), \(reason)"
@@ -807,11 +812,12 @@ extension TrailInfoViewController : RatingViewDelegate {
         }
         
         let service = ServiceFactory.getTrailService()
-        service.setTrailRating(trailId: trailId, rating: Double(newRating), callback: { result in
-            if result.isSuccess {
+        service.setTrailRating(trailId: trailId, rating: Double(newRating), completion: { result in
+            switch result {
+            case .success(_):
                 // Update the value also in the View
                 self.userData = self.userData?.copyWithRating(rating: newRating)
-            } else {
+            case .failure(_):
                 self.showError("Trail update failed: \(result.buildErrorMessage() ?? "unknown reason")".toError())
             }
         })

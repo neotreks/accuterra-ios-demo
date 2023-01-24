@@ -144,16 +144,17 @@ class BaseTripRecordingViewController : BaseDrivingViewController {
                 }
                 let tripName = "Trip \(Date().toLocalDateString())" // Default name
                 let vehicleId = "test_vehicle" // TODO: Load vehicle ID
-                let result: AccuTerraSDK.Result<TripStartResult> =
-                    try self.tripRecorder.startTripRecording(
-                        name: tripName, trailId: self.trailId,
-                        vehicleId: vehicleId, extProperties: self.getExtProperties(), telemetryModel: self.getTelemetryModel())
+                let result =
+                try self.tripRecorder.startTripRecording(
+                    name: tripName, trailId: self.trailId,
+                    vehicleId: vehicleId, extProperties: self.getExtProperties(), telemetryModel: self.getTelemetryModel())
 
-                if result.isFailure {
+                switch result {
+                case .failure(_):
                     self.showError(result.error ?? "Could not start trip recording.".toError())
-                } else {
-                    if result.value?.startType == TripStartResultType.OK_NEW_STARTED {
-                        self.tripUuid = result.value?.tripUuid
+                case .success(let value):
+                    if value.startType == TripStartResultType.OK_NEW_STARTED {
+                        self.tripUuid = value.tripUuid
                     }
                     Log.d(self.TAG, "Trip UUID: \(String(describing: self.tripUuid))")
 

@@ -27,10 +27,12 @@ class TrailImageCollectionViewCell: UICollectionViewCell {
         self.imageView.image = nil
         self.imageLoadingIndicator.startAnimating()
         
-        mediaLoader?.load(callback: { [weak self] (mediaLoader, image) in
-            if let loader = self?.mediaLoader, mediaLoader.isEqual(loader: loader) {
-                self?.imageView.image = image
-                self?.imageLoadingIndicator.stopAnimating()
+        mediaLoader?.load(completion: { [weak self] result in
+            if case let .success(value) = result {
+                if let loader = self?.mediaLoader, loader.isEqual(loader: value.0) {
+                    self?.imageView.image = value.1
+                    self?.imageLoadingIndicator.stopAnimating()
+                }
             }
         })
     }

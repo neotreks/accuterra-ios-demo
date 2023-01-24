@@ -10,16 +10,16 @@ import Foundation
 import AccuTerraSDK
 
 class TrailInfoRepo {
-    static func loadTrailComments(trailId: Int64, callback: @escaping (Result<GetTrailCommentsResult>) -> Void) throws {
+    static func loadTrailComments(trailId: Int64, completion: @escaping (Result<GetTrailCommentsResult, Error>) -> Void) throws {
         let service = ServiceFactory.getTrailService()
         
         let criteria = try GetTrailCommentsCriteriaBuilder.build(trailId: trailId)
         
-        return service.getTrailComments(criteria: criteria, callback: callback)
+        return service.getTrailComments(criteria: criteria, completion: completion)
     }
     
-    static func loadTrailUserData(trailId: Int64) -> Result<TrailUserData> {
+    static func loadTrailUserData(trailId: Int64) throws -> TrailUserData {
         let service = ServiceFactory.getTrailService()
-        return service.getTrailUserData(trailId: trailId)
+        return try service.getTrailUserData(trailId: trailId)
     }
 }

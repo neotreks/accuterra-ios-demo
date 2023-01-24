@@ -37,13 +37,14 @@ class ProfileViewController: BaseViewController {
     }
     
     @IBAction func didTapResetToken() {
-        DemoCredentialsAccessManager.shared.resetToken { () in
+        DemoCredentialsAccessManager.shared.resetToken { result in
             executeBlockOnMainThread {
-                self.showInfo("Token reset")
-            }
-        } errorHandler: { (error) in
-            executeBlockOnMainThread {
-                self.showError(error)
+                switch result {
+                case .success(_):
+                    self.showInfo("Token reset")
+                case .failure(let error):
+                    self.showError(error)
+                }
             }
         }
     }
@@ -86,21 +87,21 @@ class ProfileViewController: BaseViewController {
         progress.title = "Deleting User Data"
         present(progress, animated: false) {
             DispatchQueue.global().async {
-                SdkManager.shared.deleteUserData(onComplete: { result in
+                SdkManager.shared.deleteUserData(completion: { result in
                     executeBlockOnMainThread {
-                        progress.dismiss(animated: false) {
-                            if result.hasErrors() {
-                                self.showError(result.toString().toError())
-                            } else {
-                                self.showInfo("User data deleted successfully")
+                        switch result {
+                        case .success(let res):
+                            progress.dismiss(animated: false) {
+                                if res.hasErrors() {
+                                    self.showError(res.toString().toError())
+                                } else {
+                                    self.showInfo("User data deleted successfully")
+                                }
                             }
-                        }
-                    }
-                },
-                onError: { error in
-                    executeBlockOnMainThread {
-                        progress.dismiss(animated: false) {
-                            self.showError(error)
+                        case .failure(let error):
+                            progress.dismiss(animated: false) {
+                                self.showError(error)
+                            }
                         }
                     }
                 })
