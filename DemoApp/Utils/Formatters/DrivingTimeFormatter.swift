@@ -9,6 +9,18 @@ class DrivingTimeFormatter {
     static func formatDrivingTime(ctimeInSeconds: Int) -> String {
         ElapsedTime(timeInterval: Double(ctimeInSeconds)).formatted
     }
+
+    static func formatEstimatedDrivingTimeRange(minTimeInSeconds: Int, avgTimeInSeconds: Int) -> String {
+        let minHours = minTimeInSeconds / 60 / 60
+        let avgHours = avgTimeInSeconds / 60 / 60
+        return minHours == avgHours ? "\(minHours) hrs." : "\(minHours) to \(avgHours) hrs."
+    }
+
+    static func formatEstimatedDrivingTime(ctimeInSeconds: Int) -> String {
+        let timeInMinutes = ctimeInSeconds / 60
+        let hours = timeInMinutes / 60
+        return "\(hours) hrs."
+    }
 }
 
 struct ElapsedTime {

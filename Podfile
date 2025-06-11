@@ -1,4 +1,4 @@
-source 'https://github.com/CocoaPods/Specs.git'
+source 'https://cdn.cocoapods.org/'
 source 'https://github.com/neotreks/Specs/'
 
 #
@@ -15,14 +15,11 @@ platform :ios, '14.0'
 use_frameworks!
 
 def shared_pods
-  pod 'AccuTerraSDK', '~> 0.26.1'
+  pod 'AccuTerraSDK', '~> 0.29.0'
   # UI pods
-  pod 'StarryStars', '~> 1.0.0'
-  pod 'AlignedCollectionViewFlowLayout'
-  pod 'Kingfisher', '7.4.1'
-  # Analytics
-  pod 'Firebase/Crashlytics', '10.2.0'
-  pod 'Firebase/Analytics', '10.2.0'
+  pod 'StarryStars', '1.0.0'
+  pod 'AlignedCollectionViewFlowLayout', '1.1.2'
+  pod 'Kingfisher', '7.11.0'
 end
 
 target 'DemoApp(Develop)' do
@@ -33,10 +30,20 @@ target 'DemoApp(Test)' do
     shared_pods
 end
 
+target 'DemoAppUITests' do
+  shared_pods
+end
+
+target 'DemoAppUnitTests' do
+  shared_pods
+end
+
 post_install do |installer_representation|
     installer_representation.pods_project.targets.each do |target|
         target.build_configurations.each do |config|
             config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'YES'
+            # Deleting IPHONEOS_DEPLOYMENT_TARGET installs the pods with app's min deployment version
+            config.build_settings.delete 'IPHONEOS_DEPLOYMENT_TARGET'
         end
     end
 end

@@ -12,7 +12,7 @@ import AccuTerraSDK
 class SettingsViewController: BaseViewController {
 
     // MARK:- Properties
-    private let TAG = "SettingsViewController"
+    private let TAG = LogTag(subsystem: "ATDemoApp", category: "SettingsViewController")
     static let trailCollectionModeKey = "trailCollectionModeKey"
     
     // MARK:- IBOutlets
@@ -47,6 +47,7 @@ extension SettingsViewController : UITextFieldDelegate {
             switch result {
             case .success(_):
                 Log.d(self.TAG, "Access token reset finished.")
+                NotificationCenter.default.post(name: .userChanged, object: nil)
             case .failure(let error):
                 self.showError(error)
             }

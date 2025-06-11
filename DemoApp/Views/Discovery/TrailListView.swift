@@ -29,10 +29,10 @@ protocol TrailListViewDelegate : AnyObject {
 
 class TrailListView: UIView {
 
-    private let TAG = "TrailListView"
-    @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var listButton: UIButton!
-    
+    private let TAG = LogTag(subsystem: "ATDemoApp", category: "TrailListView")
+    var listButton: UIButton = UIButton()
+    @IBOutlet weak var collectionView: UICollectionView!
+
     var trailsService: ITrailService?
     
     weak var delegate: TrailListViewDelegate?
@@ -42,7 +42,22 @@ class TrailListView: UIView {
     private var selectedTrailId: Int64?
     
     func loadTrails() -> Set<Int64> {
-        tableView.register(UINib(nibName: TrailListTableviewCell.cellXibName, bundle: nil), forCellReuseIdentifier: TrailListTableviewCell.cellIdentifier)
+        guard let collectionView = self.collectionView else { return Set<Int64>() }
+
+        collectionView.register(UINib(nibName: TrailListTableviewCell.cellXibName, bundle: nil), forCellWithReuseIdentifier: TrailListTableviewCell.cellIdentifier)
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.backgroundColor = UIColor.clear
+
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 24
+        layout.itemSize = CGSize(width: collectionView.bounds.width - 24, height: collectionView.bounds.height)
+        let horizontalInset: CGFloat = 12
+        layout.sectionInset = UIEdgeInsets(top: 0, left: horizontalInset, bottom: 0, right: horizontalInset)
+        collectionView.collectionViewLayout = layout
+        collectionView.isPagingEnabled = true
+
         guard let delegate = self.delegate else {
             Log.e(TAG, "TrailListView delegate not set")
             return Set<Int64>()
@@ -89,18 +104,18 @@ class TrailListView: UIView {
                     limit: try QueryLimitBuilder.build(),
                     trailSearchType: .BY_TRAIL_BOUNDS)
                 self.trails = try trailsService!.findTrails(byMapBoundsCriteria: searchCriteria)
-                self.tableView.reloadData()
+                self.collectionView.reloadData()
             } else {
                 let searchCriteria = TrailMapSearchCriteria(
                     mapCenter: delegate.getVisibleMapCenter(),
-                    nameSearchCriteria: TextSearchCriteriaBuilder.build(searchString: filter.trailNameFilter!),
+                    nameSearchCriteria: TextSearchCriteriaBuilder.build(searchString: filter.trailNameFilter ?? ""),
                     techRating: techRatingSearchCriteria,
                     userRating: userRatingSearchCriteria,
                     length: lengthSearchCriteria,
                     orderBy: OrderByBuilder.build(),
                     limit: try QueryLimitBuilder.build())
                 self.trails = try trailsService!.findTrails(byMapCriteria: searchCriteria)
-                self.tableView.reloadData()
+                self.collectionView.reloadData()
             }
             self.selectTrail(trailId: self.selectedTrailId)
         }
@@ -121,13 +136,13 @@ class TrailListView: UIView {
     func selectTrail(trailId: Int64?) {
         self.selectedTrailId = trailId
         guard let trailId = trailId else {
-            self.tableView.selectRow(at: nil, animated: false, scrollPosition: UITableView.ScrollPosition.none)
+            self.collectionView.selectItem(at: nil, animated: false, scrollPosition: .left)
             return
         }
         if let trails = self.trails, let index = trails.firstIndex(where: { (t) -> Bool in
             return t.id == trailId
         }) {
-            self.tableView.selectRow(at: IndexPath(row: index, section: 0), animated: true, scrollPosition: UITableView.ScrollPosition.none)
+            self.collectionView.selectItem(at: IndexPath(row: index, section: 0), animated: true, scrollPosition: .left)
         }
     }
 
@@ -144,22 +159,25 @@ class TrailListView: UIView {
         
         let service = ServiceFactory.getTrailService()
         do {
-            service.updateTrailDb { (progress) in
+            service.updateTrailDb(progressChange: { progress in
                 dialog.progress = Float(progress.fractionCompleted)
-            } completion: { result in
+            }, updateConfig: TrailDbUpdateConfig()) { result in
                 switch result {
-                case .success(_):
+                case .success(let value):
                     delegate.reloadLayers()
                     delegate.handleMapViewChanged()
+
                     dialog.dismiss(animated: false, completion: nil)
-                    if case let .success(value) = result {
-                        if value.hasChangeActions() {
-                            delegate.showInfo("Trail DB updated (\(value.changedTrailsCount())).")
-                        } else {
-                            delegate.showInfo("There were no updates of the Trail DB.")
-                        }
-                    } else {
-                        delegate.showError("Trails update failed. \(result.buildErrorMessage() ?? "unknown")".toError())
+
+                    switch value {
+                    case .Empty, .Fresh:
+                        delegate.showInfo("There were no updates of the Trail DB.")
+                    case .InProgress:
+                        delegate.showInfo("Trail DB update already in progress.")
+                    case .Updated(_, _ ,let creates,let updates,let deletes,let ignores):
+                        delegate.showInfo("Trail DB updated creted: (\(creates.count), updated: \(updates.count), deleted: \(deletes.count), ignored: \(ignores.count)")
+                    default:
+                        Log.e(self.TAG, "Empty value returned for successful result: \(result)")
                     }
                 case .failure(let error):
                     dialog.dismiss(animated: false, completion: nil)
@@ -170,28 +188,36 @@ class TrailListView: UIView {
     }
 }
 
-extension TrailListView : UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.trails?.count ?? 0
+extension TrailListView : UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
+
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        trails?.count ?? 0
     }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell :TrailListTableviewCell = tableView.dequeueReusableCell(withIdentifier: TrailListTableviewCell.cellIdentifier, for: indexPath) as! TrailListTableviewCell
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrailListTableviewCell.cellIdentifier, for: indexPath) as! TrailListTableviewCell
         if let trails = trails {
-            TrailInfoDisplay.setDisplayFieldValues(trailTitleLabel: &cell.trailTitle, descriptionLabel:&cell.trailDescription, distanceLabel: &cell.trailDistanceLabel, userRatings: &cell.ratingStars, difficultyColorBar:&cell.difficultyColorBarLabel, basicTrailInfo: trails[indexPath.row])
+            TrailInfoDisplay.setDisplayFieldValues(trailTitleLabel: &cell.trailTitle, descriptionLabel:&cell.trailDescription, distanceLabel: &cell.trailDistanceLabel, timeLabel: &cell.trailTimeLabel, elevationLabel: &cell.trailElevationLabel, userRatings: &cell.ratingStars, difficultyColorBar:&cell.difficultyColorBarLabel, difficultyLabel: &cell.difficultyLabel, difficultyView: &cell.difficultyView, bookmarkButton: cell.bookmarkButton, basicTrailInfo: trails[indexPath.row])
             cell.trail = trails[indexPath.row]
         }
         cell.delegate = self.delegate
         return cell
     }
-    
-    func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        guard let trails = self.trails else {
-            return indexPath
-        }
-        self.delegate?.didSelectTrail(basicInfo: trails[indexPath.row])
-        self.selectedTrailId = trails[indexPath.row].id
-        return indexPath
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+
     }
 }
 
+extension TrailListView: UIScrollViewDelegate {
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        let visibleRect = CGRect(origin: collectionView.contentOffset, size: collectionView.bounds.size)
+        if let visibleIndexPath = collectionView.indexPathForItem(at: CGPoint(x: visibleRect.midX, y: visibleRect.midY)) {
+            print("Current page: \(visibleIndexPath.item)")
+            guard let trails = self.trails else { return }
+            guard self.selectedTrailId != trails[visibleIndexPath.row].id else { return }
+            self.delegate?.didSelectTrail(basicInfo: trails[visibleIndexPath.row])
+            self.selectedTrailId = trails[visibleIndexPath.row].id
+        }
+    }
+}

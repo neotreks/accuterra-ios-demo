@@ -10,16 +10,18 @@ import UIKit
 import AccuTerraSDK
 import StarryStars
 
-class TrailListTableviewCell: UITableViewCell {
+class TrailListTableviewCell: UICollectionViewCell {
     @IBOutlet weak var trailTitle: UILabel!
-    @IBOutlet weak var ratingStars: RatingView!
+    var ratingStars: RatingView = RatingView()
     @IBOutlet weak var trailDistanceLabel: UILabel!
+    @IBOutlet weak var trailTimeLabel: UILabel!
+    @IBOutlet weak var trailElevationLabel: UILabel!
     @IBOutlet weak var trailDescription: UILabel!
     @IBOutlet weak var bookmarkButton: UIButton!
-    @IBOutlet weak var goToMapButton: UIButton!
-    @IBOutlet weak var goToDetailsButton: UIButton!
     @IBOutlet weak var difficultyColorBarLabel: UILabel!
-    
+    @IBOutlet weak var difficultyView: UIView!
+    @IBOutlet weak var difficultyLabel: UILabel!
+
     static let cellIdentifier = "TrailInfoCell"
     static let cellXibName = "TrailListTableviewCell"
     
@@ -28,39 +30,45 @@ class TrailListTableviewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+
+        self.contentView.layer.cornerRadius = 10
+        self.contentView.clipsToBounds = true
+        self.isUserInteractionEnabled = true
+        self.contentView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(containerPicked)))
+
         bookmarkButton.layer.cornerRadius = 15.0
         bookmarkButton.layer.borderColor = UIColor.black.cgColor
         bookmarkButton.layer.borderWidth = 1.0
-        
-        goToMapButton.layer.cornerRadius = 15.0
-        goToMapButton.layer.borderColor = UIColor.Active?.cgColor
-        goToMapButton.layer.borderWidth = 1.0
-        goToMapButton.tintColor = UIColor.Active
-        
-        goToDetailsButton.layer.cornerRadius = 15.0
-        goToDetailsButton.layer.borderColor = UIColor.Active?.cgColor
-        goToDetailsButton.layer.borderWidth = 1.0
-        goToDetailsButton.tintColor = UIColor.Active
-        
         bookmarkButton.imageView?.image = UIImage.bookmarkImage
-        goToMapButton.imageView?.image = UIImage.mappinAndEllipseImage
-        goToDetailsButton.imageView?.image = UIImage.chevronRightImage
+
+        difficultyView.layer.cornerRadius = difficultyView.bounds.height / 2
     }
-    
-    @IBAction func bookmarkPicked(_ sender: Any) {
-        print("bookmarkPicked")
-    }
-    
-    @IBAction func goToDetailsPicked(_ sender: Any) {
+
+    @objc func containerPicked() {
         if let trail = self.trail  {
             self.delegate?.didTapTrailInfo(basicInfo: trail)
         }
     }
-    
-    @IBAction func goToMapPicked(_ sender: Any) {
+
+    @IBAction func bookmarkPicked(_ sender: Any) {
         if let trail = self.trail  {
-            self.delegate?.didTapTrailMap(basicInfo: trail)
+            guard let userData = trail.userData ?? (try? TrailInfoRepo.loadTrailUserData(trailId: trail.id)) else {
+                return
+            }
+
+            // Toggle value
+            let toggleFavorite = !(userData.favorite ?? false)
+            let service = ServiceFactory.getTrailService()
+            service.setTrailFavorite(trailId: trail.id, favorite: toggleFavorite) { (result) in
+                if case let .success(value) = result {
+                    // Update the value also in the View
+                    let updatedUserData = self.trail?.userData?.copyWithFavorite(favorite: value.favorite)
+                    self.trail?.userData = updatedUserData
+                    self.bookmarkButton.isSelected = toggleFavorite
+                } else {
+                    print("Trail update failed: \(result.buildErrorMessage() ?? "unknown reason")")
+                }
+            }
         }
     }
-    
 }

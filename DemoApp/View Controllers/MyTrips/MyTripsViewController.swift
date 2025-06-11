@@ -18,7 +18,7 @@ class MyTripsViewController: ActivityFeedBaseViewController {
     @IBOutlet weak var sourceSwitch: UISwitch!
 
     // MARK:- Properties
-    private let TAG = "MyTripsViewController"
+    private let TAG = LogTag(subsystem: "ATDemoApp", category: "MyTripsViewController")
     private var cancellableRefs = [AnyCancellable]()
     private var requiresReload = false
     private var reloadTimer: Timer?
@@ -43,7 +43,12 @@ class MyTripsViewController: ActivityFeedBaseViewController {
                 self?.onTripUploadStatusChanged(notification: notification)
             }
             .store(in: &cancellableRefs)
-        
+
+        NotificationCenter.default.publisher(for: .userChanged)
+            .sink { [weak self] _ in
+                self?.loadTrips(forceReload: true)
+            }.store(in: &cancellableRefs)
+
         reloadTimer = Timer.scheduledTimer(timeInterval: 30, target: self, selector: #selector(reloadTripsOnTimer), userInfo: nil, repeats: true)
         self.loadTrips(forceReload: true)
     }
@@ -109,7 +114,7 @@ class MyTripsViewController: ActivityFeedBaseViewController {
                 // Online
                 self.listItems = [ActivityFeedItem]()
                 tableView.reloadData()
-                let criteria = GetMyActivityFeedCriteria(includeExtProperties: true, workflowStatus: [.PUBLISHED]) // Default criteria
+                let criteria = GetMyActivityFeedCriteria(includeExtProperties: true) // Default criteria
                 loadOnlineTrips(criteria: criteria) {[weak self] in
                     self?.reloadTableData()
                     self?.sourceSwitch.isEnabled = true
@@ -125,7 +130,7 @@ class MyTripsViewController: ActivityFeedBaseViewController {
     
     private func loadOnlineTrips(criteria: GetMyActivityFeedCriteria, callback: @escaping () -> Void) {
         let service = ServiceFactory.getTripService()
-        service.getMyActivityFeed(criteria: criteria) { result in
+        service.getMyActivityFeed(criteria: criteria, fetchConfig: TripFetchConfig()) { result in
             if case let .success(value) = result {
                 let trips = self.convertToFeedItem(trips: value.entries)
                 self.listItems = trips

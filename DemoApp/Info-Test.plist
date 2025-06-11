@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>ACCUTERRA_MAP_API_KEY</key>
+	<string></string>
+	<key>ACCUTERRA_MAP_STYLE_URL</key>
+	<string>https://maps.accuterra.com/v1/styles/accuterra-outdoors/style.json</string>
 	<key>AccuTerraEnvironment</key>
 	<string>Test</string>
 	<key>CFBundleDevelopmentRegion</key>
@@ -20,6 +24,8 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>HERE_API_KEY</key>
+	<string></string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MGLMapboxMetricsEnabledSettingShownInApp</key>
@@ -27,9 +33,9 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Add images to your trip.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>The AccuTerra Demo App needs your location to display it on the map and record your trips in background.</string>
+	<string>The AccuTerra Trails needs your location to display it on the map and record your trips in background.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>The AccuTerra Demo App needs your location to display this on the map.</string>
+	<string>The AccuTerra Trails needs your location to display this on the map.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Add images to your trip.</string>
 	<key>UIAppFonts</key>
@@ -88,8 +94,6 @@
 	<string></string>
 	<key>WS_AUTH_URL</key>
 	<string>https://test.accuterra.com/auth/</string>
-	<key>MGLMapboxAccessToken</key>
-	<string></string>
 	<key>WS_BASE_URL</key>
 	<string>https://test.accuterra.com:443/api/</string>
 </dict>

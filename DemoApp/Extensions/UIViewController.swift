@@ -11,6 +11,8 @@ import UIKit
 import AccuTerraSDK
 
 extension UIViewController {
+    private static let TAG = LogTag(subsystem: "ATDemoApp", category: "UIViewControllerExtension")
+
     func tryOrShowError<T>(_ block: () throws -> T) -> T? {
         do {
             return try block()
@@ -32,7 +34,7 @@ extension UIViewController {
         let alert = UIAlertController(title: "Error", message: "\(error.localizedDescription)", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         self.present(alert, animated: false, completion: nil)
-        Log.e("", "\(error)")
+        Log.e(UIViewController.TAG, "\(error)")
     }
     
     func showInfo(_ text: String, _ handler: (() -> Void)? = nil) {
@@ -42,5 +44,21 @@ extension UIViewController {
             handler?()
         }))
         self.present(alert, animated: false, completion: nil)
+    }
+    
+    func topMostViewController() -> UIViewController {
+        if self.presentedViewController == nil {
+            return self
+        }
+        if let navigation = self.presentedViewController as? UINavigationController {
+            return navigation.visibleViewController!.topMostViewController()
+        }
+        if let tab = self.presentedViewController as? UITabBarController {
+            if let selectedTab = tab.selectedViewController {
+                return selectedTab.topMostViewController()
+            }
+            return tab.topMostViewController()
+        }
+        return self.presentedViewController!.topMostViewController()
     }
 }

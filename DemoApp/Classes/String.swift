@@ -7,5 +7,5 @@
 //
 
 extension String {
-    static let appTitle = "AccuTerra SDK Demo"
+    static let appTitle = "AccuTerra Trails"
 }

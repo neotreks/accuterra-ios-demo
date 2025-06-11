@@ -8,7 +8,7 @@
 
 import UIKit
 import AccuTerraSDK
-import Mapbox
+import MapLibre
 import CoreLocation
 
 class RecordNewTripViewController: BaseTripRecordingViewController {
@@ -16,7 +16,7 @@ class RecordNewTripViewController: BaseTripRecordingViewController {
     private var demoTelemetryModel: TelemetryModel? = nil
     private var demoTelemetryType: TelemetryRecordType? = nil
     private var telemetryTimer: Timer? = nil
-    private let TAG = "RecordNewTripViewController"
+    private let TAG = LogTag(subsystem: "ATDemoApp", category: "RecordNewTripViewController")
 
     // MARK:- Lifecycle
     override func viewDidLoad() {
@@ -49,6 +49,8 @@ class RecordNewTripViewController: BaseTripRecordingViewController {
                         self.navigationController?.popToRootViewController(animated: true)
                     }
                 }
+            } else {
+                self.navigationController?.popToRootViewController(animated: true)
             }
         } catch {
             showError(error)

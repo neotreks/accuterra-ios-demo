@@ -15,11 +15,13 @@ import Combine
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private var cancellableRefs = [AnyCancellable]()
-    
+    private let thermalStateMonitor = ThermalStateMonitor.shared
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Set log level to debug
         Log.level = .debug
         listenForTrailUploadNotification()
+        listenForThermalStateNotification()
         return true
     }
 
@@ -75,6 +77,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         userNotificationCenter.delegate = self
     }
+    
+    private func listenForThermalStateNotification() {
+        
+        thermalStateMonitor.state
+            .receive(on: DispatchQueue.main).sink { [weak self] value in
+                self?.onThermalStateChanged(state: value)
+            }
+            .store(in: &cancellableRefs)
+    }
+    
+    private func onThermalStateChanged(state: ProcessInfo.ThermalState) {
+        
+        if state == .critical {
+            let alertController = UIAlertController(title: "Warning", message: state.description, preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "OK", style: .default))
+            
+            UIApplication.shared.topMostViewController()?.present(alertController, animated: true, completion: nil)
+        }
+    }
 }
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
@@ -86,4 +107,3 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         completionHandler([.alert, .badge, .sound])
     }
 }
-

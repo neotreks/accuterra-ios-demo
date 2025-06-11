@@ -11,7 +11,6 @@ else
 	  echo "$token_file found."
   else
 	  echo "$token_file not found."
-    exit 0
   fi
 
   token="$(cat $token_file 2>/dev/null || cat $token_file2 2>/dev/null)"

@@ -8,7 +8,7 @@
 
 import UIKit
 import AccuTerraSDK
-import Mapbox
+import MapLibre
 import CoreLocation
 import AlignedCollectionViewFlowLayout
 import Combine
@@ -287,8 +287,8 @@ class TrailCollectionViewController: BaseTripRecordingViewController {
         }
     }
     
-    override func getExtProperties() -> [ExtProperties]? {
-        return ExtPropertiesBuilder.buildList(value: TrailCollectionData())
+    override func getExtProperties() throws -> [ExtProperties]? {
+        return try ExtPropertiesBuilder.buildList(value: TrailCollectionData())
     }
     
     private func validateForm() -> Bool {
@@ -529,10 +529,12 @@ extension TrailCollectionViewController : TripRecordingMediaCollectionViewCellDe
 // MARK:- UIImagePickerControllerDelegate extension
 extension TrailCollectionViewController : UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        temporaryHideCompass()
         picker.dismiss(animated: true, completion: nil)
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        temporaryHideCompass()
         guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else {
             return
         }

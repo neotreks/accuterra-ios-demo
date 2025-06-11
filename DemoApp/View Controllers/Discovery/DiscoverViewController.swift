@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Mapbox
+import MapLibre
 import AccuTerraSDK
 import Reachability
 import Combine
@@ -25,7 +25,6 @@ class DiscoverViewController: BaseViewController {
     @IBOutlet weak var contentView: UIView!
     @IBOutlet weak var mapView: AccuTerraMapView!
     @IBOutlet weak var contentViewTopConstraint: NSLayoutConstraint!
-    @IBOutlet weak var mapViewHeightPartialConstraint: NSLayoutConstraint!
     /// Note: for the full screen list we stop resizing map, but rather resize
     /// the TrailsListView.
     @IBOutlet weak var listViewHeightFullConstraint: NSLayoutConstraint!
@@ -35,9 +34,11 @@ class DiscoverViewController: BaseViewController {
 
     /// Shows caching progress for trail or overlay
     @IBOutlet weak var cacheProgressView: UILabelledProgressView!
+    @IBOutlet weak var cacheProgressHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var mapLoadingIndicator: UIActivityIndicatorView!
 
     // MARK:- Properties
-    private let TAG = "DiscoverViewController"
+    private let TAG = LogTag(subsystem: "ATDemoApp", category: "DiscoverViewController")
     
     var searchController: UISearchController?
     var trailsListView: TrailListView = UIView.fromNib()
@@ -48,7 +49,8 @@ class DiscoverViewController: BaseViewController {
     var isTrailsLayerManagersLoaded = false
     var trailsFilter = TrailsFilter()
     var trailFilterButton: UIButton?
-    
+    private var enableHeadingTask: Task<Void, Never>?
+
     // Location tracking mode
     private var currentTracking = TrackingOption.NONE_WITH_LOCATION
     private var lastGpsTracking: TrackingOption?
@@ -62,13 +64,32 @@ class DiscoverViewController: BaseViewController {
     var trailService: ITrailService?
     
     /// List of styles, the layers button cycles through them
-    var styles: [URL] = [AccuTerraStyle.vectorStyleURL, MGLStyle.satelliteStreetsStyleURL]
+    var styles: [URL] = [AccuTerraStyle.vectorStyleURL, ApkHereMapClass().styleURL]
     
     /// Offline supported styles
-    var offlineStyles: [URL] = [MGLStyle.satelliteStreetsStyleURL, AccuTerraStyle.vectorStyleURL]
+    var offlineStyles: [URL] = [ApkHereMapClass().styleURL, AccuTerraStyle.vectorStyleURL]
     
     /// Current style Id
     var styleId = 0
+
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        // There is a crash in MapLibre when heading is animating while device rotates. We want to hide the heading and
+        // show it later when animation finishes. We are using task with delay to do this.
+        mapView.compassView.isHidden = true
+        if let enableHeadingTask {
+            enableHeadingTask.cancel()
+        }
+        enableHeadingTask = Task { [weak self] in
+            do {
+                try await Task.sleep(nanoseconds:1_000_000_000)
+                DispatchQueue.main.async {
+                    self?.mapView.compassView.isHidden = false
+                }
+            } catch {
+                return
+            }
+        }
+    }
 
     // MARK:- Lifecycle
     override func viewDidLoad() {
@@ -104,12 +125,36 @@ class DiscoverViewController: BaseViewController {
                 }
             }
             .store(in: &cancellableRefs)
+
+        NotificationCenter.default.publisher(for: Notification.Name.TrailsUpdated, object: nil)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
+                    let visibleTrails = self.trailsListView.loadTrails()
+                    self.mapView.trailLayersManager.setVisibleTrails(trailIds: visibleTrails)
+                }
+            }
+            .store(in: &cancellableRefs)
+
         OfflineMapManager.shared.addProgressObserver(observer: self)
+
+        // Hide cache indicator
+        cacheProgressHeightConstraint.constant = 0
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setUpSearchBar()
+
+        if let last = lastGpsTracking {
+            setLocationTracking(trackingOption: last)
+        }
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        setLocationTracking(trackingOption: TrackingOption.NONE)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -176,8 +221,8 @@ class DiscoverViewController: BaseViewController {
         }
         
         // Initialize map
-        self.mapView.initialize(styleURL: styles[styleId])
-        
+        self.mapView.initialize(styleURL: styles[styleId], styleProvider: getStyleProvider(style: styles[styleId]))
+
         trailsListView.delegate = self
         
         myLocationButton.layer.cornerRadius = 20.0
@@ -210,12 +255,12 @@ class DiscoverViewController: BaseViewController {
             return AccuTerraSatelliteStyleProvider(mapStyle:style)
         }
         else {
-            return AccuTerraStyleProvider(mapStyle:style)
+            return AccuTerraStyleProviderTrailCollection(mapStyle:style)
         }
     }
     
     func isSatellite(style:URL) -> Bool {
-        if let _ = style.absoluteString.range(of: "satellite-streets", options: .caseInsensitive) {
+        if let _ = style.absoluteString.range(of: "HERESatelliteStyle", options: .caseInsensitive) {
             return true
         }
         else {
@@ -271,13 +316,13 @@ class DiscoverViewController: BaseViewController {
         // Colorado’s bounds
         let northeast = CLLocationCoordinate2D(latitude: 40.989329, longitude: -102.062592)
         let southwest = CLLocationCoordinate2D(latitude: 36.986207, longitude: -109.049896)
-        let colorado = MGLCoordinateBounds(sw: southwest, ne: northeast)
-        
+        let colorado = MLNCoordinateBounds(sw: southwest, ne: northeast)
+
         mapView.zoomToExtent(bounds: colorado, animated: true)
     }
     
     private func zoomToTrail(locationInfo: TrailLocationInfo) {
-        let extent = MGLCoordinateBounds(sw: locationInfo.mapBounds.sw.coordinates, ne: locationInfo.mapBounds.ne.coordinates)
+        let extent = MLNCoordinateBounds(sw: locationInfo.mapBounds.sw.coordinates, ne: locationInfo.mapBounds.ne.coordinates)
         self.mapView.zoomToExtent(bounds: extent, edgePadding: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10), animated: true)
     }
     
@@ -326,6 +371,7 @@ class DiscoverViewController: BaseViewController {
 extension DiscoverViewController : AccuTerraMapViewDelegate {
 
     func onMapLoadFailed(error: Error) {
+        mapLoadingIndicator.stopAnimating()
         showError(error)
     }
 
@@ -351,10 +397,10 @@ extension DiscoverViewController : AccuTerraMapViewDelegate {
     }
     
     func handleTrailMapClick(trailId: Int64?) {
+        self.showTrailPOIs(trailId: trailId)
         tryOrShowError {
             try mapView.trailLayersManager.highLightTrail(trailId: trailId)
         }
-        self.showTrailPOIs(trailId: trailId)
         self.trailsListView.selectTrail(trailId: trailId)
     }
     
@@ -402,6 +448,7 @@ extension DiscoverViewController : AccuTerraMapViewDelegate {
     }
     
     func onMapLoaded() {
+        mapLoadingIndicator.stopAnimating()
         // Used to zoom to user when app starts
         if self.initLoading == true && CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
             self.initLoading = false
@@ -453,15 +500,15 @@ extension DiscoverViewController : AccuTerraMapViewDelegate {
             }
         }
     }
-    
+
     /// Checks if overlay is cached and prompts user to download the overlay.
     func checkOverlayMapCache() throws {
         let status = try OfflineMapManager.shared.getOverlayOfflineMap()?.status ?? .NOT_CACHED
-
+        
         if status == .NOT_CACHED || status == .FAILED {
             let estimatedBytes: Int64 = (try? OfflineMapManager.shared.estimateOverlayCacheSize().totalSize) ?? 0
             AlertUtils.showPrompt(viewController: self, title: "Download", message: "Would you like to download Overlay map cache (~\(estimatedBytes.humanFileSize()))?", confirmHandler: {
-
+                
                 // Starts download of the OVERLAY chache.
 
                 OfflineMapManager.shared.downloadOverlayOfflineMap(includeImagery: true) { result in
@@ -484,27 +531,27 @@ extension DiscoverViewController : TrailLayersManagerDelegate {
     }
 }
 
-// MARK:- MGLMapViewDelegate extension
-extension DiscoverViewController : MGLMapViewDelegate {
-    
-    func mapView(_ mapView: MGLMapView, didUpdate userLocation: MGLUserLocation?) {
+// MARK:- MLNMapViewDelegate extension
+extension DiscoverViewController : MLNMapViewDelegate {
+
+    func mapView(_ mapView: MLNMapView, didUpdate userLocation: MLNUserLocation?) {
         if self.initLoading == true && self.mapWasLoaded == true {
             self.initLoading = false
         }
     }
     
-    func mapView(_ mapView: MGLMapView, didChange mode: MGLUserTrackingMode, animated: Bool) {
+    func mapView(_ mapView: MLNMapView, didChange mode: MLNUserTrackingMode, animated: Bool) {
         if mode == .none {
             
         }
     }
     
-    func mapView(_ mapView: MGLMapView, annotationCanShowCallout annotation: MGLAnnotation) -> Bool {
+    func mapView(_ mapView: MLNMapView, annotationCanShowCallout annotation: MLNAnnotation) -> Bool {
         // Always allow callouts to popup when annotations are tapped.
         return true
     }
     
-    func mapViewDidFailLoadingMap(_ mapView: MGLMapView, withError error: Error) {
+    func mapViewDidFailLoadingMap(_ mapView: MLNMapView, withError error: Error) {
         showError(error)
     }
 }
@@ -516,33 +563,33 @@ extension DiscoverViewController : TrailListViewDelegate {
     }
     
     func didTapTrailInfo(basicInfo: TrailBasicInfo) {
+        self.showTrailPOIs(trailId: basicInfo.id)
         tryOrShowError {
             try self.mapView.trailLayersManager.highLightTrail(trailId: basicInfo.id)
         }
-        self.showTrailPOIs(trailId: basicInfo.id)
         self.trailsListView.selectTrail(trailId: basicInfo.id)
         onLoadTrailDetail(basicInfo: basicInfo)
     }
-    
+
     func didTapTrailMap(basicInfo: TrailBasicInfo) {
         do {
-            try self.mapView.trailLayersManager.highLightTrail(trailId: basicInfo.id)
             self.showTrailPOIs(trailId: basicInfo.id)
+            try self.mapView.trailLayersManager.highLightTrail(trailId: basicInfo.id)
             if let trailManager = self.trailService,
                 let trail = try trailManager.getTrailById(basicInfo.id) {
                 self.zoomToTrail(locationInfo: trail.locationInfo)
             }
         }
         catch {
-            Log.e("DiscoverViewController", error)
+            Log.e(TAG, error)
         }
     }
     
     func didSelectTrail(basicInfo: TrailBasicInfo) {
+        self.showTrailPOIs(trailId: basicInfo.id)
         tryOrShowError {
             try self.mapView.trailLayersManager.highLightTrail(trailId: basicInfo.id)
         }
-        self.showTrailPOIs(trailId: basicInfo.id)
     }
     
     private func showTrailPOIs(trailId: Int64?) {
@@ -583,13 +630,11 @@ extension DiscoverViewController : TrailListViewDelegate {
         self.trailListSliderMode = .partial
         self.mapViewHeightClosedConstraint.isActive = false
         self.listViewHeightFullConstraint.isActive = false
-        self.mapViewHeightPartialConstraint.isActive = true
         self.trailsListView.listButton.setImage(UIImage.chevronUpImage, for: .normal)
     }
     
     func showTrailListClosedMode() {
         self.trailListSliderMode = .closed
-        self.mapViewHeightPartialConstraint.isActive = false
         self.listViewHeightFullConstraint.isActive = false
         self.mapViewHeightClosedConstraint.isActive = true
         self.trailsListView.listButton.setImage(UIImage.chevronUpImage, for: .normal)
@@ -625,6 +670,7 @@ extension DiscoverViewController : TrailListViewDelegate {
 extension DiscoverViewController : TrailInfoViewDelegate {
     func didTapTrailInfoBackButton() {
         self.cacheProgressView.isHidden = true
+        self.cacheProgressHeightConstraint.constant = 0
     }
 }
 
@@ -667,18 +713,15 @@ extension DiscoverViewController : CacheProgressDelegate {
         let progress = offlineMap.progress
         
         self.cacheProgressView.isHidden = false
+        self.cacheProgressHeightConstraint.constant = 30
         self.cacheProgressView.progress = Float(progress)
         switch offlineMap.type {
         case .OVERLAY:
-            self.cacheProgressView.text = "Downloading Overlay: \(Int(progress * 100))%"
+            self.cacheProgressView.text = "Downloading \(offlineMap.displayName): \(Int(progress * 100))%"
         case .TRAIL:
-            if let trailId = (offlineMap as? ITrailOfflineMap)?.trailId {
-                self.cacheProgressView.text = "Downloading Trail \(trailId): \(Int(progress * 100))%"
-            }
+            self.cacheProgressView.text = "Downloading \(offlineMap.displayName): \(Int(progress * 100))%"
         case .AREA:
-            if let areaName = (offlineMap as? IAreaOfflineMap)?.areaName {
-                self.cacheProgressView.text = "Downloading Area \(areaName): \(Int(progress * 100))%"
-            }
+            self.cacheProgressView.text = "Downloading \(offlineMap.displayName): \(Int(progress * 100))%"
         }
     }
     
@@ -691,9 +734,16 @@ extension DiscoverViewController : CacheProgressDelegate {
         }).joined(separator: "\n")
         showError(message.toError())
         self.cacheProgressView.isHidden = true
+        self.cacheProgressHeightConstraint.constant = 0
     }
     
     func onComplete(offlineMap: IOfflineMap) {
         self.cacheProgressView.isHidden = true
+        self.cacheProgressHeightConstraint.constant = 0
+    }
+    
+    func onImageryDeleted(offlineMaps: [IOfflineMap]) {
+        let offlineMapNames = offlineMaps.map { $0.displayName }.joined(separator: "\n")
+        AlertUtils.showAlert(viewController: self, title: "Imagery deleted", message: "Because of HERE maps compliance, imagery were deleted from following offline maps: \n\(offlineMapNames)")
     }
 }

@@ -26,11 +26,12 @@ class BaseTripRecordingViewController : BaseDrivingViewController {
     @IBOutlet weak var lblLong: UILabel!
     @IBOutlet weak var lblDuration: UILabel!
     @IBOutlet weak var lblLength: UILabel!
+    private var enableHeadingTask: Task<Void, Never>?
 
     // MARK:- Properties
     var tripStatistics: TripStatistics?
     private var tripService: ITripRecordingService?
-    private let TAG = "BaseTripRecordingViewController"
+    private let TAG = LogTag(subsystem: "ATDemoApp", category: "BaseTripRecordingViewController")
     
     var tripUuid: String?
     var trailId: Int64?
@@ -53,7 +54,7 @@ class BaseTripRecordingViewController : BaseDrivingViewController {
     var isTripLayersManagerLoaded: Bool = false
     
     /// Provide custom trip recording data to be stored with the trip recording
-    func getExtProperties() -> [ExtProperties]? {
+    func getExtProperties() throws -> [ExtProperties]? {
         return nil
     }
     
@@ -145,9 +146,9 @@ class BaseTripRecordingViewController : BaseDrivingViewController {
                 let tripName = "Trip \(Date().toLocalDateString())" // Default name
                 let vehicleId = "test_vehicle" // TODO: Load vehicle ID
                 let result =
-                try self.tripRecorder.startTripRecording(
-                    name: tripName, trailId: self.trailId,
-                    vehicleId: vehicleId, extProperties: self.getExtProperties(), telemetryModel: self.getTelemetryModel())
+                    try self.tripRecorder.startTripRecording(
+                        name: tripName, trailId: self.trailId,
+                        vehicleId: vehicleId, extProperties: self.getExtProperties(), telemetryModel: self.getTelemetryModel())
 
                 switch result {
                 case .failure(_):
@@ -260,8 +261,31 @@ class BaseTripRecordingViewController : BaseDrivingViewController {
         lastLocation = location
 
         if self.tripUuid != nil && location != nil {
-            tripStatistics = tripRecorder.getTripStatistics()
+            tripStatistics = try? tripRecorder.getTripStatistics()
             updateStatistics(distance: tripStatistics?.length, drivingTime: tripStatistics?.drivingTime)
+        }
+    }
+
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        temporaryHideCompass()
+    }
+
+    func temporaryHideCompass() {
+        // There is a crash in MapLibre when heading is animating while device rotates. We want to hide the heading and
+        // show it later when animation finishes. We are using task with delay to do this.
+        mapView.compassView.isHidden = true
+        if let enableHeadingTask {
+            enableHeadingTask.cancel()
+        }
+        enableHeadingTask = Task { [weak self] in
+            do {
+                try await Task.sleep(nanoseconds:1_000_000_000)
+                DispatchQueue.main.async {
+                    self?.mapView.compassView.isHidden = false
+                }
+            } catch {
+                return
+            }
         }
     }
 

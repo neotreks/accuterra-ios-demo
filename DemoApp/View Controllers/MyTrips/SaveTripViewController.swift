@@ -22,7 +22,7 @@ class SaveTripViewController: UIViewController {
     @IBOutlet weak var promoteSwitch: UISwitch!
 
     // MARK:- Properties
-    private let TAG = "SaveTripViewController"
+    private let TAG = LogTag(subsystem: "ATDemoApp", category: "SaveTripViewController")
     var tripService: ITripRecordingService?
     var tripUuid: String?
     var trip: TripRecording?

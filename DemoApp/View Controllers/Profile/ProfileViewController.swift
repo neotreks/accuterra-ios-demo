@@ -42,6 +42,7 @@ class ProfileViewController: BaseViewController {
                 switch result {
                 case .success(_):
                     self.showInfo("Token reset")
+                    NotificationCenter.default.post(name: .userChanged, object: nil)
                 case .failure(let error):
                     self.showError(error)
                 }

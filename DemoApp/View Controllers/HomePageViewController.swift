@@ -8,7 +8,7 @@
 
 import UIKit
 import AccuTerraSDK
-import Mapbox
+import MapLibre
 
 // MARK:- Protocols
 protocol HomePageViewControllerDelegate: AnyObject {
@@ -34,16 +34,18 @@ protocol HomePageViewControllerDelegate: AnyObject {
 // MARK:- Class
 class HomePageViewController: UIPageViewController {
 
+    private static let TAG = LogTag(subsystem: "ATDemoApp", category: "HomePageViewController")
+    private static let TRAIL_DB_FRESH_PERIOD = 24 * 60
+
     // MARK:- Properties
     weak var homeDelegate: HomePageViewControllerDelegate?
     weak var homeNavItem: UINavigationItem?
-    var checkingForUpdatesDialog: BlockingProgressViewController?
     
     private(set) lazy var orderedViewControllers: [UIViewController] = {
         return [
+            self.newViewController("Discover"),
             self.newViewController("Community"),
             self.newViewController("My Trips"),
-            self.newViewController("Discover"),
             self.newViewController("Profile")
             ]
     }()
@@ -62,10 +64,14 @@ class HomePageViewController: UIPageViewController {
     }
     
     private func load() {
+
+        let initialViewController = newViewController("Logo")
+        scrollToViewController(viewController: initialViewController)
+
         // By default Mapbox is limitting max tiles count to 6000. If you are using AccuTerra SDK to download Mapbox tiles
         // you should get approval from Mapbox to increase this value
-        MGLOfflineStorage.shared.setMaximumAllowedMapboxTiles(UInt64(Int.max))
-        
+        MLNOfflineStorage.shared.setMaximumAllowedMapboxTiles(UInt64(Int.max))
+
         // Checking if DB is initialized is here just for the DEMO purpose.
         // You should not check this in real APK but call the `SdkManager.configureSdkAsync`
         // and monitor the progress and result. The TRAIL DB will be downloaded automatically
@@ -76,22 +82,12 @@ class HomePageViewController: UIPageViewController {
             self.goToDownload()
         } else {
             // Init the SDK. Since DB was downloaded already there will be no download now.
-
-            if NetworkUtils.shared.isOnline() {
-                if let dialog = AlertUtils.buildBlockingProgressValueDialog() {
-                    dialog.title = "Checking for updates"
-                    dialog.style = .loadingIndicator
-                    self.present(dialog, animated: false, completion: nil)
-                    self.checkingForUpdatesDialog = dialog
-                }
-            }
-
             self.initSdk()
         }
         
         self.isPagingEnabled = false
     }
-    
+
     private func initSdk() {
         SdkManager.shared.initSdkAsync(
             config: demoAppSdkConfig,
@@ -127,27 +123,15 @@ class HomePageViewController: UIPageViewController {
     }
     
     private func handleLaunchMode() {
-        if UserDefaults.standard.object(forKey: SettingsViewController.trailCollectionModeKey) == nil {
-            AlertUtils.showPrompt(viewController: self, title: "", message: "Would you like to launch the app in trail collection mode? You can change the mode at any time under Profile -> Settings.", confirmHandler: {
-                self.load()
-                self.homeDelegate?.updateSelection(task: .mytrips)
-                UserDefaults.standard.set(true, forKey: SettingsViewController.trailCollectionModeKey)
-            }, cancelHandler: {
-                self.load()
-                self.homeDelegate?.updateSelection(task: .discover)
-                UserDefaults.standard.set(false, forKey: SettingsViewController.trailCollectionModeKey)
-            })
+        self.load()
+
+        let launchInCollectionMode = (UserDefaults.standard.object(forKey: SettingsViewController.trailCollectionModeKey) as? Bool) ?? false
+        if launchInCollectionMode {
+            homeDelegate?.updateSelection(task: .mytrips)
+            return
         }
-        else {
-            self.load()
-            let launchInCollectionMode = (UserDefaults.standard.object(forKey: SettingsViewController.trailCollectionModeKey) as? Bool) ?? false
-            if launchInCollectionMode {
-                homeDelegate?.updateSelection(task: .mytrips)
-            }
-            else {
-                homeDelegate?.updateSelection(task: .discover)
-            }
-        }
+
+        homeDelegate?.updateSelection(task: .discover)
     }
     
     /// Scrolls to the view controller at the given index. Automatically calculates the direction.
@@ -296,19 +280,103 @@ extension HomePageViewController : SdkInitDelegate, DownloadViewControllerDelega
                 
                 let service = ServiceFactory.getUploadService()
                 service.resumeUploadQueue()
-                self.checkingForUpdatesDialog?.dismiss(animated: false, completion: nil)
-                self.checkingForUpdatesDialog = nil
-                
+
+                Task {
+                    try await Task.sleep(nanoseconds: 30_000_000_000)
+                    let trailsChanged = await self.updateTrailDb()
+                    let dynamicDataChanged = await self.updateTrailDynamicData()
+                    let userDataChanged = await self.updateTrailUserData()
+
+                    if trailsChanged || dynamicDataChanged || userDataChanged {
+                        DispatchQueue.main.async {
+                            NotificationCenter.default.post(name: Notification.Name.TrailsUpdated, object: nil)
+                        }
+                    }
+                }
+
             case .FAILED(let error):
                 taskBar?.isUserInteractionEnabled = true
                 self.displaySdkInitError(error)
-                self.checkingForUpdatesDialog?.dismiss(animated: false, completion: nil)
-                self.checkingForUpdatesDialog = nil
             case .IN_PROGRESS:
                 taskBar?.isUserInteractionEnabled = false
             default:
                 // no action needed here
                 break
+            }
+        }
+    }
+
+    private func updateTrailDb() async -> Bool {
+        await withCheckedContinuation { continuation in
+            // Check if we are online
+            if !NetworkUtils.shared.isOnline() {
+                Log.d(Self.TAG, "DB update skipped because the device is offline.")
+                continuation.resume(returning: false)
+                return
+            }
+            // Perform update
+            let service = ServiceFactory.getTrailService()
+            let updateConfig = TrailDbUpdateConfig(
+                freshPeriod: Self.TRAIL_DB_FRESH_PERIOD,
+                trailDataQueryInterval: 2_000
+            )
+            service.updateTrailDb(progressChange: nil, updateConfig: updateConfig) { result in
+                if result.isSuccess {
+                    Log.d(Self.TAG, "DB update succeeded: \(String(describing: result.value))")
+                    continuation.resume(returning: result.value?.hasChangeActions() ?? false)
+                } else {
+                    Log.d(Self.TAG, "DB update failed because of: \(String(describing: result.value))")
+                    continuation.resume(returning: false)
+                }
+            }
+        }
+    }
+
+    private func updateTrailDynamicData() async -> Bool {
+        await withCheckedContinuation { continuation in
+            do {
+                // Check if we are online
+                if !NetworkUtils.shared.isOnline() {
+                    Log.d(Self.TAG, "DB dynamic data update skipped because the device is offline.")
+                    continuation.resume(returning: false)
+                    return
+                }
+                // Perform update
+                let service = ServiceFactory.getTrailService()
+                try service.updateTrailDynamicData(progressChange: nil) { result in
+                    if result.isSuccess {
+                        Log.d(Self.TAG, "Trail dynamic data update succeeded: \(String(describing: result.value))")
+                        continuation.resume(returning: result.value?.hasChangeActions() ?? false)
+                    } else {
+                        Log.d(Self.TAG, "Trail dynamic data update failed because of: \(String(describing: result.errorMessage))")
+                        continuation.resume(returning: false)
+                    }
+                }
+            } catch {
+                Log.d(Self.TAG, "Trail dynamic data update failed because of: \(error.localizedDescription)", error)
+                continuation.resume(returning: false)
+            }
+        }
+    }
+
+    private func updateTrailUserData() async -> Bool {
+        await withCheckedContinuation { continuation in
+            // Check if we are online
+            if !NetworkUtils.shared.isOnline() {
+                Log.d(Self.TAG, "DB dynamic data update skipped because the device is offline.")
+                continuation.resume(returning: false)
+                return
+            }
+            // Perform update
+            let service = ServiceFactory.getTrailService()
+            service.updateTrailUserData(progressChange: nil) { result in
+                if result.isSuccess {
+                    Log.d(Self.TAG, "Trail user data update succeeded.")
+                    continuation.resume(returning: result.value?.hasChangeActions() ?? false)
+                } else {
+                    Log.d(Self.TAG, "Trail user data update failed because of: \(String(describing: result.errorMessage))")
+                    continuation.resume(returning: false)
+                }
             }
         }
     }

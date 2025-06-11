@@ -18,4 +18,14 @@ class TechRatingColorMapper {
             return UIColor(named: "DifficultyUnknown") ?? UIColor.white
         }
     }
+
+    static func getTechRatingForegroundColor(techRatingCode: String) -> UIColor {
+        if let techRating = SdkTechRating(rawValue: techRatingCode.uppercased()) {
+            switch techRating {
+            case .R3: return UIColor.black
+            default: return UIColor.white
+            }
+        }
+        return UIColor.white
+    }
 }

@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "570AFE52240D35DB00D06312"
-               BuildableName = "ATSDK(Test).app"
+               BuildableName = "AccuTerra Trails (Test).app"
                BlueprintName = "DemoApp(Test)"
                ReferencedContainer = "container:DemoApp.xcodeproj">
             </BuildableReference>
@@ -29,7 +29,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5720809623E189F8008C0EDD"
-               BuildableName = "ATSDK(Develop).app"
+               BuildableName = "AccuTerra Trails.app"
                BlueprintName = "DemoApp(Develop)"
                ReferencedContainer = "container:DemoApp.xcodeproj">
             </BuildableReference>
@@ -43,8 +43,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "572080AC23E189FA008C0EDD"
-               BuildableName = "DemoAppTests.xctest"
-               BlueprintName = "DemoAppTests"
+               BuildableName = "DemoAppUnitTests.xctest"
+               BlueprintName = "DemoAppUnitTests"
                ReferencedContainer = "container:DemoApp.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -87,11 +87,18 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5720809623E189F8008C0EDD"
-            BuildableName = "ATSDK(Develop).app"
+            BuildableName = "AccuTerra Trails.app"
             BlueprintName = "DemoApp(Develop)"
             ReferencedContainer = "container:DemoApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "EarlGreyStandaloneMode"
+            value = "1"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
       <LocationScenarioReference
          identifier = "com.apple.dt.IDEFoundation.CurrentLocationScenarioIdentifier"
          referenceType = "1">
@@ -107,7 +114,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5720809623E189F8008C0EDD"
-            BuildableName = "ATSDK(Develop).app"
+            BuildableName = "AccuTerra Trails.app"
             BlueprintName = "DemoApp(Develop)"
             ReferencedContainer = "container:DemoApp.xcodeproj">
          </BuildableReference>
