@@ -6,10 +6,10 @@
 //  Copyright © 2020 NeoTreks. All rights reserved.
 //
 
-import Mapbox
+import MapLibre
 
-class CustomCalloutView: UIView, MGLCalloutView {
-    var representedObject: MGLAnnotation
+class CustomCalloutView: UIView, MLNCalloutView {
+    var representedObject: MLNAnnotation
 
     // Allow the callout to remain open during panning.
     let dismissesAutomatically: Bool = false
@@ -30,14 +30,14 @@ class CustomCalloutView: UIView, MGLCalloutView {
     lazy var leftAccessoryView = UIView() /* unused */
     lazy var rightAccessoryView = UIView() /* unused */
 
-    weak var delegate: MGLCalloutViewDelegate?
+    weak var delegate: MLNCalloutViewDelegate?
 
     let tipHeight: CGFloat = 10.0
     let tipWidth: CGFloat = 20.0
 
     let mainBody: UIButton
 
-    required init(representedObject: MGLAnnotation) {
+    required init(representedObject: MLNAnnotation) {
         self.representedObject = representedObject
         self.mainBody = UIButton(type: .system)
 
@@ -57,7 +57,7 @@ class CustomCalloutView: UIView, MGLCalloutView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - MGLCalloutView API
+    // MARK: - MLNCalloutView API
     func presentCallout(from rect: CGRect, in view: UIView, constrainedTo constrainedRect: CGRect, animated: Bool) {
 
         delegate?.calloutViewWillAppear?(self)
@@ -117,7 +117,7 @@ class CustomCalloutView: UIView, MGLCalloutView {
 
     func isCalloutTappable() -> Bool {
         if let delegate = delegate {
-            if delegate.responds(to: #selector(MGLCalloutViewDelegate.calloutViewShouldHighlight)) {
+            if delegate.responds(to: #selector(MLNCalloutViewDelegate.calloutViewShouldHighlight)) {
                 return delegate.calloutViewShouldHighlight!(self)
             }
         }
@@ -125,7 +125,7 @@ class CustomCalloutView: UIView, MGLCalloutView {
     }
 
     @objc func calloutTapped() {
-        if isCalloutTappable() && delegate!.responds(to: #selector(MGLCalloutViewDelegate.calloutViewTapped)) {
+        if isCalloutTappable() && delegate!.responds(to: #selector(MLNCalloutViewDelegate.calloutViewTapped)) {
             delegate!.calloutViewTapped!(self)
         }
     }

@@ -14,7 +14,7 @@ import AccuTerraSDK
 ///
 
 public class EnumUtil {
-    private static let TAG = "EnumUtil"
+    private static let TAG = LogTag(subsystem: "ATDemoApp", category: "EnumUtil")
     private static var techRatings = [String: TechnicalRating]()
     
     ///

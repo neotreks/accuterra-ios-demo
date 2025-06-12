@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Mapbox
+import MapLibre
 import AccuTerraSDK
 
 class NewOfflineMapViewController: BaseViewController {
@@ -41,7 +41,7 @@ class NewOfflineMapViewController: BaseViewController {
         [.LOCATION, .NONE_WITH_LOCATION]
     
     /// List of styles, the layers button cycles through them
-    var styles: [URL] = [AccuTerraStyle.vectorStyleURL, MGLStyle.satelliteStreetsStyleURL]
+    var styles: [URL] = [AccuTerraStyle.vectorStyleURL, ApkHereMapClass().styleURL]
     
     /// Current style Id
     var styleId = 0
@@ -141,7 +141,7 @@ class NewOfflineMapViewController: BaseViewController {
                                 self.showError(error)
                                 self.downloadButton.isEnabled = true
                             }
-                        }
+                    }
                 }
                 
                 // If this is edit, then delete the previous map
@@ -272,30 +272,30 @@ extension NewOfflineMapViewController : AccuTerraMapViewDelegate {
     }
 }
 
-// MARK:- MGLMapViewDelegate extension
-extension NewOfflineMapViewController : MGLMapViewDelegate {
-    
-    func mapView(_ mapView: MGLMapView, didUpdate userLocation: MGLUserLocation?) {
+// MARK:- MLNMapViewDelegate extension
+extension NewOfflineMapViewController : MLNMapViewDelegate {
+
+    func mapView(_ mapView: MLNMapView, didUpdate userLocation: MLNUserLocation?) {
         if self.initLoading == true && self.mapWasLoaded == true {
             self.initLoading = false
         }
     }
     
-    func mapView(_ mapView: MGLMapView, didChange mode: MGLUserTrackingMode, animated: Bool) {
+    func mapView(_ mapView: MLNMapView, didChange mode: MLNUserTrackingMode, animated: Bool) {
         if mode == .none {
         }
     }
     
-    func mapView(_ mapView: MGLMapView, annotationCanShowCallout annotation: MGLAnnotation) -> Bool {
+    func mapView(_ mapView: MLNMapView, annotationCanShowCallout annotation: MLNAnnotation) -> Bool {
         // Always allow callouts to popup when annotations are tapped.
         return true
     }
     
-    func mapViewDidFailLoadingMap(_ mapView: MGLMapView, withError error: Error) {
+    func mapViewDidFailLoadingMap(_ mapView: MLNMapView, withError error: Error) {
         showError(error)
     }
     
-    func mapView(_ mapView: MGLMapView, regionDidChangeWith reason: MGLCameraChangeReason, animated: Bool) {
+    func mapView(_ mapView: MLNMapView, regionDidChangeWith reason: MLNCameraChangeReason, animated: Bool) {
         refreshEstimate()
     }
 }

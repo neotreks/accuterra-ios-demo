@@ -13,10 +13,9 @@ protocol TaskbarDelegate: AnyObject {
 }
 
 enum TaskTypes: String {
-    case community = "COMMUNITY"
-//    case activities = "ACTIVITIES"
-    case mytrips = "MY TRIPS"
     case discover = "DISCOVER"
+    case feed = "FEED"
+    case mytrips = "TRIPS"
     case profile = "PROFILE"
 }
 
@@ -24,10 +23,9 @@ class TaskBar: UIView {
         
     static var tasks: [Int: TaskTypes] {
         return [
-            0: .community,
-//            1: .activities,
-            1: .mytrips,
-            2: .discover,
+            0: .discover,
+            1: .feed,
+            2: .mytrips,
             3: .profile
         ]
     }
@@ -78,6 +76,9 @@ extension TaskBar: UICollectionViewDataSource, UICollectionViewDelegate, UIColle
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! TaskbarCell
         cell.title?.text = TaskBar.tasks[indexPath.row]?.rawValue
+        cell.icon?.image = cell.isSelected ? TaskBar.tasks[indexPath.row]?.selectedIcon : TaskBar.tasks[indexPath.row]?.icon
+        cell.iconSelected = TaskBar.tasks[indexPath.row]?.selectedIcon
+        cell.iconUnselected = TaskBar.tasks[indexPath.row]?.icon
         return cell
     }
     
@@ -103,6 +104,27 @@ extension TaskBar: UICollectionViewDataSource, UICollectionViewDelegate, UIColle
         }) {
             self.collectionView.selectItem(at: IndexPath(row: index.key, section: 0), animated: true, scrollPosition: .centeredHorizontally)
             delegate?.taskSelected(task: task)
+        }
+    }
+}
+
+extension TaskTypes {
+
+    var icon: UIImage? {
+        switch self {
+        case .discover: UIImage(systemName: "map", withConfiguration: UIImage.SymbolConfiguration(pointSize: 24, weight: .light))
+        case .feed: UIImage(systemName: "newspaper", withConfiguration: UIImage.SymbolConfiguration(pointSize: 24, weight: .light))
+        case .mytrips: UIImage(systemName: "car.2", withConfiguration: UIImage.SymbolConfiguration(pointSize: 24, weight: .light))
+        case .profile: UIImage(systemName: "person", withConfiguration: UIImage.SymbolConfiguration(pointSize: 24, weight: .light))
+        }
+    }
+
+    var selectedIcon: UIImage? {
+        switch self {
+        case .discover: UIImage(systemName: "map.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 24, weight: .semibold))
+        case .feed: UIImage(systemName: "newspaper.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 24, weight: .semibold))
+        case .mytrips: UIImage(systemName: "car.2.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 24, weight: .semibold))
+        case .profile: UIImage(systemName: "person.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 24, weight: .semibold))
         }
     }
 }

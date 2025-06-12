@@ -9,7 +9,6 @@
 import UIKit
 import AccuTerraSDK
 import StarryStars
-import ObjectMapper
 import AlignedCollectionViewFlowLayout
 
 class TrailSaveViewController: UIViewController {
@@ -48,7 +47,7 @@ class TrailSaveViewController: UIViewController {
     @IBOutlet var permitControls: [UIView] = [UIView]()
 
     // MARK:- Properties
-    private let TAG = "TrailSaveViewController"
+    private let TAG = LogTag(subsystem: "ATDemoApp", category: "TrailSaveViewController")
     private var tripService: ITripRecordingService?
     var tripUuid: String?
     private var trip: TripRecording?
@@ -461,8 +460,8 @@ class TrailSaveViewController: UIViewController {
             
             // Copy gathered data
             trip.media = tripMedia
-            trip.extProperties = ExtPropertiesBuilder.buildList(value: trailCollectionData)
-            
+            trip.extProperties = try ExtPropertiesBuilder.buildList(value: trailCollectionData)
+
             // Safe Trip Data into the DB
             
             trip = try tripService.updateTripRecording(tripRecording: trip)
@@ -538,7 +537,7 @@ class TrailSaveViewController: UIViewController {
         trailDescriptionTextView.text = trip.tripInfo.description
         
         
-        if let data = trip.extProperties.first?.data, let trailCollectionData = Mapper<TrailCollectionData>().map(JSONString: data) {
+        if let data = trip.extProperties.first?.data, let trailCollectionData: TrailCollectionData = try data.decode() {
             // Main Custom data
             // For Trail collection we define just one value
             let techRatingLow = trailCollectionData.difficultyRating ?? 1

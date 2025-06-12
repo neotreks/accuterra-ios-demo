@@ -22,17 +22,27 @@ var demoAppSdkConfig: ApkSdkConfig = {
         sdkEndpointConfig: sdkEndpointConfig,
         mapConfig: MapConfig(
             // providing nil value will load map token and style url from backend
-            accuTerraMapConfig: nil),
+            accuTerraMapConfig: nil,
+            // custom imagery style
+            imageryMapConfig: ImageryMapConfig(styleURL: ApkHereMapClass().styleURL)),
         tripConfiguration: TripConfiguration(
             // Just to demonstrate the upload network type constraint
-            uploadNetworkType: .CONNECTED),
+            uploadNetworkType: .CONNECTED,
+            // Let's keep the trip recording on the device for development reasons,
+            // otherwise it should be deleted
+            deleteRecordingAfterUpload: false,
+            attachmentSplitConfig: TripAttachmentSplitConfig(attachmentSplitSizeLimit: 2.0, attachmentSplitChunkSize: 1.0)),
         trailConfiguration: TrailConfiguration(
+            // Increases launch time
+            trailFeatureCacheMode: .CACHE_TRAILS_WHEN_ACCESSED,
             // Update trail DB during SDK initialization
-            updateTrailDbDuringSdkInit: NetworkTypeConstraint.UNMETERED.isMet,
+            updateTrailDbDuringSdkInit: false,
             // Update trail User Data during SDK initialization
-            updateTrailUserDataDuringSdkInit: NetworkTypeConstraint.UNMETERED.isMet,
+            updateTrailUserDataDuringSdkInit: false,
             // Update trail Dynamic Data during SDK initialization (ratings, reported closed dates, etc.)
-            updateTrailDynamicDataDuringSdkInit: NetworkTypeConstraint.UNMETERED.isMet
-        )
+            updateTrailDynamicDataDuringSdkInit: false
+        ),
+        
+        mapRequestInterceptor: ApkHereMapClass()
     )
 }()

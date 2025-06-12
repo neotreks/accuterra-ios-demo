@@ -157,6 +157,10 @@ extension OfflineMapsViewController : CacheProgressDelegate {
             loadOfflineMaps()
         }
     }
+    
+    func onImageryDeleted(offlineMaps: [IOfflineMap]) {
+        // We do not want to do anything here
+    }
 }
 
 // MARK:- OfflineMapTableViewCellDelegate extension

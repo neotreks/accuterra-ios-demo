@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Mapbox
+import MapLibre
 import AccuTerraSDK
 
 // MARK:- Enums
@@ -32,13 +32,16 @@ class DrivingViewController: BaseTripRecordingViewController {
     @IBOutlet weak var wrongDirectionLabel: UILabel!
     @IBOutlet weak var trailLostLabel: UILabel!
 
+    @IBOutlet weak var bottomContainerLayoutView: UIView!
+    @IBOutlet weak var bottomContainerLayoutHeighConstraint: NSLayoutConstraint!
+
     // Note: for the full screen list we stop resizing map, but rather resize
     // the TrailsListView.
     @IBOutlet weak var listViewHeightFullConstraint: NSLayoutConstraint!
     @IBOutlet weak var mapViewHeightClosedConstraint: NSLayoutConstraint!
 
     // MARK:- Properties
-    private let TAG = "DrivingViewController"
+    private let TAG = LogTag(subsystem: "ATDemoApp", category: "DrivingViewController")
     private var trail: Trail?
 
     private var navigatorStatus = NavigatorStatus.createNotReady() {
@@ -71,6 +74,7 @@ class DrivingViewController: BaseTripRecordingViewController {
     private var nextExpectedWayPoint: TrailDriveWaypoint? = nil
     var waypointsListView: WaypointListView = UIView.fromNib()
     var waypointListSliderMode: WaypointListSliderMode = .minimum
+    var isNavigating: Bool = false
 
     // MARK:- Lifecycle
     override func viewDidLoad() {
@@ -91,7 +95,17 @@ class DrivingViewController: BaseTripRecordingViewController {
         self.wrongDirectionLabel.isHidden = true
         self.contentView.isHidden = true
         self.expandButton.isSelected = false
-        simulateTrailPath =  Bundle.main.infoDictionary?["SIMULATE_TRAIL_PATH"] as? Bool ?? false
+
+        self.buttonAddPoi.isHidden = true
+        self.bottomContainerLayoutHeighConstraint.constant = 0
+        self.bottomContainerLayoutView.isHidden = true
+        self.buttonStart.isHidden = true
+        self.buttonFinish.isHidden = true
+        self.buttonResume.isHidden = true
+        self.buttonStop.isHidden = true
+        self.buttonAddPoi.isHidden = true
+
+        simulateTrailPath = SimulatedTrailPathUtil.isTrailPathSimulated
         
         super.viewDidLoad()
     
@@ -118,7 +132,7 @@ class DrivingViewController: BaseTripRecordingViewController {
 
     // MARK:- Actions
     @objc func close() {
-        guard !tripRecorder.hasActiveTripRecording() else {
+        guard isNavigating || !tripRecorder.hasActiveTripRecording() else {
             showError("Cannot exit while recording a trip".toError())
             return
         }
@@ -128,6 +142,11 @@ class DrivingViewController: BaseTripRecordingViewController {
     // MARK:-
     func setupListView() {
         waypointsListView.delegate = self
+    }
+
+    private func setupNavigatingViewIfNeeded() {
+        guard isNavigating else { return }
+        buttonAddPoi.isHidden = true
     }
 
     override func getTrailDrive() -> TrailDrive? {
@@ -337,6 +356,7 @@ extension DrivingViewController {
         self.addTrailLayers()
         do {
             try setupRecordingAfterOnAccuTerraMapViewReady()
+            self.setupNavigatingViewIfNeeded()
         } catch {
             showError(error)
         }

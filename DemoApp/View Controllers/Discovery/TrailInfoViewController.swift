@@ -21,11 +21,12 @@ class TrailInfoViewController: LocationViewController {
     @IBOutlet weak var trailTitleLabel: UILabel!
     @IBOutlet weak var trailDescriptionTextView: UITextView!
     @IBOutlet weak var trailDistanceLabel: UILabel!
-    @IBOutlet weak var trailRatingValueLabel: UILabel!
-    @IBOutlet weak var trailUserRatingCountLabel: UILabel!
-    @IBOutlet weak var trailUserRatingStar: RatingView!
+    private var trailRatingValueLabel: UILabel = UILabel()
+    private var trailUserRatingCountLabel: UILabel = UILabel()
+    private var trailUserRatingStar: RatingView = RatingView()
     @IBOutlet weak var trailImagesCollectionView: UICollectionView!
     @IBOutlet weak var difficultyLabel: UILabel!
+    @IBOutlet weak var difficultyView: UIView!
     @IBOutlet weak var getThereButton: UIButton!
     @IBOutlet weak var favoriteButton: UIButton!
     @IBOutlet weak var downloadButton: UIButton!
@@ -49,7 +50,7 @@ class TrailInfoViewController: LocationViewController {
     var trailId: Int64?
     
     // MARK: - Private properties
-    private let TAG = String(describing: self)
+    private let TAG = LogTag(subsystem: "ATDemoApp", category: String(describing: self))
     private var trail: Trail?
     private var trailBasicInfo: TrailBasicInfo?
     private var imageUrls: [TrailMedia]?
@@ -127,7 +128,7 @@ class TrailInfoViewController: LocationViewController {
 
         startNavigationButton.imageView?.image = UIImage.startNavigationImage
 
-        TrailInfoDisplay.setDisplayFieldValues(trailTitleLabel: &trailTitleLabel, descriptionTextView: &trailDescriptionTextView, distanceLabel: &trailDistanceLabel, userRatings: &trailUserRatingStar, userRatingCountLabel: &trailUserRatingCountLabel, userRatingValueLabel: &trailRatingValueLabel, difficultyLabel: &difficultyLabel, basicTrailInfo: trailBasicInfo)
+        TrailInfoDisplay.setDisplayFieldValues(trailTitleLabel: &trailTitleLabel, descriptionTextView: &trailDescriptionTextView, distanceLabel: &trailDistanceLabel, userRatings: &trailUserRatingStar, userRatingCountLabel: &trailUserRatingCountLabel, userRatingValueLabel: &trailRatingValueLabel, difficultyLabel: &difficultyLabel, difficultyView: &difficultyView, basicTrailInfo: trailBasicInfo, trail: trail)
 
         self.downloadButton.isEnabled = false
         self.downloadButton.alpha = 0
@@ -299,20 +300,20 @@ class TrailInfoViewController: LocationViewController {
                 
                 AlertUtils.showPrompt(viewController: self, title: "Cancel Offline Cache?",
                                       message: "Downloading trail cache. Do you want to cancel?", confirmHandler: {
-
-                    self.downloadButton.isEnabled = false
-
-                    // Delete cache is asynchronous
-
-                    OfflineMapManager.shared.deleteOfflineMap(offlineMapId: trailOfflineMap!.offlineMapId) { error in
-                        if let error = error {
-                            self.showError(error)
-                        } else {
-                            self.downloadButton.isEnabled = true
-                            self.configureDownloadButton(mapStatus: .NOT_CACHED)
-                        }
-                    }
-                })
+                                        
+                                        self.downloadButton.isEnabled = false
+                                        
+                                        // Delete cache is asynchronous
+                                        
+                                        OfflineMapManager.shared.deleteOfflineMap(offlineMapId: trailOfflineMap!.offlineMapId) { error in
+                                            if let error = error {
+                                                self.showError(error)
+                                            } else {
+                                                self.downloadButton.isEnabled = true
+                                                self.configureDownloadButton(mapStatus: .NOT_CACHED)
+                                            }
+                                        }
+                                      })
             @unknown default:
                 return
             }
@@ -333,7 +334,7 @@ class TrailInfoViewController: LocationViewController {
         // Toggle value
         let toggleFavorite = !(userData.favorite ?? false)
         let service = ServiceFactory.getTrailService()
-        service.setTrailFavorite(trailId: trailId, favorite: toggleFavorite) { result in
+        service.setTrailFavorite(trailId: trailId, favorite: toggleFavorite) { (result) in
             if case let .success(value) = result {
                 // Update the value also in the View
                 self.userData = self.userData?.copyWithFavorite(favorite: value.favorite)
@@ -348,7 +349,7 @@ class TrailInfoViewController: LocationViewController {
     }
     
     @IBAction func didTapStartNavigation(_ sender: Any) {
-        let simulateTrailPath = Bundle.main.infoDictionary?["SIMULATE_TRAIL_PATH"] as? Bool ?? false
+        let simulateTrailPath = SimulatedTrailPathUtil.isTrailPathSimulated
         guard simulateTrailPath || isTrailNavigable() else {
             AlertUtils.showAlert(viewController: self, title: "Trail lost", message: "You must be closer to the trail path")
             return
@@ -357,6 +358,7 @@ class TrailInfoViewController: LocationViewController {
             instantiateViewController(withIdentifier: "Driving") as? DrivingViewController {
             vc.title = "Trail Info"
             vc.trailId = self.trailId
+            vc.isNavigating = true
             let nav = UINavigationController(rootViewController: vc)
             nav.modalPresentationStyle = .overCurrentContext
             self.present(nav, animated: true, completion: nil)
@@ -437,6 +439,13 @@ class TrailInfoViewController: LocationViewController {
     }
     
     private func setViewState(_ newViewState: ViewState) {
+        // Prevent Rapid State Changes
+        self.view.isUserInteractionEnabled = false
+        viewState = newViewState
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.view.isUserInteractionEnabled = true
+        }
+
         self.trailDescriptionButton.isSelected = false
         self.trailDescriptionTextView.isHidden = true
         self.trailUGCView.isHidden = true
@@ -477,13 +486,10 @@ class TrailInfoViewController: LocationViewController {
                 if let media = try? service.getTrailDrives(trail.info.id).first?.mapImage {
                     self.mapImageLoader = MediaLoaderFactory.trailMediaLoader(media: media, variant: .DEFAULT)
                     self.trailMapImageView.image = nil
-                    self.trailMapImageView.kf.indicatorType = .activity
-                    self.trailMapImageView.kf.indicator?.startAnimatingView()
 
                     self.mapImageLoader?.load(completion: { [weak self] result in
                         if case let .success(value) = result {
                             self?.trailMapImageView.image = value.1
-                            self?.trailMapImageView.stopAnimating()
                         }
                     })
                 }
@@ -507,7 +513,7 @@ class TrailInfoViewController: LocationViewController {
             let reason = error.localizedDescription
             let errorMessage = "Error while loading trail user data: \(trailId), \(reason)"
             Log.e(TAG, errorMessage, error)
-            showError(errorMessage.toError())
+            //showError(errorMessage.toError())
         }
         self.favoriteButton.isSelected = self.userData?.favorite ?? false
         self.trailUGCRatingView.rating = self.userData?.rating ?? 0
@@ -533,13 +539,12 @@ class TrailInfoViewController: LocationViewController {
                 if case let .success(value) = result {
                     self.comments = value.comments
                     self.commentsCount = value.paging.total
-                callback?(true)
-
+                    callback?(true)
                 } else {
                     let reason = result.buildErrorMessage() ?? "unknown reason"
                     let errorMessage = "Error while loading trail comments: \(trailId), \(reason)"
                     Log.e(self.TAG, errorMessage, result.error)
-                    self.showError(errorMessage.toError())
+                    //self.showError(errorMessage.toError())
                     callback?(false)
                     return
                 }
@@ -555,16 +560,16 @@ class TrailInfoViewController: LocationViewController {
 extension TrailInfoViewController : UITableViewDelegate, UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        switch self.viewState {
-        case .developer:
-            return 15
-        case .pois:
-            return 1
-        case .ugc:
-            return 1
-        default:
-            return 0
+        if tableView == trailDetailsTableView {
+            switch viewState {
+            case .developer: return 15
+            case .pois: return 1
+            default: return 0
+            }
+        } else if tableView == trailUGCCommentsTableView {
+            return viewState == .ugc ? 1 : 0
         }
+        return 0
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -610,32 +615,38 @@ extension TrailInfoViewController : UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch self.viewState {
-        case .developer:
-            guard let trailDetails = self.trailDeveloperDetails else {
-                return 0
-            }
-            if let section = trailDetails.getSection(sectionId: section) {
-                if section.values.count == 0 {
-                    return 1 // Show Empty Section note
-                } else {
-                    return section.values.count
+        if tableView == trailDetailsTableView {
+            switch self.viewState {
+            case .developer:
+                guard let trailDetails = self.trailDeveloperDetails else {
+                    return 0
                 }
-            } else {
+                if let section = trailDetails.getSection(sectionId: section) {
+                    if section.values.count == 0 {
+                        return 1 // Show Empty Section note
+                    } else {
+                        return section.values.count
+                    }
+                } else {
+                    return 0
+                }
+            case .pois:
+                guard let waypoints = self.drive?.waypoints else {
+                    return 0
+                }
+                return waypoints.count
+            default:
                 return 0
             }
-        case .pois:
-            guard let waypoints = self.drive?.waypoints else {
-                return 0
+        } else if tableView == trailUGCCommentsTableView {
+            if viewState == .ugc {
+                return Int(commentsCount)
             }
-            return waypoints.count
-        case .ugc:
-            return Int(commentsCount)
-        default:
             return 0
         }
+        return 0
     }
-    
+
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch self.viewState {
         case .developer:
@@ -652,59 +663,64 @@ extension TrailInfoViewController : UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch self.viewState {
-        case .developer:
-            let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
-            
-            if let trailDetails = self.trailDeveloperDetails, let section = trailDetails.getSection(sectionId: indexPath.section) {
-                if section.values.count == 0 {
-                    cell.textLabel?.text = "No information is available"
-                } else {
-                    cell.textLabel?.text = section.values[indexPath.row].key
-                    var value = section.values[indexPath.row].value
-                    if value.count == 0 {
-                        value = "N/A"
+        if tableView == trailDetailsTableView {
+            switch self.viewState {
+            case .developer:
+                let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
+
+                if let trailDetails = self.trailDeveloperDetails, let section = trailDetails.getSection(sectionId: indexPath.section) {
+                    if section.values.count == 0 {
+                        cell.textLabel?.text = "No information is available"
+                    } else {
+                        cell.textLabel?.text = section.values[indexPath.row].key
+                        var value = section.values[indexPath.row].value
+                        if value.count == 0 {
+                            value = "N/A"
+                        }
+                        cell.detailTextLabel?.text = value
                     }
-                    cell.detailTextLabel?.text = value
                 }
-            }
-            
-            return cell
-        case .pois:
-            let cell :WaypointListTableviewCell = tableView.dequeueReusableCell(withIdentifier: WaypointListTableviewCell.cellIdentifier, for: indexPath) as! WaypointListTableviewCell
-            
-            let waypoint = self.drive?.waypoints[indexPath.row]
-            
-            if let poiDistance = waypoint?.distanceMarker {
-                cell.poiListItemMillage.text = DistanceFormatter.formatDistance(distanceInMeters: poiDistance)
-            } else {
-                cell.poiListItemMillage.text = "N/A"
-            }
-            
-            cell.poiDescriptionLabel.text = waypoint?.description
-            
-            if let waypoint = waypoint {
-                if let name = waypoint.point.name, !name.isEmpty {
-                    cell.poiListItemName.text = name
+
+                return cell
+            case .pois:
+                let cell :WaypointListTableviewCell = tableView.dequeueReusableCell(withIdentifier: WaypointListTableviewCell.cellIdentifier, for: indexPath) as! WaypointListTableviewCell
+
+                let waypoint = self.drive?.waypoints[indexPath.row]
+
+                if let poiDistance = waypoint?.distanceMarker {
+                    cell.poiListItemMillage.text = DistanceFormatter.formatDistance(distanceInMeters: poiDistance)
                 } else {
-                    cell.poiListItemName.text = "WP #\(waypoint.navigationOrder)"
+                    cell.poiListItemMillage.text = "N/A"
                 }
-            } else {
-                cell.poiListItemName.text = ""
+
+                cell.poiDescriptionLabel.text = waypoint?.description
+
+                if let waypoint = waypoint {
+                    if let name = waypoint.point.name, !name.isEmpty {
+                        cell.poiListItemName.text = name
+                    } else {
+                        cell.poiListItemName.text = "WP #\(waypoint.navigationOrder)"
+                    }
+                } else {
+                    cell.poiListItemName.text = ""
+                }
+
+                cell.delegate = self
+                return cell
+            default:
+                return UITableViewCell()
             }
-            
-            cell.delegate = self
-            return cell
-        case .ugc:
-            let cell: CommentTableviewCell = tableView.dequeueReusableCell(withIdentifier: CommentTableviewCell.cellIdentifier, for: indexPath) as! CommentTableviewCell
-            if let comment = self.comments?[indexPath.row]{
-                cell.userNameLabel.text = comment.user.userId
-                cell.commentTextLabel.text = comment.text
+        } else if tableView == trailUGCCommentsTableView {
+            if viewState == .ugc {
+                let cell: CommentTableviewCell = tableView.dequeueReusableCell(withIdentifier: CommentTableviewCell.cellIdentifier, for: indexPath) as! CommentTableviewCell
+                if let comment = self.comments?[indexPath.row]{
+                    cell.userNameLabel.text = comment.user.userId
+                    cell.commentTextLabel.text = comment.text
+                }
+                return cell
             }
-            return cell
-        default:
-            return UITableViewCell()
         }
+        return UITableViewCell()
     }
     
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
@@ -752,6 +768,10 @@ extension TrailInfoViewController : CacheProgressDelegate {
         if let trailOfflineMap = offlineMap as? ITrailOfflineMap, trailOfflineMap.trailId == self.trailId {
             configureDownloadButton(mapStatus: .COMPLETE)
         }
+    }
+    
+    func onImageryDeleted(offlineMaps: [IOfflineMap]) {
+        // We do not want to do anything here
     }
 }
 
@@ -813,11 +833,10 @@ extension TrailInfoViewController : RatingViewDelegate {
         
         let service = ServiceFactory.getTrailService()
         service.setTrailRating(trailId: trailId, rating: Double(newRating), completion: { result in
-            switch result {
-            case .success(_):
+            if result.isSuccess {
                 // Update the value also in the View
                 self.userData = self.userData?.copyWithRating(rating: newRating)
-            case .failure(_):
+            } else {
                 self.showError("Trail update failed: \(result.buildErrorMessage() ?? "unknown reason")".toError())
             }
         })

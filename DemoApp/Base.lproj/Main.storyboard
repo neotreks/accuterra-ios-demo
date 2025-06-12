@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="pgE-KE-uU6">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23094" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="pgE-KE-uU6">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23084"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -11,10 +11,43 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
+        <!--View Controller-->
+        <scene sceneID="e9T-f0-8Tf">
+            <objects>
+                <viewController storyboardIdentifier="Logo" id="oHr-76-5wP" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="vfb-fZ-iwm">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Logo" translatesAutoresizingMaskIntoConstraints="NO" id="ixR-zx-xq4">
+                                <rect key="frame" x="41.5" y="289.5" width="331" height="331"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="ixR-zx-xq4" secondAttribute="height" multiplier="1:1" id="xUa-Dx-sT1"/>
+                                </constraints>
+                            </imageView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="EBd-iY-vKC">
+                                <rect key="frame" x="197" y="570" width="20" height="20"/>
+                            </activityIndicatorView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="CxG-0i-KvR"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="EBd-iY-vKC" firstAttribute="centerX" secondItem="CxG-0i-KvR" secondAttribute="centerX" id="GhG-C3-6ST"/>
+                            <constraint firstItem="ixR-zx-xq4" firstAttribute="centerX" secondItem="CxG-0i-KvR" secondAttribute="centerX" id="Kj9-N5-AIj"/>
+                            <constraint firstItem="ixR-zx-xq4" firstAttribute="width" secondItem="vfb-fZ-iwm" secondAttribute="width" multiplier="0.8" id="Ljf-1X-vVp"/>
+                            <constraint firstItem="ixR-zx-xq4" firstAttribute="centerY" secondItem="CxG-0i-KvR" secondAttribute="centerY" id="Vd4-Wn-T2h"/>
+                            <constraint firstItem="EBd-iY-vKC" firstAttribute="top" secondItem="ixR-zx-xq4" secondAttribute="bottom" constant="-50.5" id="wgh-Wd-HRB"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="8Op-mj-Vmm" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1570" y="1008"/>
+        </scene>
         <!--Driving View Controller-->
         <scene sceneID="HJH-dk-u6J">
             <objects>
-                <viewController storyboardIdentifier="Driving" id="lqV-EL-LG2" customClass="DrivingViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Driving" id="lqV-EL-LG2" customClass="DrivingViewController" customModule="AccuTerra_Trails" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="agB-KR-FEb">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -137,7 +170,7 @@
                                     <action selector="drivingModeButtonPressed" destination="lqV-EL-LG2" eventType="touchUpInside" id="9pf-9d-07F"/>
                                 </connections>
                             </button>
-                            <view hidden="YES" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4dt-en-sqb" customClass="WaypointListView" customModule="ATSDK_Develop_" customModuleProvider="target">
+                            <view hidden="YES" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4dt-en-sqb" customClass="WaypointListView" customModule="AccuTerra_Trails" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="98" width="414" height="572"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </view>
@@ -472,10 +505,12 @@
                     </view>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="color" keyPath="navBarBackgroundTintColor">
-                            <color key="value" red="0.27450980392156865" green="0.75294117647058822" blue="0.9137254901960784" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <color key="value" red="0.27450980390000002" green="0.75294117650000003" blue="0.91372549020000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         </userDefinedRuntimeAttribute>
                     </userDefinedRuntimeAttributes>
                     <connections>
+                        <outlet property="bottomContainerLayoutHeighConstraint" destination="Nbg-Dx-0Y0" id="aRA-67-ZHc"/>
+                        <outlet property="bottomContainerLayoutView" destination="WDq-RK-RuR" id="uXb-nV-hvW"/>
                         <outlet property="buttonAddPoi" destination="mDd-yo-DCa" id="w9B-jE-lNM"/>
                         <outlet property="buttonFinish" destination="0eb-FT-TDO" id="TAY-Tg-eQF"/>
                         <outlet property="buttonResume" destination="Lbf-nq-6ja" id="TOY-a8-GiV"/>
@@ -512,7 +547,7 @@
         <!--Offline Maps View Controller-->
         <scene sceneID="Itc-Iq-9eq">
             <objects>
-                <viewController storyboardIdentifier="OfflineMaps" id="AjF-SX-8Zw" customClass="OfflineMapsViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="OfflineMaps" id="AjF-SX-8Zw" customClass="OfflineMapsViewController" customModule="AccuTerra_Trails" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="AOG-J4-kWF">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -554,7 +589,7 @@
                                 <rect key="frame" x="20" y="150" width="374" height="712"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="offlineMapTableViewCell" rowHeight="60" id="r4g-e0-u6w" customClass="OfflineMapTableViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="offlineMapTableViewCell" rowHeight="60" id="r4g-e0-u6w" customClass="OfflineMapTableViewCell" customModule="AccuTerra_Trails" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="50" width="374" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="r4g-e0-u6w" id="fsN-GF-HmW">
@@ -654,7 +689,7 @@
                     </view>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="color" keyPath="navBarBackgroundTintColor">
-                            <color key="value" red="0.27450980392156865" green="0.75294117647058822" blue="0.9137254901960784" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <color key="value" red="0.27450980390000002" green="0.75294117650000003" blue="0.91372549020000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         </userDefinedRuntimeAttribute>
                     </userDefinedRuntimeAttributes>
                     <connections>
@@ -668,21 +703,28 @@
         <!--DiscoverViewController-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController storyboardIdentifier="Discover" id="BYZ-38-t0r" userLabel="DiscoverViewController" customClass="DiscoverViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Discover" id="BYZ-38-t0r" userLabel="DiscoverViewController" customClass="DiscoverViewController" customModule="AccuTerra_Trails" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XfO-iD-lfD" customClass="AccuTerraMapView" customModule="AccuTerraSDK">
-                                <rect key="frame" x="0.0" y="48" width="414" height="493"/>
+                                <rect key="frame" x="0.0" y="48" width="414" height="784"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <connections>
                                     <outlet property="accuTerraDelegate" destination="BYZ-38-t0r" id="cGG-9x-QIN"/>
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="wHP-Q6-xAL"/>
                                 </connections>
                             </view>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="xsX-Vj-wQg">
+                                <rect key="frame" x="188.5" y="436.5" width="37" height="37"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="xsX-Vj-wQg" secondAttribute="height" multiplier="1:1" id="WyL-Du-7sF"/>
+                                </constraints>
+                                <color key="color" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </activityIndicatorView>
                             <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="401-iX-Hcf" userLabel="My Location Button">
-                                <rect key="frame" x="354" y="481" width="40" height="40"/>
+                                <rect key="frame" x="20" y="118" width="40" height="40"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="5XA-XX-xOg"/>
@@ -736,11 +778,14 @@
                                     <action selector="layersPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="UFj-eR-kmx"/>
                                 </connections>
                             </button>
-                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="WKS-tV-5cJ" customClass="TrailListView" customModule="ATSDK_Develop_" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="541" width="414" height="321"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="WKS-tV-5cJ" customClass="TrailListView" customModule="AccuTerra_Trails" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="671" width="414" height="156"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="156" id="X39-2h-GmX"/>
+                                </constraints>
                             </view>
-                            <view hidden="YES" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lmr-2U-nxv" customClass="UILabelledProgressView" customModule="ATSDK_Develop_" customModuleProvider="target">
+                            <view hidden="YES" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lmr-2U-nxv" customClass="UILabelledProgressView" customModule="AccuTerra_Trails" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="832" width="414" height="30"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
@@ -751,23 +796,24 @@
                         <viewLayoutGuide key="safeArea" id="UCU-TG-yQM"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="lmr-2U-nxv" firstAttribute="top" secondItem="XfO-iD-lfD" secondAttribute="bottom" id="03g-a1-LEl"/>
                             <constraint firstItem="WKS-tV-5cJ" firstAttribute="top" secondItem="XfO-iD-lfD" secondAttribute="top" id="10T-f5-12Q"/>
-                            <constraint firstItem="UCU-TG-yQM" firstAttribute="bottom" secondItem="WKS-tV-5cJ" secondAttribute="bottom" id="Dbe-HP-aCl"/>
+                            <constraint firstItem="xsX-Vj-wQg" firstAttribute="centerY" secondItem="UCU-TG-yQM" secondAttribute="centerY" id="AD6-PZ-eFN"/>
                             <constraint firstItem="WKS-tV-5cJ" firstAttribute="leading" secondItem="UCU-TG-yQM" secondAttribute="leading" id="FUa-nz-P9R"/>
                             <constraint firstItem="UCU-TG-yQM" firstAttribute="trailing" secondItem="WKS-tV-5cJ" secondAttribute="trailing" id="HlM-Mf-Tot"/>
                             <constraint firstItem="UCU-TG-yQM" firstAttribute="trailing" secondItem="XfO-iD-lfD" secondAttribute="trailing" id="M1t-YX-nrI"/>
                             <constraint firstItem="ASD-ng-Ecg" firstAttribute="top" secondItem="XfO-iD-lfD" secondAttribute="top" constant="20" id="Md6-tH-sLl"/>
+                            <constraint firstItem="UCU-TG-yQM" firstAttribute="bottom" secondItem="WKS-tV-5cJ" secondAttribute="bottom" constant="35" id="Ouh-0k-hKc"/>
                             <constraint firstItem="UCU-TG-yQM" firstAttribute="trailing" secondItem="lmr-2U-nxv" secondAttribute="trailing" id="QKs-4H-Nck"/>
                             <constraint firstItem="ASD-ng-Ecg" firstAttribute="leading" secondItem="XfO-iD-lfD" secondAttribute="leading" constant="20" id="StI-hm-RXN"/>
                             <constraint firstItem="UCU-TG-yQM" firstAttribute="bottom" secondItem="lmr-2U-nxv" secondAttribute="bottom" id="Z55-ag-BfB"/>
-                            <constraint firstItem="XfO-iD-lfD" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" multiplier="0.55" id="aKk-Ga-pA4" userLabel="Map View Height Partial Constraint"/>
+                            <constraint firstItem="401-iX-Hcf" firstAttribute="top" secondItem="ASD-ng-Ecg" secondAttribute="bottom" constant="10" id="a1w-VW-vX5"/>
                             <constraint firstItem="XfO-iD-lfD" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" multiplier="0.95" id="dF0-dD-XYy"/>
+                            <constraint firstItem="401-iX-Hcf" firstAttribute="leading" secondItem="ASD-ng-Ecg" secondAttribute="leading" id="fC0-JP-4w5"/>
                             <constraint firstItem="XfO-iD-lfD" firstAttribute="top" secondItem="UCU-TG-yQM" secondAttribute="top" id="fE7-ui-Tlz"/>
-                            <constraint firstItem="WKS-tV-5cJ" firstAttribute="top" secondItem="XfO-iD-lfD" secondAttribute="bottom" priority="800" id="qsB-tE-SJD"/>
+                            <constraint firstItem="xsX-Vj-wQg" firstAttribute="centerX" secondItem="UCU-TG-yQM" secondAttribute="centerX" id="htF-S6-eyb"/>
                             <constraint firstItem="XfO-iD-lfD" firstAttribute="leading" secondItem="UCU-TG-yQM" secondAttribute="leading" id="tvK-FQ-UQA"/>
                             <constraint firstItem="lmr-2U-nxv" firstAttribute="leading" secondItem="UCU-TG-yQM" secondAttribute="leading" id="vvc-Iu-N0A"/>
-                            <constraint firstItem="401-iX-Hcf" firstAttribute="bottom" secondItem="XfO-iD-lfD" secondAttribute="bottom" constant="-20" id="zFH-8d-GH6"/>
-                            <constraint firstItem="401-iX-Hcf" firstAttribute="trailing" secondItem="XfO-iD-lfD" secondAttribute="trailing" constant="-20" id="znK-fU-ZTG"/>
                         </constraints>
                         <variation key="default">
                             <mask key="constraints">
@@ -779,29 +825,29 @@
                     <navigationItem key="navigationItem" id="c8V-kW-PIO"/>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="color" keyPath="navBarBackgroundTintColor">
-                            <color key="value" red="0.070588235294117646" green="0.20000000000000001" blue="0.45882352941176469" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <color key="value" red="0.070999999999999994" green="0.20000000000000001" blue="0.45900000000000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         </userDefinedRuntimeAttribute>
                     </userDefinedRuntimeAttributes>
                     <connections>
+                        <outlet property="cacheProgressHeightConstraint" destination="XH2-HT-iju" id="BT5-ID-9Uy"/>
                         <outlet property="cacheProgressView" destination="lmr-2U-nxv" id="1tL-uS-Ieq"/>
                         <outlet property="contentView" destination="WKS-tV-5cJ" id="sDR-Nh-ZKs"/>
-                        <outlet property="contentViewTopConstraint" destination="qsB-tE-SJD" id="nz7-cw-gR9"/>
                         <outlet property="layersButton" destination="ASD-ng-Ecg" id="afg-PI-RpB"/>
                         <outlet property="listViewHeightFullConstraint" destination="10T-f5-12Q" id="FWH-V1-shg"/>
+                        <outlet property="mapLoadingIndicator" destination="xsX-Vj-wQg" id="KyH-8k-Yt8"/>
                         <outlet property="mapView" destination="XfO-iD-lfD" id="OxX-Y3-MpE"/>
                         <outlet property="mapViewHeightClosedConstraint" destination="dF0-dD-XYy" id="bcQ-Ph-3ki"/>
-                        <outlet property="mapViewHeightPartialConstraint" destination="aKk-Ga-pA4" id="DvS-me-JiI"/>
                         <outlet property="myLocationButton" destination="401-iX-Hcf" id="2vo-cw-P3D"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="816" y="565"/>
+            <point key="canvasLocation" x="815.94202898550736" y="564.50892857142856"/>
         </scene>
         <!--Community View Controller-->
         <scene sceneID="Xxe-h1-QQi">
             <objects>
-                <viewController storyboardIdentifier="Community" id="adL-3u-ya8" userLabel="Community View Controller" customClass="CommunityFeedViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Community" id="adL-3u-ya8" userLabel="Community View Controller" customClass="CommunityFeedViewController" customModule="AccuTerra_Trails" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="46T-Lm-fsr">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -810,7 +856,7 @@
                                 <rect key="frame" x="0.0" y="48" width="414" height="814"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripUserViewCell" rowHeight="80" id="24D-O5-11b" customClass="ActivityFeedTripUserViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripUserViewCell" rowHeight="80" id="24D-O5-11b" customClass="ActivityFeedTripUserViewCell" customModule="AccuTerra_Trails" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="50" width="414" height="80"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="24D-O5-11b" id="RWJ-UJ-8AC">
@@ -854,7 +900,7 @@
                                             <outlet property="userNameLabel" destination="awA-ry-EJM" id="GPx-lB-eJU"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripHeaderViewCell" rowHeight="93" id="4xW-a0-lel" customClass="ActivityFeedTripHeaderViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripHeaderViewCell" rowHeight="93" id="4xW-a0-lel" customClass="ActivityFeedTripHeaderViewCell" customModule="AccuTerra_Trails" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="130" width="414" height="93"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="4xW-a0-lel" id="Ard-4I-cD5">
@@ -910,7 +956,7 @@
                                             <outlet property="relatedTrailLabel" destination="NLv-vj-LS1" id="Atg-x3-UXb"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripStatisticsViewCell" rowHeight="60" id="uk7-m6-SQK" customClass="ActivityFeedTripStatisticsViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripStatisticsViewCell" rowHeight="60" id="uk7-m6-SQK" customClass="ActivityFeedTripStatisticsViewCell" customModule="AccuTerra_Trails" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="223" width="414" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="uk7-m6-SQK" id="WSO-bv-pnc">
@@ -1008,7 +1054,7 @@
                                             <outlet property="typeLabel" destination="Btp-eE-W3w" id="UzO-MD-3SC"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripThumbnailViewCell" rowHeight="220" id="4G8-jo-M8l" customClass="ActivityFeedTripThumbnailViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripThumbnailViewCell" rowHeight="220" id="4G8-jo-M8l" customClass="ActivityFeedTripThumbnailViewCell" customModule="AccuTerra_Trails" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="283" width="414" height="220"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="4G8-jo-M8l" id="a29-F3-K0M">
@@ -1030,7 +1076,7 @@
                                             <outlet property="thumbnailMapView" destination="sxi-qA-jpx" id="Wj8-UX-H5G"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripUgcFooterCell" rowHeight="40" id="vsh-lr-6rS" customClass="ActivityFeedTripUgcFooterCell" customModule="ATSDK_Develop_" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripUgcFooterCell" rowHeight="40" id="vsh-lr-6rS" customClass="ActivityFeedTripUgcFooterCell" customModule="AccuTerra_Trails" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="503" width="414" height="40"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="vsh-lr-6rS" id="BDj-eZ-d8X">
@@ -1171,7 +1217,7 @@
                                             <outlet property="photosLabel" destination="CDs-mZ-RhW" id="U4j-by-s8C"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedNoRecordsViewCell" id="2TG-3I-7EY" customClass="ActivityFeedNoRecordsViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedNoRecordsViewCell" id="2TG-3I-7EY" customClass="ActivityFeedNoRecordsViewCell" customModule="AccuTerra_Trails" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="543" width="414" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="2TG-3I-7EY" id="u24-GI-0Vg">
@@ -1210,7 +1256,7 @@
                     <navigationItem key="navigationItem" id="nci-SC-4L6"/>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="color" keyPath="navBarBackgroundTintColor">
-                            <color key="value" red="0.27450980392156865" green="0.75294117647058822" blue="0.9137254901960784" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <color key="value" red="0.27450980390000002" green="0.75294117650000003" blue="0.91372549020000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         </userDefinedRuntimeAttribute>
                     </userDefinedRuntimeAttributes>
                     <connections>
@@ -1224,13 +1270,13 @@
         <!--Activities View Controller-->
         <scene sceneID="1xg-nm-pG6">
             <objects>
-                <viewController storyboardIdentifier="Activities" id="bSE-KY-TYo" userLabel="Activities View Controller" customClass="ActivitiesViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Activities" id="bSE-KY-TYo" userLabel="Activities View Controller" customClass="ActivitiesViewController" customModule="AccuTerra_Trails" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="yhD-NA-G0b">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Activities" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hNm-pw-T0Q">
-                                <rect key="frame" x="172.5" y="437.5" width="69.5" height="21"/>
+                                <rect key="frame" x="172.5" y="437.5" width="69" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="21" id="gBg-zx-MbW"/>
                                 </constraints>
@@ -1249,7 +1295,7 @@
                     <navigationItem key="navigationItem" id="pMh-bv-O2k"/>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="color" keyPath="navBarBackgroundTintColor">
-                            <color key="value" red="0.070588235294117646" green="0.20000000000000001" blue="0.45882352941176469" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <color key="value" red="0.070999999999999994" green="0.20000000000000001" blue="0.45900000000000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         </userDefinedRuntimeAttribute>
                     </userDefinedRuntimeAttributes>
                 </viewController>
@@ -1260,20 +1306,20 @@
         <!--Home View Controller-->
         <scene sceneID="ttx-1Q-uwK">
             <objects>
-                <viewController id="C0Y-vG-j86" userLabel="Home View Controller" customClass="HomeViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="C0Y-vG-j86" userLabel="Home View Controller" customClass="HomeViewController" customModule="AccuTerra_Trails" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Iem-cN-22F">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fi4-0A-A33" userLabel="Taskbar" customClass="TaskBar" customModule="ATSDK_Develop_" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="92" width="414" height="50"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fi4-0A-A33" userLabel="Taskbar" customClass="TaskBar" customModule="AccuTerra_Trails" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="807" width="414" height="55"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="aQk-Tb-rm3"/>
+                                    <constraint firstAttribute="height" constant="55" id="aQk-Tb-rm3"/>
                                 </constraints>
                             </view>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2rV-5Q-GRo">
-                                <rect key="frame" x="0.0" y="149" width="414" height="706"/>
+                                <rect key="frame" x="0.0" y="92" width="414" height="720"/>
                                 <connections>
                                     <segue destination="FJb-4o-fDc" kind="embed" id="t1Q-U8-7mf"/>
                                 </connections>
@@ -1282,13 +1328,15 @@
                         <viewLayoutGuide key="safeArea" id="7n2-i0-vsz"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="fi4-0A-A33" firstAttribute="leading" secondItem="7n2-i0-vsz" secondAttribute="leading" id="22Y-7m-gxL"/>
                             <constraint firstItem="2rV-5Q-GRo" firstAttribute="leading" secondItem="7n2-i0-vsz" secondAttribute="leading" id="4OT-6P-cRs"/>
+                            <constraint firstItem="fi4-0A-A33" firstAttribute="top" secondItem="2rV-5Q-GRo" secondAttribute="bottom" constant="-5" id="6AT-B8-TaP"/>
+                            <constraint firstItem="2rV-5Q-GRo" firstAttribute="top" secondItem="7n2-i0-vsz" secondAttribute="top" id="IWK-vg-Zbb"/>
+                            <constraint firstItem="2rV-5Q-GRo" firstAttribute="trailing" secondItem="7n2-i0-vsz" secondAttribute="trailing" id="LEe-1x-9rh"/>
                             <constraint firstItem="7n2-i0-vsz" firstAttribute="trailing" secondItem="fi4-0A-A33" secondAttribute="trailing" id="Xe7-Rl-Y70"/>
-                            <constraint firstItem="2rV-5Q-GRo" firstAttribute="top" secondItem="fi4-0A-A33" secondAttribute="bottom" constant="7" id="ck3-Md-Cfi"/>
                             <constraint firstItem="7n2-i0-vsz" firstAttribute="trailing" secondItem="2rV-5Q-GRo" secondAttribute="trailing" id="lJD-g5-nh7"/>
-                            <constraint firstItem="fi4-0A-A33" firstAttribute="top" secondItem="7n2-i0-vsz" secondAttribute="top" id="uGE-MI-o2M"/>
-                            <constraint firstItem="7n2-i0-vsz" firstAttribute="bottom" secondItem="2rV-5Q-GRo" secondAttribute="bottom" constant="7" id="wr8-1y-lS9"/>
+                            <constraint firstItem="7n2-i0-vsz" firstAttribute="bottom" secondItem="fi4-0A-A33" secondAttribute="bottom" id="mex-vk-wgz"/>
+                            <constraint firstItem="fi4-0A-A33" firstAttribute="leading" secondItem="7n2-i0-vsz" secondAttribute="leading" id="sZJ-DW-8pl"/>
+                            <constraint firstItem="2rV-5Q-GRo" firstAttribute="leading" secondItem="7n2-i0-vsz" secondAttribute="leading" id="xtj-NN-NYl"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="vZW-OF-tw4"/>
@@ -1304,7 +1352,7 @@
         <!--Home Page View Controller-->
         <scene sceneID="K8J-e6-jQs">
             <objects>
-                <viewController id="FJb-4o-fDc" userLabel="Home Page View Controller" customClass="HomePageViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController"/>
+                <viewController id="FJb-4o-fDc" userLabel="Home Page View Controller" customClass="HomePageViewController" customModule="AccuTerra_Trails" customModuleProvider="target" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5BW-Su-ZZr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="31.884057971014496" y="184.82142857142856"/>
@@ -1330,7 +1378,7 @@
         <!--Download View Controller-->
         <scene sceneID="21E-c9-oXM">
             <objects>
-                <viewController storyboardIdentifier="Download" id="EQE-0l-03P" customClass="DownloadViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Download" id="EQE-0l-03P" customClass="DownloadViewController" customModule="AccuTerra_Trails" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="qgo-Ws-Wcm">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1383,7 +1431,7 @@
         <!--Filter View Controller-->
         <scene sceneID="YOs-Mw-ogn">
             <objects>
-                <viewController storyboardIdentifier="FilterController" id="Ok0-lb-5Xu" customClass="FilterViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="FilterController" id="Ok0-lb-5Xu" customClass="FilterViewController" customModule="AccuTerra_Trails" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="bUu-Ad-x6T">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1537,7 +1585,7 @@
         <!--Profile View Controller-->
         <scene sceneID="NLM-3Y-6gT">
             <objects>
-                <viewController storyboardIdentifier="Profile" id="IFd-w6-COh" customClass="ProfileViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Profile" id="IFd-w6-COh" customClass="ProfileViewController" customModule="AccuTerra_Trails" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="xLE-xl-WiP">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1639,7 +1687,7 @@
                     </view>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="color" keyPath="navBarBackgroundTintColor">
-                            <color key="value" red="0.070588235294117646" green="0.20000000000000001" blue="0.45882352941176469" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <color key="value" red="0.070588235289999995" green="0.20000000000000001" blue="0.45882352939999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         </userDefinedRuntimeAttribute>
                     </userDefinedRuntimeAttributes>
                     <connections>
@@ -1653,7 +1701,7 @@
         <!--Blocking Progress View Controller-->
         <scene sceneID="sEZ-ym-2oD">
             <objects>
-                <viewController storyboardIdentifier="BlockingProgressVC" id="AY8-qk-Hec" customClass="BlockingProgressViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="BlockingProgressVC" id="AY8-qk-Hec" customClass="BlockingProgressViewController" customModule="AccuTerra_Trails" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Imu-nY-BjC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1716,7 +1764,7 @@
         <!--My Trips View Controller-->
         <scene sceneID="pIA-Mc-1o5">
             <objects>
-                <viewController storyboardIdentifier="My Trips" id="jEn-5w-C2A" customClass="MyTripsViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="My Trips" id="jEn-5w-C2A" customClass="MyTripsViewController" customModule="AccuTerra_Trails" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Vap-cy-aEx">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1737,7 +1785,7 @@
                                 <rect key="frame" x="0.0" y="99" width="414" height="763"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="activityFeedRecordedTripViewCell" rowHeight="70" id="6CM-kC-5DF" userLabel="activityFeedRecordedTripViewCell" customClass="ActivityFeedRecordedTripViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="activityFeedRecordedTripViewCell" rowHeight="70" id="6CM-kC-5DF" userLabel="activityFeedRecordedTripViewCell" customClass="ActivityFeedRecordedTripViewCell" customModule="AccuTerra_Trails" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="50" width="414" height="70"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="6CM-kC-5DF" id="rZj-8w-gGF">
@@ -1793,7 +1841,7 @@
                                             <outlet property="lblStatus" destination="583-8O-hmC" id="Rii-bo-AXD"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripUserViewCell" rowHeight="80" id="9lz-hX-89A" customClass="ActivityFeedTripUserViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripUserViewCell" rowHeight="80" id="9lz-hX-89A" customClass="ActivityFeedTripUserViewCell" customModule="AccuTerra_Trails" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="120" width="414" height="80"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="9lz-hX-89A" id="GBh-RL-euZ">
@@ -1837,7 +1885,7 @@
                                             <outlet property="userNameLabel" destination="QfD-JX-XzB" id="kMB-9T-v4L"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripHeaderViewCell" rowHeight="93" id="w4S-Qg-V8h" customClass="ActivityFeedTripHeaderViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripHeaderViewCell" rowHeight="93" id="w4S-Qg-V8h" customClass="ActivityFeedTripHeaderViewCell" customModule="AccuTerra_Trails" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="200" width="414" height="93"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="w4S-Qg-V8h" id="nn5-RF-1Cv">
@@ -1893,7 +1941,7 @@
                                             <outlet property="relatedTrailLabel" destination="XYH-u3-qwt" id="z5E-f1-lKw"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripStatisticsViewCell" rowHeight="60" id="t8v-4E-hDL" customClass="ActivityFeedTripStatisticsViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripStatisticsViewCell" rowHeight="60" id="t8v-4E-hDL" customClass="ActivityFeedTripStatisticsViewCell" customModule="AccuTerra_Trails" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="293" width="414" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="t8v-4E-hDL" id="bco-ca-1aj">
@@ -1991,7 +2039,7 @@
                                             <outlet property="typeLabel" destination="7YE-n1-Lry" id="hQX-p9-jYe"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripThumbnailViewCell" rowHeight="220" id="yLn-Ga-IPJ" customClass="ActivityFeedTripThumbnailViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripThumbnailViewCell" rowHeight="220" id="yLn-Ga-IPJ" customClass="ActivityFeedTripThumbnailViewCell" customModule="AccuTerra_Trails" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="353" width="414" height="220"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="yLn-Ga-IPJ" id="aG4-UF-HKt">
@@ -2013,7 +2061,7 @@
                                             <outlet property="thumbnailMapView" destination="ebc-pR-MHd" id="Xkj-kW-yys"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripUgcFooterCell" rowHeight="40" id="4KC-bg-kqh" customClass="ActivityFeedTripUgcFooterCell" customModule="ATSDK_Develop_" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedTripUgcFooterCell" rowHeight="40" id="4KC-bg-kqh" customClass="ActivityFeedTripUgcFooterCell" customModule="AccuTerra_Trails" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="573" width="414" height="40"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="4KC-bg-kqh" id="uLU-wl-DZZ">
@@ -2154,7 +2202,7 @@
                                             <outlet property="photosLabel" destination="vsM-aw-hSS" id="tjU-1c-HJl"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedNoRecordsViewCell" id="tQy-qa-kQC" customClass="ActivityFeedNoRecordsViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="activityFeedNoRecordsViewCell" id="tQy-qa-kQC" customClass="ActivityFeedNoRecordsViewCell" customModule="AccuTerra_Trails" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="613" width="414" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="tQy-qa-kQC" id="jHM-jE-pUY">
@@ -2198,7 +2246,7 @@
                     <navigationItem key="navigationItem" id="PVB-cg-b3D"/>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="color" keyPath="navBarBackgroundTintColor">
-                            <color key="value" red="0.070588235294117646" green="0.20000000000000001" blue="0.45882352941176469" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <color key="value" red="0.070999999999999994" green="0.20000000000000001" blue="0.45900000000000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         </userDefinedRuntimeAttribute>
                     </userDefinedRuntimeAttributes>
                     <connections>
@@ -2213,7 +2261,7 @@
         <!--Record New Trip Choose View Controller-->
         <scene sceneID="C6r-HP-XH0">
             <objects>
-                <viewController storyboardIdentifier="RecordNewTripChooseVC" id="voc-Hz-afZ" customClass="RecordNewTripChooseViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="RecordNewTripChooseVC" id="voc-Hz-afZ" customClass="RecordNewTripChooseViewController" customModule="AccuTerra_Trails" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="TE0-15-EYD">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2329,7 +2377,7 @@
                     </view>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="color" keyPath="navBarBackgroundTintColor">
-                            <color key="value" red="0.27450980392156865" green="0.75294117647058822" blue="0.9137254901960784" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <color key="value" red="0.27450980390000002" green="0.75294117650000003" blue="0.91372549020000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         </userDefinedRuntimeAttribute>
                     </userDefinedRuntimeAttributes>
                 </viewController>
@@ -2340,7 +2388,7 @@
         <!--Record New Trip View Controller-->
         <scene sceneID="Z7X-JZ-XRL">
             <objects>
-                <viewController storyboardIdentifier="RecordNewTripVC" id="Q14-kB-GCv" customClass="RecordNewTripViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="RecordNewTripVC" id="Q14-kB-GCv" customClass="RecordNewTripViewController" customModule="AccuTerra_Trails" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="bUA-Vm-UyH">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2704,7 +2752,7 @@
                     </view>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="color" keyPath="navBarBackgroundTintColor">
-                            <color key="value" red="0.27450980392156865" green="0.75294117647058822" blue="0.9137254901960784" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <color key="value" red="0.27450980390000002" green="0.75294117650000003" blue="0.91372549020000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         </userDefinedRuntimeAttribute>
                     </userDefinedRuntimeAttributes>
                     <connections>
@@ -2732,7 +2780,7 @@
         <!--Save Trip View Controller-->
         <scene sceneID="67I-S9-0Me">
             <objects>
-                <viewController storyboardIdentifier="SaveTripVC" id="Eq5-Bx-jGd" customClass="SaveTripViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SaveTripVC" id="Eq5-Bx-jGd" customClass="SaveTripViewController" customModule="AccuTerra_Trails" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="fnO-cv-46T">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2972,7 +3020,7 @@
         <!--Trip Poi View Controller-->
         <scene sceneID="Cej-QC-WRQ">
             <objects>
-                <viewController storyboardIdentifier="TripPoiVC" id="2yM-3k-HjB" customClass="TripPoiViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="TripPoiVC" id="2yM-3k-HjB" customClass="TripPoiViewController" customModule="AccuTerra_Trails" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="m5J-1o-Qma">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -3147,7 +3195,7 @@
         <!--Trail Poi Detail View Controller-->
         <scene sceneID="jea-E2-Uoc">
             <objects>
-                <viewController storyboardIdentifier="TrailPoiDetailVC" id="Ihw-Xb-fS4" customClass="TrailPoiDetailViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="TrailPoiDetailVC" id="Ihw-Xb-fS4" customClass="TrailPoiDetailViewController" customModule="AccuTerra_Trails" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="VtE-Db-xRi">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -3233,7 +3281,7 @@
         <!--Online Trip Poi View Controller-->
         <scene sceneID="BEX-4Q-O6Z">
             <objects>
-                <viewController storyboardIdentifier="OnlineTripPoiVC" id="jpe-bT-gPc" customClass="OnlineTripPoiViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="OnlineTripPoiVC" id="jpe-bT-gPc" customClass="OnlineTripPoiViewController" customModule="AccuTerra_Trails" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="3QL-7V-NQ5">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -3336,7 +3384,7 @@
         <!--Online Trip View Controller-->
         <scene sceneID="awF-hx-JHO">
             <objects>
-                <viewController storyboardIdentifier="OnlineTripViewVC" id="ZtP-ce-PXw" customClass="OnlineTripViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="OnlineTripViewVC" id="ZtP-ce-PXw" customClass="OnlineTripViewController" customModule="AccuTerra_Trails" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="zeo-4q-DbO">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -3344,6 +3392,7 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="user_avatar" translatesAutoresizingMaskIntoConstraints="NO" id="A32-oQ-vXk">
                                 <rect key="frame" x="15" y="60" width="60" height="60"/>
                                 <constraints>
+                                    <constraint firstAttribute="width" secondItem="A32-oQ-vXk" secondAttribute="height" id="f0Z-Ih-ot9"/>
                                     <constraint firstAttribute="width" secondItem="A32-oQ-vXk" secondAttribute="height" id="s8V-yB-Gn7"/>
                                     <constraint firstAttribute="height" constant="60" id="wV9-yT-PDX"/>
                                 </constraints>
@@ -3569,7 +3618,7 @@
                                         <rect key="frame" x="15" y="5" width="384" height="140"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <prototypes>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="onlineTripStatisticViewCell" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="onlineTripStatisticViewCell" rowHeight="40" id="NEh-0C-3lt" customClass="OnlineTripStatisticViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="onlineTripStatisticViewCell" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="onlineTripStatisticViewCell" rowHeight="40" id="NEh-0C-3lt" customClass="OnlineTripStatisticViewCell" customModule="AccuTerra_Trails" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="50" width="384" height="40"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="NEh-0C-3lt" id="uLR-5u-TT1">
@@ -3605,7 +3654,7 @@
                                                     <outlet property="valueLabel" destination="V98-zD-bgx" id="Y9X-10-Lda"/>
                                                 </connections>
                                             </tableViewCell>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="onlineTripPoiViewCell" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="onlineTripPoiViewCell" id="cfw-tH-JXK" customClass="OnlineTripPoiViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="onlineTripPoiViewCell" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="onlineTripPoiViewCell" id="cfw-tH-JXK" customClass="OnlineTripPoiViewCell" customModule="AccuTerra_Trails" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="90" width="384" height="43.5"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="cfw-tH-JXK" id="6fy-DO-PmR">
@@ -3789,7 +3838,7 @@
                                 <rect key="frame" x="15" y="487.5" width="384" height="364.5"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="onlineTripCommentViewCell" rowHeight="70" id="9JL-Y8-iXy" customClass="OnlineTripCommentViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="onlineTripCommentViewCell" rowHeight="70" id="9JL-Y8-iXy" customClass="OnlineTripCommentViewCell" customModule="AccuTerra_Trails" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="50" width="384" height="70"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="9JL-Y8-iXy" id="DMy-2h-SOZ">
@@ -3870,7 +3919,6 @@
                             <constraint firstItem="g0X-Lx-6ke" firstAttribute="trailing" secondItem="kx9-xr-8ai" secondAttribute="trailing" id="bhd-sV-qAs"/>
                             <constraint firstItem="g0X-Lx-6ke" firstAttribute="trailing" secondItem="SxU-1U-pGp" secondAttribute="trailing" constant="15" id="dAe-RQ-ePL"/>
                             <constraint firstItem="cZK-Ij-6bf" firstAttribute="leading" secondItem="g0X-Lx-6ke" secondAttribute="leading" id="doj-0r-lHS"/>
-                            <constraint firstItem="A32-oQ-vXk" firstAttribute="width" secondItem="A32-oQ-vXk" secondAttribute="height" id="f0Z-Ih-ot9"/>
                             <constraint firstItem="4SR-JB-2Lp" firstAttribute="trailing" secondItem="kx9-xr-8ai" secondAttribute="trailing" constant="-15" id="fBv-V1-frJ"/>
                             <constraint firstItem="g0X-Lx-6ke" firstAttribute="bottom" secondItem="SxU-1U-pGp" secondAttribute="bottom" constant="10" id="l8C-uY-9OL"/>
                             <constraint firstItem="g0X-Lx-6ke" firstAttribute="trailing" secondItem="Wst-ie-2tA" secondAttribute="trailing" constant="15" id="lhy-f4-exg"/>
@@ -3920,7 +3968,7 @@
         <!--New Comment View Controller-->
         <scene sceneID="9Wp-bZ-LxL">
             <objects>
-                <viewController storyboardIdentifier="NewCommentVC" id="Ao4-WG-ae8" customClass="NewCommentViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NewCommentVC" id="Ao4-WG-ae8" customClass="NewCommentViewController" customModule="AccuTerra_Trails" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="06n-NQ-cfC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -3963,7 +4011,7 @@
         <!--Photo View Controller-->
         <scene sceneID="wro-v5-JE1">
             <objects>
-                <viewController storyboardIdentifier="PhotoViewController" id="esY-du-HWE" customClass="PhotoViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="PhotoViewController" id="esY-du-HWE" customClass="PhotoViewController" customModule="AccuTerra_Trails" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ZzV-Ah-toI">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -3998,7 +4046,7 @@
         <!--Settings View Controller-->
         <scene sceneID="FJ7-vM-msa">
             <objects>
-                <viewController storyboardIdentifier="Settings" id="kut-Ga-doh" customClass="SettingsViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Settings" id="kut-Ga-doh" customClass="SettingsViewController" customModule="AccuTerra_Trails" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="rQD-Fn-oRb">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -4066,7 +4114,7 @@
                     </view>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="color" keyPath="navBarBackgroundTintColor">
-                            <color key="value" red="0.27450980392156865" green="0.75294117647058822" blue="0.9137254901960784" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <color key="value" red="0.27450980390000002" green="0.75294117650000003" blue="0.91372549020000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         </userDefinedRuntimeAttribute>
                     </userDefinedRuntimeAttributes>
                     <connections>
@@ -4081,7 +4129,7 @@
         <!--NewOfflineMapViewController-->
         <scene sceneID="ZKX-yZ-Xqh">
             <objects>
-                <viewController storyboardIdentifier="NewOfflineMap" id="CK6-ve-g4w" userLabel="NewOfflineMapViewController" customClass="NewOfflineMapViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NewOfflineMap" id="CK6-ve-g4w" userLabel="NewOfflineMapViewController" customClass="NewOfflineMapViewController" customModule="AccuTerra_Trails" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="qe6-y3-bu4">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -4156,7 +4204,7 @@
                                     <action selector="layersPressed:" destination="CK6-ve-g4w" eventType="touchUpInside" id="bd0-J8-6cg"/>
                                 </connections>
                             </button>
-                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JG4-WM-EiE" userLabel="View" customClass="TrailListView" customModule="ATSDK_Develop_" customModuleProvider="target">
+                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JG4-WM-EiE" userLabel="View" customClass="TrailListView" customModule="AccuTerra_Trails" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="642" width="414" height="220"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Include Imagery" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ia2-Vg-juZ">
@@ -4256,7 +4304,7 @@
                     <navigationItem key="navigationItem" id="z8P-uw-kha"/>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="color" keyPath="navBarBackgroundTintColor">
-                            <color key="value" red="0.27450980392156865" green="0.75294117647058822" blue="0.9137254901960784" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <color key="value" red="0.27450980390000002" green="0.75294117650000003" blue="0.91372549020000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         </userDefinedRuntimeAttribute>
                     </userDefinedRuntimeAttributes>
                     <connections>
@@ -4277,7 +4325,7 @@
         <!--Trail Collection Mode-->
         <scene sceneID="EEE-24-tlT">
             <objects>
-                <viewController storyboardIdentifier="TrailCollectionVC" title="Trail Collection Mode" id="o1b-FS-7vW" customClass="TrailCollectionViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="TrailCollectionVC" title="Trail Collection Mode" id="o1b-FS-7vW" customClass="TrailCollectionViewController" customModule="AccuTerra_Trails" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="lO4-eq-esg">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -4789,7 +4837,7 @@
                                                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                         </collectionViewFlowLayout>
                                                         <cells>
-                                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="poiTagCell" id="5SS-Uc-Y3h" customClass="PoiTagCollectionViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
+                                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="poiTagCell" id="5SS-Uc-Y3h" customClass="PoiTagCollectionViewCell" customModule="AccuTerra_Trails" customModuleProvider="target">
                                                                 <rect key="frame" x="0.0" y="0.0" width="137.5" height="20.5"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                 <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="cv6-id-7iv">
@@ -5040,7 +5088,7 @@
                     </view>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="color" keyPath="navBarBackgroundTintColor">
-                            <color key="value" red="0.27450980392156865" green="0.75294117647058822" blue="0.9137254901960784" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <color key="value" red="0.27450980390000002" green="0.75294117650000003" blue="0.91372549020000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         </userDefinedRuntimeAttribute>
                     </userDefinedRuntimeAttributes>
                     <connections>
@@ -5086,7 +5134,7 @@
         <!--Trail Collection Mode-->
         <scene sceneID="Gh1-rA-dgQ">
             <objects>
-                <viewController storyboardIdentifier="TrailCollectionGuideVC" title="Trail Collection Mode" id="S15-ww-VHR" customClass="BaseViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="TrailCollectionGuideVC" title="Trail Collection Mode" id="S15-ww-VHR" customClass="BaseViewController" customModule="AccuTerra_Trails" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="NxL-MQ-8Gx">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -5117,7 +5165,7 @@ High data standards:
                     </view>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="color" keyPath="navBarBackgroundTintColor">
-                            <color key="value" red="0.27450980392156865" green="0.75294117647058822" blue="0.9137254901960784" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <color key="value" red="0.27450980390000002" green="0.75294117650000003" blue="0.91372549020000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         </userDefinedRuntimeAttribute>
                     </userDefinedRuntimeAttributes>
                 </viewController>
@@ -5128,7 +5176,7 @@ High data standards:
         <!--Trail Save View Controller-->
         <scene sceneID="yav-Zy-qth">
             <objects>
-                <viewController storyboardIdentifier="TrailSaveVC" id="HW1-2O-5m9" customClass="TrailSaveViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="TrailSaveVC" id="HW1-2O-5m9" customClass="TrailSaveViewController" customModule="AccuTerra_Trails" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="XeH-QU-nJM">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -5316,7 +5364,7 @@ High data standards:
                                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                 </collectionViewFlowLayout>
                                                 <cells>
-                                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="poiTagCell" id="hYH-Li-Q7b" customClass="PoiTagCollectionViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
+                                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="poiTagCell" id="hYH-Li-Q7b" customClass="PoiTagCollectionViewCell" customModule="AccuTerra_Trails" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="0.0" width="138" height="20.5"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="JtB-ZK-g9U">
@@ -5661,7 +5709,7 @@ High data standards:
                                                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                         </collectionViewFlowLayout>
                                                         <cells>
-                                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="accessConcernCell" id="cYf-bI-zeT" customClass="AccessConcernCollectionViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
+                                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="accessConcernCell" id="cYf-bI-zeT" customClass="AccessConcernCollectionViewCell" customModule="AccuTerra_Trails" customModuleProvider="target">
                                                                 <rect key="frame" x="0.0" y="0.0" width="107" height="20.5"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                 <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="9op-ju-ODX">
@@ -6054,7 +6102,7 @@ High data standards:
         <!--Upload View Controller-->
         <scene sceneID="oDJ-Bf-8a7">
             <objects>
-                <viewController storyboardIdentifier="uploadVC" id="flC-VK-lif" customClass="UploadViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="uploadVC" id="flC-VK-lif" customClass="UploadViewController" customModule="AccuTerra_Trails" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="EDN-zK-aQY">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -6063,7 +6111,7 @@ High data standards:
                                 <rect key="frame" x="20" y="58" width="374" height="804"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="uploadStatusTableViewCell" rowHeight="129" id="nmX-zc-gIA" customClass="UploadStatusTableViewCell" customModule="ATSDK_Develop_" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="uploadStatusTableViewCell" rowHeight="129" id="nmX-zc-gIA" customClass="UploadStatusTableViewCell" customModule="AccuTerra_Trails" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="50" width="374" height="129"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="nmX-zc-gIA" id="5ba-Zc-wed">
@@ -6141,7 +6189,7 @@ High data standards:
                     </view>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="color" keyPath="navBarBackgroundTintColor">
-                            <color key="value" red="0.27450980392156865" green="0.75294117647058822" blue="0.9137254901960784" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <color key="value" red="0.27450980390000002" green="0.75294117650000003" blue="0.91372549020000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         </userDefinedRuntimeAttribute>
                     </userDefinedRuntimeAttributes>
                     <connections>
@@ -6155,7 +6203,7 @@ High data standards:
         <!--Database Passcode-->
         <scene sceneID="IT4-jy-IPk">
             <objects>
-                <viewController storyboardIdentifier="DbPasscodeVC" title="Database Passcode" id="9WH-Ek-0LO" customClass="DbPasscodeViewController" customModule="ATSDK_Develop_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="DbPasscodeVC" title="Database Passcode" id="9WH-Ek-0LO" customClass="DbPasscodeViewController" customModule="AccuTerra_Trails" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="k08-AN-6zZ">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -6206,7 +6254,7 @@ High data standards:
                     </view>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="color" keyPath="navBarBackgroundTintColor">
-                            <color key="value" red="0.27450980392156865" green="0.75294117647058822" blue="0.9137254901960784" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <color key="value" red="0.27450980390000002" green="0.75294117650000003" blue="0.91372549020000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         </userDefinedRuntimeAttribute>
                     </userDefinedRuntimeAttributes>
                     <connections>
@@ -6219,6 +6267,7 @@ High data standards:
         </scene>
     </scenes>
     <resources>
+        <image name="Logo" width="512" height="512"/>
         <image name="arrow.left" catalog="system" width="128" height="95"/>
         <image name="arrow.up" catalog="system" width="118" height="128"/>
         <image name="arrowtriangle.down.fill" catalog="system" width="128" height="120"/>
@@ -6231,7 +6280,7 @@ High data standards:
         <image name="hand.thumbsup.fill" catalog="system" width="128" height="121"/>
         <image name="info.circle" catalog="system" width="128" height="123"/>
         <image name="layers" width="368" height="368"/>
-        <image name="location" catalog="system" width="128" height="121"/>
+        <image name="location" catalog="system" width="128" height="119"/>
         <image name="location.fill" catalog="system" width="128" height="119"/>
         <image name="note.text" catalog="system" width="128" height="107"/>
         <image name="person.circle.fill" catalog="system" width="128" height="123"/>
@@ -6239,11 +6288,11 @@ High data standards:
         <image name="plus" catalog="system" width="128" height="113"/>
         <image name="plus.bubble.fill" catalog="system" width="128" height="110"/>
         <image name="poi.add" width="30" height="30"/>
-        <image name="scope" width="21" height="21"/>
-        <image name="star" width="19" height="18"/>
-        <image name="star.fill" width="19" height="18"/>
+        <image name="scope" width="16" height="16"/>
+        <image name="star" width="15" height="14"/>
         <image name="star.fill" catalog="system" width="128" height="116"/>
-        <image name="star.lefthalf.fill" width="19" height="18"/>
+        <image name="star.fill" width="15" height="14"/>
+        <image name="star.lefthalf.fill" width="15" height="14"/>
         <image name="user_avatar" width="600" height="600"/>
         <namedColor name="Accent">
             <color red="0.84705882352941175" green="0.10588235294117647" blue="0.37647058823529411" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -6273,7 +6322,7 @@ High data standards:
             <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <systemColor name="labelColor">
-            <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

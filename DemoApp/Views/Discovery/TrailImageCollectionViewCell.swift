@@ -23,13 +23,13 @@ class TrailImageCollectionViewCell: UICollectionViewCell {
         if let mediaLoader = self.mediaLoader, mediaLoader.mediaUrl() == media.url {
             return //already loaded or loading the same media
         }
-        self.mediaLoader = MediaLoaderFactory.trailMediaLoader(media: media, variant: .THUMBNAIL)
+        self.mediaLoader = MediaLoaderFactory.trailMediaLoader(media: media, variant: .DEFAULT)
         self.imageView.image = nil
         self.imageLoadingIndicator.startAnimating()
         
         mediaLoader?.load(completion: { [weak self] result in
             if case let .success(value) = result {
-                if let loader = self?.mediaLoader, loader.isEqual(loader: value.0) {
+                if let loader = self?.mediaLoader, value.0.isEqual(loader: loader) {
                     self?.imageView.image = value.1
                     self?.imageLoadingIndicator.stopAnimating()
                 }

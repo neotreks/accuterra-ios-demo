@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 import AccuTerraSDK
-import Mapbox
+import MapLibre
 import Reachability
 import Combine
 
@@ -38,11 +38,11 @@ class BaseDrivingViewController : LocationViewController {
     // Available online styles
     private let styles: [URL] = [
         AccuTerraStyle.vectorStyleURL,
-        MGLStyle.satelliteStreetsStyleURL]
+        ApkHereMapClass().styleURL]
 
     // Available offline styles
     private let offlineStyles: [URL] = [
-        MGLStyle.satelliteStreetsStyleURL,
+        ApkHereMapClass().styleURL,
         AccuTerraStyle.vectorStyleURL]
 
     override func viewDidLoad() {
@@ -141,7 +141,7 @@ class BaseDrivingViewController : LocationViewController {
 
     /// Returns true if style is aerial, so we can set better style
     private func isSatellite(style: URL) -> Bool {
-        if let _ = style.absoluteString.range(of: "satellite-streets", options: .caseInsensitive) {
+        if let _ = style.absoluteString.range(of: "HERESatelliteStyle", options: .caseInsensitive) {
             return true
         } else {
             return false
@@ -194,8 +194,8 @@ class BaseDrivingViewController : LocationViewController {
     }
 }
 
-// MARK:- MGLMapViewDelegate extension
-extension BaseDrivingViewController : MGLMapViewDelegate {
+// MARK:- MLNMapViewDelegate extension
+extension BaseDrivingViewController : MLNMapViewDelegate {
 }
 
 // MARK:- AccuTerraMapViewDelegate extension
@@ -254,5 +254,10 @@ extension BaseDrivingViewController : CacheProgressDelegate {
     
     func onComplete(offlineMap: IOfflineMap) {
         // We do not want to do anything here
+    }
+    
+    func onImageryDeleted(offlineMaps: [IOfflineMap]) {
+        let offlineMapNames = offlineMaps.map { $0.displayName }.joined(separator: "\n")
+        AlertUtils.showAlert(viewController: self, title: "Imagery deleted", message: "Because of HERE maps compliance, imagery were deleted from following offline maps: \n\(offlineMapNames)")
     }
 }

@@ -11,57 +11,38 @@ import UIKit
 class TaskbarCell: UICollectionViewCell {
     
     static let selectedBarHeight = 7.0
-    
+    static let titleFontSize = 9.0
+
+    var icon: UIImageView?
     var title: UILabel?
-    var selectedBar: UILabel?
-    
+
+    var iconUnselected: UIImage?
+    var iconSelected: UIImage?
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        title = UILabel(frame: CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height))
-        title?.font = UIFont.systemFont(ofSize: 12.0)
+        title = UILabel(frame: CGRect(x: 0, y: 0, width: bounds.width, height: 0))
+        title?.font = UIFont.systemFont(ofSize: TaskbarCell.titleFontSize)
         title?.textAlignment = .center
         title?.textColor = UIColor.TaskbarTextColor
         title?.translatesAutoresizingMaskIntoConstraints = false
         if let titleLabel = title {
             contentView.addSubview(titleLabel)
-            let constraintStringWidth = "H:[v0(\(bounds.width))]"
-            let constraintStringHeight = "V:[v0(\(bounds.height))]"
-            addConstraintsWithFormat(constraintStringWidth, views: titleLabel)
-            addConstraintsWithFormat(constraintStringHeight, views: titleLabel)
             addConstraint(NSLayoutConstraint(item: titleLabel, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1, constant: 0))
-            addConstraint(NSLayoutConstraint(item: titleLabel, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1, constant: 0))
+            addConstraint(NSLayoutConstraint(item: titleLabel, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1, constant: 0))
         }
-        
-        selectedBar = UILabel(frame: CGRect(x: 0, y: 0, width: bounds.width, height: CGFloat(TaskbarCell.selectedBarHeight)))
-        selectedBar?.backgroundColor = UIColor.TaskbarBackgroundColor
-        if let bar = selectedBar {
-            contentView.addSubview(bar)
-            let constraintStringWidth = "H:[v0(\(bounds.width))]"
-            let constraintStringHeight = "V:[v0(\(TaskbarCell.selectedBarHeight))]"
-            addConstraintsWithFormat(constraintStringWidth, views: bar)
-            addConstraintsWithFormat(constraintStringHeight, views: bar)
-            addConstraint(NSLayoutConstraint (item: bar,
-                                              attribute: NSLayoutConstraint.Attribute.bottom,
-                                              relatedBy: NSLayoutConstraint.Relation.equal,
-                                              toItem: contentView,
-                                              attribute: NSLayoutConstraint.Attribute.bottom,
-                                              multiplier: 1,
-                                              constant: 0))
-            addConstraint(NSLayoutConstraint (item: bar,
-                                              attribute: NSLayoutConstraint.Attribute.leading,
-                                              relatedBy: NSLayoutConstraint.Relation.equal,
-                                              toItem: contentView,
-                                              attribute: NSLayoutConstraint.Attribute.leading,
-                                              multiplier: 1,
-                                              constant: 0))
-            addConstraint(NSLayoutConstraint (item: bar,
-                                              attribute: NSLayoutConstraint.Attribute.trailing,
-                                              relatedBy: NSLayoutConstraint.Relation.equal,
-                                              toItem: contentView,
-                                              attribute: NSLayoutConstraint.Attribute.trailing,
-                                              multiplier: 1,
-                                              constant: 0))
+
+        icon = UIImageView(frame: CGRect(x: 0, y: 0, width: bounds.width, height: 22))
+        icon?.image = iconUnselected
+        icon?.contentMode = .scaleAspectFit
+        icon?.translatesAutoresizingMaskIntoConstraints = false
+        if let iconImageView = icon {
+            contentView.addSubview(iconImageView)
+            addConstraint(NSLayoutConstraint(item: iconImageView, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1, constant: 0))
+            addConstraint(NSLayoutConstraint(item: iconImageView, attribute: .bottom, relatedBy: .equal, toItem: title, attribute: .top, multiplier: 1, constant: -8))
+            addConstraint(NSLayoutConstraint(item: iconImageView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 22)
+)
         }
     }
     
@@ -72,14 +53,16 @@ class TaskbarCell: UICollectionViewCell {
     override var isHighlighted: Bool {
         didSet {
             title?.textColor = isHighlighted ? UIColor.TaskbarActiveTextColor: UIColor.TaskbarTextColor
-            selectedBar?.backgroundColor = isHighlighted ? UIColor.TaskbarActiveBarColor: UIColor.TaskbarBackgroundColor
+            title?.font = isHighlighted ? UIFont.systemFont(ofSize: TaskbarCell.titleFontSize, weight: .semibold) : UIFont.systemFont(ofSize: TaskbarCell.titleFontSize, weight: .regular)
+            icon?.image = isHighlighted ? iconSelected : iconUnselected
         }
     }
     
     override var isSelected: Bool {
         didSet {
             title?.textColor = isSelected ? UIColor.TaskbarActiveTextColor : UIColor.TaskbarTextColor
-            selectedBar?.backgroundColor = isSelected ? UIColor.TaskbarActiveBarColor: UIColor.TaskbarBackgroundColor
+            title?.font = isSelected ? UIFont.systemFont(ofSize: TaskbarCell.titleFontSize, weight: .semibold) : UIFont.systemFont(ofSize: TaskbarCell.titleFontSize, weight: .regular)
+            icon?.image = isSelected ? iconSelected : iconUnselected
         }
     }
     

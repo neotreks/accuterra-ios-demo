@@ -40,33 +40,67 @@ public class TrailInfoDisplay {
     }
     
     // Description with a UILabel (Trail List)
-    public static func setDisplayFieldValues(trailTitleLabel: inout UILabel, descriptionLabel: inout UILabel, distanceLabel: inout UILabel, userRatings: inout RatingView, difficultyColorBar: inout UILabel, basicTrailInfo: TrailBasicInfo?) {
-        
+    public static func setDisplayFieldValues(trailTitleLabel: inout UILabel, descriptionLabel: inout UILabel, distanceLabel: inout UILabel, timeLabel: inout UILabel, elevationLabel: inout UILabel, userRatings: inout RatingView, difficultyColorBar: inout UILabel, difficultyLabel: inout UILabel, difficultyView: inout UIView, bookmarkButton: UIButton, basicTrailInfo: TrailBasicInfo?) {
+
         setDisplayFieldValuesPartial(trailTitleLabel: &trailTitleLabel, distanceLabel: &distanceLabel, basicTrailInfo: basicTrailInfo)
-        
-        if let description = basicTrailInfo?.highlights {
-            descriptionLabel.text = description
+
+        if let elevation = basicTrailInfo?.statistics.highestElevation {
+            elevationLabel.text = ElevationFormatter.formatElevation(elevationInMeters: Double(elevation))
         }
         else {
-            descriptionLabel.text = "N/A"
+            elevationLabel.text = "-- FT"
         }
-        
+
+        if let minTime = basicTrailInfo?.statistics.estimatedDriveTimeMin, let avgTime = basicTrailInfo?.statistics.estimatedDurationAvg {
+            timeLabel.text = DrivingTimeFormatter.formatEstimatedDrivingTimeRange(minTimeInSeconds: minTime, avgTimeInSeconds: avgTime)
+        } else {
+            if let minTime = basicTrailInfo?.statistics.estimatedDriveTimeMin {
+                timeLabel.text = DrivingTimeFormatter.formatEstimatedDrivingTime(ctimeInSeconds: minTime)
+            } else if let avgTime = basicTrailInfo?.statistics.estimatedDurationAvg {
+                timeLabel.text = DrivingTimeFormatter.formatEstimatedDrivingTime(ctimeInSeconds: avgTime)
+            } else {
+                timeLabel.text = "N/A"
+            }
+        }
+
+        if let nearestTown = basicTrailInfo?.locationInfo.nearestTownName {
+            descriptionLabel.text = nearestTown
+        } else if let description = basicTrailInfo?.highlights {
+            descriptionLabel.text = description
+        } else {
+            descriptionLabel.text = ""
+        }
+
         if let difficulty = basicTrailInfo?.techRatingHigh {
             let techRatingColor = TechRatingColorMapper.getTechRatingColor(techRatingCode: difficulty.code)
             difficultyColorBar.backgroundColor = techRatingColor
+            
+            difficultyLabel.text = difficulty.name
+            difficultyLabel.textColor = TechRatingColorMapper.getTechRatingForegroundColor(techRatingCode: difficulty.code)
+            difficultyView.backgroundColor = TechRatingColorMapper.getTechRatingColor(techRatingCode: difficulty.code)
         }
         else {
            difficultyColorBar.backgroundColor = UIColor.white
+            difficultyLabel.text = "UNKNOWN"
+            difficultyView.backgroundColor = .white
         }
+        bookmarkButton.isSelected = basicTrailInfo?.userData?.favorite == true
     }
         
     // Description with a UITextView (Trail Info)
-    public static func setDisplayFieldValues(trailTitleLabel: inout UILabel, descriptionTextView: inout UITextView, distanceLabel: inout UILabel, userRatings: inout RatingView, userRatingCountLabel: inout UILabel, userRatingValueLabel: inout UILabel, difficultyLabel: inout UILabel, basicTrailInfo: TrailBasicInfo?) {
-        
+    public static func setDisplayFieldValues(trailTitleLabel: inout UILabel, descriptionTextView: inout UITextView, distanceLabel: inout UILabel, userRatings: inout RatingView, userRatingCountLabel: inout UILabel, userRatingValueLabel: inout UILabel, difficultyLabel: inout UILabel, difficultyView: inout UIView, basicTrailInfo: TrailBasicInfo?, trail: Trail?) {
+
         setDisplayFieldValuesPartial(trailTitleLabel: &trailTitleLabel, distanceLabel: &distanceLabel, basicTrailInfo: basicTrailInfo)
-        
-        if let description = basicTrailInfo?.highlights {
-            descriptionTextView.attributedText = description.htmlAttributed(family: "-apple-system", size: 14, color: UIColor.Inactive!)
+
+        difficultyView.layer.cornerRadius = difficultyView.bounds.height / 2
+
+        if let description = basicTrailInfo?.description {
+            if let history = trail?.info.history, !history.isEmpty {
+                let historyTitle = "<br/><br/><h3>History</h3>"
+                descriptionTextView.attributedText = (description + historyTitle + history).htmlAttributed(family: "-apple-system", size: 14, color: UIColor.Inactive!)
+            } else {
+                descriptionTextView.attributedText = description.htmlAttributed(family: "-apple-system", size: 14, color: UIColor.Inactive!)
+            }
         }
         else {
             descriptionTextView.text = "N/A"
@@ -90,9 +124,12 @@ public class TrailInfoDisplay {
         
         if let difficulty = basicTrailInfo?.techRatingHigh {
             difficultyLabel.text = difficulty.name
+            difficultyLabel.textColor = TechRatingColorMapper.getTechRatingForegroundColor(techRatingCode: difficulty.code)
+            difficultyView.backgroundColor = TechRatingColorMapper.getTechRatingColor(techRatingCode: difficulty.code)
         }
         else {
-           difficultyLabel.text = "UNKNOWN"
+            difficultyLabel.text = "UNKNOWN"
+            difficultyView.backgroundColor = .white
         }
     }
 }

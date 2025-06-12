@@ -8,7 +8,6 @@
 
 import UIKit
 import AccuTerraSDK
-import ObjectMapper
 
 class ActivityFeedBaseViewController: BaseViewController {
 
@@ -147,7 +146,7 @@ extension ActivityFeedBaseViewController : UITableViewDelegate, UITableViewDataS
         let tripRecording = try service.getTripRecordingByUUID(uuid: uuid)
         
         if let json = tripRecording?.extProperties.first?.data {
-            return Mapper<TrailCollectionData>().map(JSONString: json)
+            return try json.decode()
         } else {
             return nil
         }
@@ -186,6 +185,7 @@ extension ActivityFeedBaseViewController : UITableViewDelegate, UITableViewDataS
             let nav = UINavigationController(rootViewController: vc)
             nav.modalPresentationStyle = .fullScreen
             self.present(nav, animated: true, completion: completion)
+
         }
     }
     

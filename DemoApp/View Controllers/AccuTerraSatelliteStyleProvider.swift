@@ -8,15 +8,15 @@
 
 import Foundation
 import AccuTerraSDK
-import Mapbox
+import MapLibre
 
 /**
 * A custom style provider used for imaginary base map
 */
-class AccuTerraSatelliteStyleProvider: AccuTerraStyleProvider {
+class AccuTerraSatelliteStyleProvider: AccuTerraStyleProviderTrailCollection {
     
     // Trail Path properties
-    override func getTrailProperties(type:TrailLayerStyleType, layer: MGLLineStyleLayer) -> MGLLineStyleLayer {
+    override func getTrailProperties(type:TrailLayerStyleType, layer: MLNLineStyleLayer) -> MLNLineStyleLayer {
         if type == TrailLayerStyleType.TRAIL_PATH {
             layer.lineColor = NSExpression(forConstantValue: UIColor.red)
             layer.lineWidth = NSExpression(forConstantValue: 1.0)
@@ -52,13 +52,13 @@ class AccuTerraSatelliteStyleProvider: AccuTerraStyleProvider {
     }
     
     // Unclustered marker or POI properties
-    override func getPoiProperties(type: TrailPoiStyleType, layer: MGLSymbolStyleLayer) -> MGLSymbolStyleLayer {
+    override func getPoiProperties(type: TrailPoiStyleType, layer: MLNSymbolStyleLayer) -> MLNSymbolStyleLayer {
         if type == TrailPoiStyleType.TRAIL_HEAD {
             layer.iconScale = NSExpression(forConstantValue: 1.0)
             layer.iconOpacity = NSExpression(forConstantValue: 0.85)
             layer.iconColor = NSExpression(forConstantValue: UIColor(hex: "00ff00"))
             layer.iconIgnoresPlacement = NSExpression(forConstantValue: true)
-            layer.iconAnchor = NSExpression(forConstantValue: NSNumber(value: MGLIconAnchor.bottom.rawValue))
+            layer.iconAnchor = NSExpression(forConstantValue: NSNumber(value: MLNIconAnchor.bottom.rawValue))
             layer.iconAllowsOverlap = NSExpression(forConstantValue: true)
             return layer
         }
@@ -67,7 +67,7 @@ class AccuTerraSatelliteStyleProvider: AccuTerraStyleProvider {
             layer.iconOpacity = NSExpression(forConstantValue: 0.85)
             layer.iconColor = NSExpression(forConstantValue: UIColor(hex: "0000ff"))
             layer.iconIgnoresPlacement = NSExpression(forConstantValue: true)
-            layer.iconAnchor = NSExpression(forConstantValue: NSNumber(value: MGLIconAnchor.bottom.rawValue))
+            layer.iconAnchor = NSExpression(forConstantValue: NSNumber(value: MLNIconAnchor.bottom.rawValue))
             layer.iconAllowsOverlap = NSExpression(forConstantValue: true)
             return layer
             }
@@ -77,10 +77,10 @@ class AccuTerraSatelliteStyleProvider: AccuTerraStyleProvider {
     }
         
     // Cluster properties
-    override func getTrailMarkerProperties(type: TrailMarkerStyleType, layer: MGLVectorStyleLayer) -> MGLVectorStyleLayer {
+    override func getTrailMarkerProperties(type: TrailMarkerStyleType, layer: MLNVectorStyleLayer) -> MLNVectorStyleLayer {
         if type == TrailMarkerStyleType.CLUSTER {
-            if layer is MGLCircleStyleLayer{
-                let circleLayer = layer as! MGLCircleStyleLayer
+            if layer is MLNCircleStyleLayer{
+                let circleLayer = layer as! MLNCircleStyleLayer
                 circleLayer.circleRadius = NSExpression(forConstantValue: NSNumber(value: iconSize / 2))
                 circleLayer.circleOpacity = NSExpression(forConstantValue: 0.65)
                 circleLayer.circleColor = NSExpression(forConstantValue: UIColor(hex: "777777"))
@@ -91,8 +91,8 @@ class AccuTerraSatelliteStyleProvider: AccuTerraStyleProvider {
             }
         }
         else if type == TrailMarkerStyleType.CLUSTER_LABEL {
-            if layer is MGLSymbolStyleLayer{
-                let symbolLayer = layer as! MGLSymbolStyleLayer
+            if layer is MLNSymbolStyleLayer{
+                let symbolLayer = layer as! MLNSymbolStyleLayer
                 symbolLayer.text = NSExpression(format: "CAST(point_count, 'NSString')")
                 symbolLayer.textFontSize = NSExpression(forConstantValue: NSNumber(value: iconSize/2))
                 symbolLayer.textColor = NSExpression(forConstantValue: UIColor.yellow)
@@ -112,6 +112,20 @@ class AccuTerraSatelliteStyleProvider: AccuTerraStyleProvider {
         }
         else {
             return layer
+        }
+    }
+    
+    override func modifyFeature(feature: MLNPointFeature, marker: TrailMarker) {
+        let trailBasicInfo = try? ServiceFactory.getTrailService().getTrailBasicInfoById(marker.trailId)
+        let difficulty = getDifficulty(trail: trailBasicInfo)
+        feature.attributes["difficulty"] = difficulty
+    }
+    
+    private func getDifficulty(trail: TrailBasicInfo?) -> String {
+        if let difficultyLevel = trail?.techRatingHigh.level {
+            return String(difficultyLevel)
+        } else {
+            return "No trail found"
         }
     }
 }

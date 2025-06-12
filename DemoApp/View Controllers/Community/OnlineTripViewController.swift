@@ -10,6 +10,7 @@ import UIKit
 import AccuTerraSDK
 import StarryStars
 import CoreLocation
+import Combine
 
 class OnlineTripViewController: UIViewController {
 
@@ -24,7 +25,7 @@ class OnlineTripViewController: UIViewController {
 
     // MARK:- Properties
     private var viewState: ViewState = .map
-    private let TAG = "OnlineTripViewController"
+    private let TAG = LogTag(subsystem: "ATDemoApp", category: "OnlineTripViewController")
     private var mapLoaded = false
     private var currentStyle = AccuTerraStyle.vectorStyleURL
     private lazy var statistics = [(String, String)]()
@@ -69,6 +70,8 @@ class OnlineTripViewController: UIViewController {
     @IBOutlet weak var ratingStars: RatingView!
     @IBOutlet weak var promotedImageView: UIImageView!
 
+    private var cancellableRefs = [AnyCancellable]()
+
     // MARK:- Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -83,6 +86,10 @@ class OnlineTripViewController: UIViewController {
         if let initialViewState = self.initialViewState {
             setViewState(initialViewState)
         }
+        NotificationCenter.default.publisher(for: .userChanged)
+            .sink { [weak self] _ in
+                self?.dismiss(animated: false)
+            }.store(in: &cancellableRefs)
     }
     
     private func setViewState(_ newViewState: ViewState) {
@@ -128,22 +135,22 @@ class OnlineTripViewController: UIViewController {
         }
         
         let service = ServiceFactory.getTripService()
-        service.getTrip(tripUuid: tripUuid, completion: { result in
+        service.getTrip(tripUuid: tripUuid, fetchConfig: TripFetchConfig(), completion: { result in
             self.loadingView.isHidden = true
             switch result {
             case .success(let value):
                 self.trip = value
-                self.userData = SetTripLikedResult(tripUuid: self.trip!.info.uuid, userLike: self.trip!.userInfo.userLike ?? false, likes: self.trip!.likesCount)
+                self.userData = SetTripLikedResult(tripUuid: value.info.uuid, userLike: value.userInfo.userLike ?? false, likes: value.likesCount)
                 self.fillTripData()
                 self.setUpNavBar()
-                self.zoomToTrip(trip: self.trip!)
-                
+                self.zoomToTrip(trip: value)
+
                 // setup trip media
                 // We do merge trip photos with POI photos to show everything together
-                let poiMedia = self.trip!.navigation.points.flatMap { point in
+                let poiMedia = value.navigation.points.flatMap { point in
                     point.media.map { media in media }
                 }
-                self.tripMedia = self.trip!.media + poiMedia
+                self.tripMedia = value.media + poiMedia
                 self.tripPhotoCollection.reloadData()
             case .failure(_):
                 let errorMessage = "Error while loading trip: \(tripUuid), \(result.buildErrorMessage() ?? "unknown")}"
@@ -159,14 +166,15 @@ class OnlineTripViewController: UIViewController {
         do {
             let service = ServiceFactory.getTripService()
             let criteria = try GetTripCommentsCriteriaBuilder.build(tripUuid: tripUuid)
-            service.getTripComments(criteria: criteria) { result in
+            service.getTripComments(criteria: criteria) { (result) in
                 switch result {
                 case .success(let value):
                     self.comments = value.comments
                     self.tripCommentsTableView.reloadData()
                 case .failure(_):
                     let errorMessage = "Error while loading trip comments: \(tripUuid), \(result.buildErrorMessage() ?? "unknown")"
-                    self.showError(errorMessage.toError())
+                    Log.e(self.TAG, errorMessage, result.error)
+                    //self.showError(errorMessage.toError())
                 }
             }
         } catch {
@@ -307,7 +315,9 @@ class OnlineTripViewController: UIViewController {
             self.onPromoteTrip()
         }))
         options.addAction(UIAlertAction(title: "Edit Trip", style: .default, handler: { (action) in
-            self.editTrip()
+            Task {
+                await self.editTrip()
+            }
         }))
         options.addAction(UIAlertAction(title: "Delete Trip", style: .destructive, handler: { (action) in
             self.onDeleteTrip()
@@ -363,13 +373,14 @@ class OnlineTripViewController: UIViewController {
     }
     
     // MARK:- Edit
-    private func editTrip() {
+    @MainActor
+    private func editTrip() async {
         guard let trip = trip else {
             return
         }
         
         do {
-            let _ = try ServiceFactory.getTripRecordingService().startTripEditing(trip: trip)
+            let _ = try await ServiceFactory.getTripRecordingService().startTripEditing(trip: trip, config: StartTripEditingConfig())
             showTripEditVC(tripUuid: trip.info.uuid)
         }
         catch {

@@ -6,10 +6,10 @@
 //  Copyright © 2020 NeoTreks. All rights reserved.
 //
 
-import Mapbox
+import MapLibre
 import SwiftUI
 
-class AnnotationView: MGLAnnotationView {
+class AnnotationView: MLNAnnotationView {
     var isTrailHead:Bool
     var path: UIBezierPath!
 

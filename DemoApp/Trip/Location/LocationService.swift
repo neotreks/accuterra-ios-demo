@@ -9,7 +9,7 @@
 import Foundation
 import CoreLocation
 import AccuTerraSDK
-import Mapbox
+import MapLibre
 import Combine
 
 @objc protocol LocationServiceDelegate {
@@ -20,10 +20,10 @@ import Combine
 
 /// Service used for gathering location updates, recording these with the [ITripRecorder]
 /// and broadcasting these via the default NotificationCenter
-class LocationService : NSObject, MGLLocationManager {
+class LocationService : NSObject, MLNLocationManager {
 
-    weak var delegate: MGLLocationManagerDelegate?
-    private let TAG = "LocationService"
+    weak var delegate: MLNLocationManagerDelegate?
+    private let TAG = LogTag(subsystem: "ATDemoApp", category: "LocationService")
     private let KEY_REQUESTING_LOCATION_RECORDING = "KEY_REQUESTING_LOCATION_RECORDING"
     private var trailPathSimulator: TrailPathLocationSimulator?
     
@@ -119,13 +119,9 @@ class LocationService : NSObject, MGLLocationManager {
     {
         didSet {
             if requestingLocationUpdates {
-                locationManager.delegate = self
-                locationManager.desiredAccuracy = kCLLocationAccuracyBest
-                locationManager.startUpdatingHeading()
-                locationManager.startUpdatingLocation()
+                beginRequestingLocationUpdates()
             } else {
-                locationManager.stopUpdatingHeading()
-                locationManager.stopUpdatingLocation()
+                stopRequestingLocationUpdates()
             }
         }
     }
@@ -161,6 +157,26 @@ class LocationService : NSObject, MGLLocationManager {
             return true
         }
         return Date().timeIntervalSince(lastLocation.timestamp) > seconds
+    }
+
+    private func beginRequestingLocationUpdates() {
+        if SimulatedTrailPathUtil.isTrailPathSimulated {
+            startLocationSimulation()
+        } else {
+            locationManager.delegate = self
+            locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            locationManager.startUpdatingHeading()
+            locationManager.startUpdatingLocation()
+        }
+    }
+
+    private func stopRequestingLocationUpdates() {
+        if SimulatedTrailPathUtil.isTrailPathSimulated {
+            stopLocationSimulation()
+        } else {
+            locationManager.stopUpdatingHeading()
+            locationManager.stopUpdatingLocation()
+        }
     }
 }
 

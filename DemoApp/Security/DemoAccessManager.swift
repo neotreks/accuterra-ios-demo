@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import ObjectMapper
 import AccuTerraSDK
 
 /**
@@ -30,7 +29,7 @@ class DemoCredentialsAccessManager : ICredentialsAccessProvider {
         clientCredentials = ClientCredentials(clientId: WS_AUTH_CLIENT_ID, clientSecret: WS_AUTH_CLIENT_SECRET)
     }
     
-    func resetToken(completion: @escaping (Result<Void, Error>) -> Void){
+    func resetToken(completion: @escaping (Result<Void, Error>) -> Void) {
         SdkManager.shared.resetAccessToken(completion: completion)
     }
 }

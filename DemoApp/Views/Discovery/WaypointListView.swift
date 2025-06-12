@@ -15,7 +15,7 @@ protocol WaypointListViewDelegate : AnyObject {
 
 class WaypointListView: UIView {
     
-    private let TAG = "WaypointListView"
+    private let TAG = LogTag(subsystem: "ATDemoApp", category: "WaypointListView")
     
     @IBOutlet weak var tableView: UITableView!
     

@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Mapbox
+import MapLibre
 
 class UserLocationButton: UIButton {
     private var arrow: CAShapeLayer?
@@ -59,7 +59,7 @@ class UserLocationButton: UIButton {
     }
 
     // Update the arrow's color and rotation when tracking mode is changed.
-    func updateArrowForTrackingMode(mode: MGLUserTrackingMode) {
+    func updateArrowForTrackingMode(mode: MLNUserTrackingMode) {
         let activePrimaryColor = UIColor.Active!
         let disabledPrimaryColor = UIColor.black
         let disabledSecondaryColor = UIColor.clear
