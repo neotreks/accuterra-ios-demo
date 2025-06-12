@@ -34,10 +34,6 @@
 	<string>Add images to your trip.</string>
 	<key>SIMULATE_TRAIL_PATH</key>
 	<false/>
-	<key>UIAppFonts</key>
-	<array>
-		<string>fa-regular-400.ttf</string>
-	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -85,7 +81,7 @@
 	<key>UIUserInterfaceStyle</key>
 	<string>Light</string>
 	<key>WS_AUTH_CLIENT_ID</key>
-	<string>mobile-sdk</string>
+	<string></string>
 	<key>WS_AUTH_CLIENT_SECRET</key>
 	<string></string>
 	<key>WS_AUTH_URL</key>
