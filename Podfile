@@ -26,10 +26,6 @@ target 'DemoApp(Develop)' do
     shared_pods
 end
 
-target 'DemoApp(Test)' do
-    shared_pods
-end
-
 target 'DemoAppUITests' do
   shared_pods
 end

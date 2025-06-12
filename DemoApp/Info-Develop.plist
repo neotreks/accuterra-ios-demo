@@ -4,10 +4,6 @@
 <dict>
 	<key>MGLMapboxAccessToken</key>
 	<string></string>
-	<key>ACCUTERRA_MAP_API_KEY</key>
-	<string></string>
-	<key>ACCUTERRA_MAP_STYLE_URL</key>
-	<string>https://maps.accuterra.com/v1/styles/accuterra-outdoors/style.json</string>
 	<key>AccuTerraEnvironment</key>
 	<string>Develop</string>
 	<key>CFBundleDevelopmentRegion</key>
@@ -42,10 +38,6 @@
 	<string>Add images to your trip.</string>
 	<key>SIMULATE_TRAIL_PATH</key>
 	<false/>
-	<key>UIAppFonts</key>
-	<array>
-		<string>fa-regular-400.ttf</string>
-	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -91,7 +83,7 @@
 	<key>UIUserInterfaceStyle</key>
 	<string>Light</string>
 	<key>WS_AUTH_CLIENT_ID</key>
-	<string>mobile-sdk</string>
+	<string></string>
 	<key>WS_AUTH_CLIENT_SECRET</key>
 	<string></string>
 	<key>WS_AUTH_URL</key>
