@@ -1783,7 +1783,7 @@
 					"@executable_path/Frameworks",
 					"$(FRAMEWORK_SEARCH_PATHS)",
 				);
-				MARKETING_VERSION = 0.33;
+				MARKETING_VERSION = 0.34;
 				PRODUCT_BUNDLE_IDENTIFIER = com.neotreks.accuterra.mobile.DemoApp.Develop;
 				PRODUCT_NAME = "AccuTerra Trails";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -1808,7 +1808,7 @@
 					"@executable_path/Frameworks",
 					"$(FRAMEWORK_SEARCH_PATHS)",
 				);
-				MARKETING_VERSION = 0.33;
+				MARKETING_VERSION = 0.34;
 				PRODUCT_BUNDLE_IDENTIFIER = com.neotreks.accuterra.mobile.DemoApp.Develop;
 				PRODUCT_NAME = "AccuTerra Trails";
 				PROVISIONING_PROFILE_SPECIFIER = "AccuTerra Demo App AdHoc 2022";
