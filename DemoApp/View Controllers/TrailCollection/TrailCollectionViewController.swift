@@ -616,6 +616,8 @@ extension TrailCollectionViewController : TripRecorderDelegate {
             self.trailCollectionStatusLabel.text = "Recording Track"
             self.trailCollectionStatusLabel.backgroundColor = UIColor.Active?.withAlphaComponent(0.5)
             self.trailCollectionStatusLabel.textColor = UIColor.white
+        @unknown default:
+            fatalError()
         }
     }
 }

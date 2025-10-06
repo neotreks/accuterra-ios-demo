@@ -8,7 +8,6 @@
 
 import UIKit
 import AccuTerraSDK
-import SSZipArchive
 import Combine
 
 class UploadViewController: BaseViewController {
@@ -77,7 +76,7 @@ class UploadViewController: BaseViewController {
                     switch request.dataType {
                     case .TRIP:
                         // fileUrl contains path to zip, we want to extract it into the export folder
-                        SSZipArchive.unzipFile(atPath: fileUrl.path, toDestination: exportFolder.path)
+                        try IOUtils.unzipFile(fileUrl: fileUrl, toDestination: exportFolder)
 
                         // Copy trip db
                         let tripDbFolder = exportFolder.appendingPathComponent("db", isDirectory: true)
@@ -125,8 +124,8 @@ class UploadViewController: BaseViewController {
             if FileManager.default.fileExists(atPath: zipPath.path) {
                 try FileManager.default.removeItem(at: zipPath)
             }
-            
-            SSZipArchive.createZipFile(atPath: zipPath.path, withContentsOfDirectory: exportFolder.path)
+
+            try IOUtils.zipFolder(folder: exportFolder, zipFile: zipPath)
             
             self.documentInteractionController = UIDocumentInteractionController(url: zipPath)
             self.documentInteractionController?.presentOpenInMenu(from: self.view.frame, in: self.view, animated: true)

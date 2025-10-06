@@ -8,7 +8,6 @@
 
 import UIKit
 import AccuTerraSDK
-import StarryStars
 import CoreLocation
 
 protocol TrailInfoViewDelegate: AnyObject {
@@ -50,7 +49,7 @@ class TrailInfoViewController: LocationViewController {
     var trailId: Int64?
     
     // MARK: - Private properties
-    private let TAG = LogTag(subsystem: "ATDemoApp", category: String(describing: self))
+    private let TAG = LogTag(subsystem: "ATDemoApp", category: "TrailInfoViewController")
     private var trail: Trail?
     private var trailBasicInfo: TrailBasicInfo?
     private var imageUrls: [TrailMedia]?

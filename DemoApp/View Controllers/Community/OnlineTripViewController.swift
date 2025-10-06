@@ -8,7 +8,6 @@
 
 import UIKit
 import AccuTerraSDK
-import StarryStars
 import CoreLocation
 import Combine
 

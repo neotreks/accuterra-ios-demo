@@ -8,7 +8,6 @@
 
 import UIKit
 import AccuTerraSDK
-import StarryStars
 
 enum StarFillMode: Int {
     case full = 0

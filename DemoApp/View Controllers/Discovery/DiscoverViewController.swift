@@ -9,7 +9,7 @@
 import UIKit
 import MapLibre
 import AccuTerraSDK
-import Reachability
+import ReachabilitySwift
 import Combine
 
 // MARK:- Enums

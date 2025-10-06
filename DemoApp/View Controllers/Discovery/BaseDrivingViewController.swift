@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 import AccuTerraSDK
 import MapLibre
-import Reachability
+import ReachabilitySwift
 import Combine
 
 class BaseDrivingViewController : LocationViewController {

@@ -8,8 +8,7 @@
 
 import UIKit
 import AccuTerraSDK
-import SSZipArchive
-import Reachability
+import ReachabilitySwift
 import Combine
 
 class MyTripsViewController: ActivityFeedBaseViewController {
