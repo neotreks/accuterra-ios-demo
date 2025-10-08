@@ -1,0 +1,60 @@
+{
+  "originHash" : "4452cf66e15f56058f6ed636d30103da7770b96f93ff564b5a0e5ab613ab8c24",
+  "pins" : [
+    {
+      "identity" : "accuterra-sdk-distribution",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/neotreks/accuterra-sdk-distribution",
+      "state" : {
+        "revision" : "25c1d769cc4bde61ab6f36d20a2cb67cc243de02",
+        "version" : "0.30.1"
+      }
+    },
+    {
+      "identity" : "alignedcollectionviewflowlayout",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mischa-hildebrand/AlignedCollectionViewFlowLayout",
+      "state" : {
+        "revision" : "236094ac389234d528cc782c140bcb20724b86bf",
+        "version" : "1.1.3"
+      }
+    },
+    {
+      "identity" : "kingfisher",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/onevcat/Kingfisher.git",
+      "state" : {
+        "revision" : "dd3c422ec3088404d6f7e8c905a8318b3de12d6f",
+        "version" : "8.6.0"
+      }
+    },
+    {
+      "identity" : "maplibre-ios-distribution",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/neotreks/maplibre-ios-distribution",
+      "state" : {
+        "revision" : "7a2054253780b899ef781adfc0f3899b901ceccc",
+        "version" : "6.18.1"
+      }
+    },
+    {
+      "identity" : "reachabilityswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/neotreks/ReachabilitySwift",
+      "state" : {
+        "revision" : "54adc49e682219a739919f772f014301d86fc039",
+        "version" : "5.2.4"
+      }
+    },
+    {
+      "identity" : "turf-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/neotreks/turf-swift",
+      "state" : {
+        "revision" : "2233ff44dd7fd8525c83bfee85db5638e7a2f292",
+        "version" : "4.0.0"
+      }
+    }
+  ],
+  "version" : 3
+}

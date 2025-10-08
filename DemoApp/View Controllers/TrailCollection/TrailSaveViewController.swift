@@ -8,7 +8,6 @@
 
 import UIKit
 import AccuTerraSDK
-import StarryStars
 import AlignedCollectionViewFlowLayout
 
 class TrailSaveViewController: UIViewController {
