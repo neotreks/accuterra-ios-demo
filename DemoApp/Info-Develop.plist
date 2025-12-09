@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>MGLMapboxAccessToken</key>
-	<string></string>
 	<key>AccuTerraEnvironment</key>
 	<string>Develop</string>
 	<key>CFBundleDevelopmentRegion</key>
@@ -26,8 +24,8 @@
 	<string></string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>MGLMapboxMetricsEnabledSettingShownInApp</key>
-	<true/>
+	<key>MBXAccessToken</key>
+	<string></string>
 	<key>NSCameraUsageDescription</key>
 	<string>Add images to your trip.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
