@@ -191,7 +191,9 @@ class TrailListView: UIView {
 extension TrailListView : UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        trails?.count ?? 0
+        let count = trails?.count ?? 0
+        self.superview?.isUserInteractionEnabled = count > 0
+        return count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
