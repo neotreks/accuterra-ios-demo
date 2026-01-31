@@ -176,7 +176,7 @@ class TrailInfoViewController: LocationViewController {
         
         self.includeMedia = includeMedia
         
-        OfflineMapManager.shared.downloadTrailOfflineMap(trailId: trail.info.id, includeImagery: true, downloadTrailMedia: includeMedia) {[weak self] result in
+        OfflineMapManager.shared.downloadTrailOfflineMap(trailId: trail.info.id, includeAccuTerra: true, includeImagery: true, downloadTrailMedia: includeMedia) {[weak self] result in
             switch result {
             case .success(_):
                 self?.downloadButton.isEnabled = true
@@ -255,7 +255,7 @@ class TrailInfoViewController: LocationViewController {
         do {
             let trailOfflineMap = try OfflineMapManager.shared.getTrailOfflineMap(trailId: trail.info.id)
             let status = try OfflineMapManager.shared.getTrailCacheStatus(trailId: trail.info.id)
-            
+
             switch status {
             case .NOT_CACHED, .FAILED, .CANCELED:
                 // Please note the estimate is often very inaccurate!

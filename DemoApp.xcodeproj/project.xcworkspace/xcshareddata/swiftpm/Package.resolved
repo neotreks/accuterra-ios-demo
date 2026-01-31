@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/neotreks/accuterra-sdk-distribution",
       "state" : {
-        "revision" : "44bef7d88f96e99b2841eec358e2f54070628073",
-        "version" : "0.30.3"
+        "revision" : "4dc60a9407f5fe5b3d67f09813492736bc404c39",
+        "version" : "0.40.0"
       }
     },
     {

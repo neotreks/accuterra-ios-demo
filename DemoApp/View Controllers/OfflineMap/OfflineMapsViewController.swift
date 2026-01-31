@@ -26,7 +26,7 @@ class OfflineMapsViewController: BaseViewController {
         super.viewDidLoad()
         
         OfflineMapManager.shared.addProgressObserver(observer: self)
-        
+
         refreshControl.addTarget(self, action: #selector(refresh(sender:)), for: .valueChanged)
         tableView.addSubview(refreshControl)
     }
@@ -169,7 +169,7 @@ extension OfflineMapsViewController: OfflineMapTableViewCellDelegate {
     func showContextMenu(offlineMapId: String) {
         tryOrShowError {
             if let offlineMap = try OfflineMapManager.shared.getOfflineMap(offlineMapId: offlineMapId) {
-                
+
                 let actionController = UIAlertController(title: "Saved Map", message: nil, preferredStyle: .actionSheet)
                 
                 let updateAction = UIAlertAction(title: "Update", style: .default, handler: { (action) in
@@ -290,7 +290,7 @@ extension OfflineMapsViewController: OfflineMapTableViewCellDelegate {
                 case .TRAIL:
                     if let trailOfflineMap = offlineMap as? ITrailOfflineMap {
                         OfflineMapManager.shared.downloadTrailOfflineMap(
-                            trailId: trailOfflineMap.trailId, includeImagery: true, downloadTrailMedia: trailOfflineMap.downloadTrailMedia) { result in
+                            trailId: trailOfflineMap.trailId, includeAccuTerra: true, includeImagery: true, downloadTrailMedia: trailOfflineMap.downloadTrailMedia) { result in
                                 executeBlockOnMainThread {
                                     switch result {
                                     case .success(_):

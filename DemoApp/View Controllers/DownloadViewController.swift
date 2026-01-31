@@ -42,7 +42,12 @@ class DownloadViewController : BaseViewController {
     }
     
     private func initSdk() {
-        SdkManager.shared.initSdkAsync(config: demoAppSdkConfig, accessProvider: DemoCredentialsAccessManager.shared, identityProvider: DemoIdentityManager.shared, delegate: self, dbEncryptConfigProvider: DemoDbEncryptProvider())
+        guard let hereApiKey = Bundle.main.infoDictionary?["HERE_API_KEY"] as? String else {
+            fatalError("HERE_API_KEY is missing in info.plist")
+        }
+
+        let mapProvider = MapLibreMapProvider(imageryTileServer: ImageryTileServer(type: .HereMaps, apiKey: hereApiKey))
+        SdkManager.shared.initSdkAsync(config: demoAppSdkConfig, accessProvider: DemoCredentialsAccessManager.shared, identityProvider: DemoIdentityManager.shared, delegate: self, dbEncryptConfigProvider: DemoDbEncryptProvider(), mapProvider: mapProvider)
     }
 }
 

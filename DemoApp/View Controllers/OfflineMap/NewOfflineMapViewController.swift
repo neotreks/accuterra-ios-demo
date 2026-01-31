@@ -41,8 +41,14 @@ class NewOfflineMapViewController: BaseViewController {
         [.LOCATION, .NONE_WITH_LOCATION]
     
     /// List of styles, the layers button cycles through them
-    var styles: [URL] = [AccuTerraStyle.vectorStyleURL, ApkHereMapClass().styleURL]
-    
+    var styles: [URL] {
+        if let imageryStyle = OfflineMapStyle.IMAGERY.styleUrl {
+            [AccuTerraStyle.vectorStyleURL, imageryStyle]
+        } else {
+            [AccuTerraStyle.vectorStyleURL]
+        }
+    }
+
     /// Current style Id
     var styleId = 0
     

@@ -20,11 +20,6 @@ var demoAppSdkConfig: ApkSdkConfig = {
     let sdkEndpointConfig = SdkEndpointConfig(wsUrl: WS_BASE_URL, wsAuthUrl: WS_AUTH_URL)
     return ApkSdkConfig(
         sdkEndpointConfig: sdkEndpointConfig,
-        mapConfig: MapConfig(
-            // providing nil value will load map token and style url from backend
-            accuTerraMapConfig: nil,
-            // custom imagery style
-            imageryMapConfig: ImageryMapConfig(styleURL: ApkHereMapClass().styleURL)),
         tripConfiguration: TripConfiguration(
             // Just to demonstrate the upload network type constraint
             uploadNetworkType: .CONNECTED,
@@ -41,8 +36,6 @@ var demoAppSdkConfig: ApkSdkConfig = {
             updateTrailUserDataDuringSdkInit: false,
             // Update trail Dynamic Data during SDK initialization (ratings, reported closed dates, etc.)
             updateTrailDynamicDataDuringSdkInit: false
-        ),
-        
-        mapRequestInterceptor: ApkHereMapClass()
+        )
     )
 }()
