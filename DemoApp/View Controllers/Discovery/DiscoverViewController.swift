@@ -63,12 +63,24 @@ class DiscoverViewController: BaseViewController {
     
     var trailService: ITrailService?
     
-    /// List of styles, the layers button cycles through them
-    var styles: [URL] = [AccuTerraStyle.vectorStyleURL, ApkHereMapClass().styleURL]
-    
-    /// Offline supported styles
-    var offlineStyles: [URL] = [ApkHereMapClass().styleURL, AccuTerraStyle.vectorStyleURL]
-    
+    // Available online styles
+    private var styles: [URL] {
+        if let imageryStyle = OfflineMapStyle.IMAGERY.styleUrl {
+            return [AccuTerraStyle.vectorStyleURL, imageryStyle]
+        } else {
+            return [AccuTerraStyle.vectorStyleURL]
+        }
+    }
+
+    // Available offline styles
+    private var offlineStyles: [URL] {
+        if let imageryStyle = OfflineMapStyle.IMAGERY.styleUrl {
+            return [AccuTerraStyle.vectorStyleURL, imageryStyle]
+        } else {
+            return [AccuTerraStyle.vectorStyleURL]
+        }
+    }
+
     /// Current style Id
     var styleId = 0
 
@@ -101,7 +113,7 @@ class DiscoverViewController: BaseViewController {
             .publisher(for: Notification.Name.reachabilityChanged)
             .compactMap({$0.object as? Reachability})
             .receive(on: DispatchQueue.main)
-            .sink() { [weak self] reachability in
+            .sink() { [weak self] (reachability: Reachability) in
                 guard let self = self else {
                     return
                 }
@@ -504,7 +516,7 @@ extension DiscoverViewController : AccuTerraMapViewDelegate {
     /// Checks if overlay is cached and prompts user to download the overlay.
     func checkOverlayMapCache() throws {
         let status = try OfflineMapManager.shared.getOverlayOfflineMap()?.status ?? .NOT_CACHED
-        
+
         if status == .NOT_CACHED || status == .FAILED {
             let estimatedBytes: Int64 = (try? OfflineMapManager.shared.estimateOverlayCacheSize().totalSize) ?? 0
             AlertUtils.showPrompt(viewController: self, title: "Download", message: "Would you like to download Overlay map cache (~\(estimatedBytes.humanFileSize()))?", confirmHandler: {

@@ -24,8 +24,6 @@
 	<string></string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>MBXAccessToken</key>
-	<string></string>
 	<key>NSCameraUsageDescription</key>
 	<string>Add images to your trip.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>

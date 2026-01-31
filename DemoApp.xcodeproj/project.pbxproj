@@ -33,6 +33,7 @@
 		572080DC23E18AD8008C0EDD /* TrailListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 572080CE23E18AD8008C0EDD /* TrailListView.swift */; };
 		572080DF23E18AD8008C0EDD /* TrailListView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 572080CF23E18AD8008C0EDD /* TrailListView.xib */; };
 		572080E423E18B28008C0EDD /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 572080E323E18B27008C0EDD /* UIView.swift */; };
+		5721C45B2EE710A30072E078 /* AccuTerraSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 5721C45A2EE710A30072E078 /* AccuTerraSDK */; };
 		57241B602506872500AB85B8 /* TrailImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57241B5E2506872500AB85B8 /* TrailImageCollectionViewCell.swift */; };
 		57241B642506872500AB85B8 /* TrailImageCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 57241B5F2506872500AB85B8 /* TrailImageCollectionViewCell.xib */; };
 		57241B672506872500AB85B8 /* TrailImageCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 57241B5F2506872500AB85B8 /* TrailImageCollectionViewCell.xib */; };
@@ -213,6 +214,8 @@
 		57C0D38524C1A1AC00AC814D /* NavigatorStatusType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C0D38424C1A1AC00AC814D /* NavigatorStatusType.swift */; };
 		57C0D38724C1A1AC00AC814D /* NavigatorStatusType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C0D38424C1A1AC00AC814D /* NavigatorStatusType.swift */; };
 		57C0D38824C1A1AC00AC814D /* NavigatorStatusType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C0D38424C1A1AC00AC814D /* NavigatorStatusType.swift */; };
+		57C0DD272F2E199B00EE0CFA /* AccuTerraSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 57C0DD262F2E199B00EE0CFA /* AccuTerraSDK */; };
+		57C0DD292F2E199B00EE0CFA /* AccuTerraSDKCore in Frameworks */ = {isa = PBXBuildFile; productRef = 57C0DD282F2E199B00EE0CFA /* AccuTerraSDKCore */; };
 		57C199762C7C76B900CFDC41 /* AccuTerraStyleProviderTrailCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C199752C7C76B900CFDC41 /* AccuTerraStyleProviderTrailCollection.swift */; };
 		57C199782C7C76B900CFDC41 /* AccuTerraStyleProviderTrailCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C199752C7C76B900CFDC41 /* AccuTerraStyleProviderTrailCollection.swift */; };
 		57C199792C7C76B900CFDC41 /* AccuTerraStyleProviderTrailCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C199752C7C76B900CFDC41 /* AccuTerraStyleProviderTrailCollection.swift */; };
@@ -265,6 +268,7 @@
 		57DC566B2B909DA6001DC058 /* NSNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57DC566A2B909DA6001DC058 /* NSNotification.swift */; };
 		57DC566D2B909DA6001DC058 /* NSNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57DC566A2B909DA6001DC058 /* NSNotification.swift */; };
 		57DC566E2B909DA6001DC058 /* NSNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57DC566A2B909DA6001DC058 /* NSNotification.swift */; };
+		57DCF9172EE826450094A615 /* AccuTerraSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 57DCF9162EE826450094A615 /* AccuTerraSDK */; };
 		57E42916247D0FE900B1D71A /* Int64.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57E42915247D0FE900B1D71A /* Int64.swift */; };
 		57E42918247D0FE900B1D71A /* Int64.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57E42915247D0FE900B1D71A /* Int64.swift */; };
 		57E42919247D0FE900B1D71A /* Int64.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57E42915247D0FE900B1D71A /* Int64.swift */; };
@@ -417,9 +421,6 @@
 		D3EF3D7023EDFBF800FFCCE7 /* GeoUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3EF3D6F23EDFBF800FFCCE7 /* GeoUtils.swift */; };
 		D3EF3D7823EF1B7E00FFCCE7 /* TrailListTableviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3EF3D7623EF1B7E00FFCCE7 /* TrailListTableviewCell.swift */; };
 		D3EF3D7923EF1B7E00FFCCE7 /* TrailListTableviewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D3EF3D7723EF1B7E00FFCCE7 /* TrailListTableviewCell.xib */; };
-		E820194527191AC70043FAD0 /* ApkHereMapClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = E820194427191AC70043FAD0 /* ApkHereMapClass.swift */; };
-		E820194727191AC70043FAD0 /* ApkHereMapClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = E820194427191AC70043FAD0 /* ApkHereMapClass.swift */; };
-		E820194827191AC70043FAD0 /* ApkHereMapClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = E820194427191AC70043FAD0 /* ApkHereMapClass.swift */; };
 		E876AC5D2837EE3000163BCA /* TrailPathLocationSimulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E876AC5C2837EE3000163BCA /* TrailPathLocationSimulator.swift */; };
 		E876AC602837EE5600163BCA /* TrailPathLocationSimulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E876AC5C2837EE3000163BCA /* TrailPathLocationSimulator.swift */; };
 /* End PBXBuildFile section */
@@ -587,7 +588,6 @@
 		D3EF3D6F23EDFBF800FFCCE7 /* GeoUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoUtils.swift; sourceTree = "<group>"; };
 		D3EF3D7623EF1B7E00FFCCE7 /* TrailListTableviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrailListTableviewCell.swift; sourceTree = "<group>"; };
 		D3EF3D7723EF1B7E00FFCCE7 /* TrailListTableviewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TrailListTableviewCell.xib; sourceTree = "<group>"; };
-		E820194427191AC70043FAD0 /* ApkHereMapClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApkHereMapClass.swift; sourceTree = "<group>"; };
 		E876AC5C2837EE3000163BCA /* TrailPathLocationSimulator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrailPathLocationSimulator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -597,7 +597,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				573E74FD2E93F4150035EE83 /* Kingfisher in Frameworks */,
+				57C0DD292F2E199B00EE0CFA /* AccuTerraSDKCore in Frameworks */,
+				57DCF9172EE826450094A615 /* AccuTerraSDK in Frameworks */,
+				57C0DD272F2E199B00EE0CFA /* AccuTerraSDK in Frameworks */,
 				573E74FA2E93F3F60035EE83 /* AlignedCollectionViewFlowLayout in Frameworks */,
+				5721C45B2EE710A30072E078 /* AccuTerraSDK in Frameworks */,
 				573E74F12E93F2740035EE83 /* AccuTerraSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -642,7 +646,6 @@
 		5720809923E189F8008C0EDD /* DemoApp */ = {
 			isa = PBXGroup;
 			children = (
-				57409197267FD2D7001F4EF4 /* HEREMaps */,
 				57DA34A2259228040019A07B /* Feed */,
 				57D85B98240D17E800F0B7E2 /* Trail */,
 				57D618582510F19E0088B452 /* Trip */,
@@ -718,14 +721,6 @@
 				572CA63E24F4F6BB00338AB4 /* DemoAccessManager.swift */,
 			);
 			path = Security;
-			sourceTree = "<group>";
-		};
-		57409197267FD2D7001F4EF4 /* HEREMaps */ = {
-			isa = PBXGroup;
-			children = (
-				E820194427191AC70043FAD0 /* ApkHereMapClass.swift */,
-			);
-			path = HEREMaps;
 			sourceTree = "<group>";
 		};
 		575CB15D2603D91D008870C5 /* Settings */ = {
@@ -1046,7 +1041,6 @@
 				5720809323E189F8008C0EDD /* Sources */,
 				5720809423E189F8008C0EDD /* Frameworks */,
 				5720809523E189F8008C0EDD /* Resources */,
-				579066CB24269C4F006A4B14 /* Insert Mapbox Access Token */,
 			);
 			buildRules = (
 			);
@@ -1126,9 +1120,9 @@
 			);
 			mainGroup = 5720808E23E189F8008C0EDD;
 			packageReferences = (
-				573E74EF2E93F2740035EE83 /* XCRemoteSwiftPackageReference "accuterra-sdk-distribution" */,
 				573E74F82E93F3F60035EE83 /* XCRemoteSwiftPackageReference "AlignedCollectionViewFlowLayout" */,
 				573E74FB2E93F4150035EE83 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				57C0DD252F2E199B00EE0CFA /* XCRemoteSwiftPackageReference "accuterra-sdk-distribution" */,
 			);
 			productRefGroup = 5720809823E189F8008C0EDD /* Products */;
 			projectDirPath = "";
@@ -1203,28 +1197,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		579066CB24269C4F006A4B14 /* Insert Mapbox Access Token */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
-			);
-			name = "Insert Mapbox Access Token";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "$SRCROOT/insert_mapbox_access_token.sh\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		5720809323E189F8008C0EDD /* Sources */ = {
@@ -1327,7 +1299,6 @@
 				577AE75E253B48CE0064C885 /* TripRecordingMediaCollectionViewCell.swift in Sources */,
 				57BEAD4F2610F79C0031AD78 /* PoiTagCollectionViewCell.swift in Sources */,
 				5BE16CC629C8EF43007D5F13 /* UIWindow.swift in Sources */,
-				E820194527191AC70043FAD0 /* ApkHereMapClass.swift in Sources */,
 				57B7B55324FF82B000508616 /* ActivityFeedRecordedTripViewCell.swift in Sources */,
 				57585D8625A87D4400FC731B /* NewCommentViewController.swift in Sources */,
 				57B2518C261272820014F3BA /* AccessConcernCollectionViewCell.swift in Sources */,
@@ -1463,7 +1434,6 @@
 				A052702B1D7BD9A6A2A8C6B6 /* SpeedFormatter.swift in Sources */,
 				A0527E88B719A76748E42802 /* LatLonFormatter.swift in Sources */,
 				57FEFAB32983F796003BDC20 /* DiscoverViewController.swift in Sources */,
-				E820194727191AC70043FAD0 /* ApkHereMapClass.swift in Sources */,
 				573E75012E93F46B0035EE83 /* RatingView.swift in Sources */,
 				A052731733244BE2C9B4ED3A /* HeadingFormatter.swift in Sources */,
 				57FEFAC62983F796003BDC20 /* TrailSaveViewController.swift in Sources */,
@@ -1566,7 +1536,6 @@
 				57DA3530259231140019A07B /* TripLocationInfo.swift in Sources */,
 				577B0D6C2982A99D00AE2381 /* Date.swift in Sources */,
 				5BE16CC929C8EF43007D5F13 /* UIWindow.swift in Sources */,
-				E820194827191AC70043FAD0 /* ApkHereMapClass.swift in Sources */,
 				57241B732507658600AB85B8 /* PhotoViewController.swift in Sources */,
 				57DA34DF25922BBE0019A07B /* ActivityFeedTripHeaderItem.swift in Sources */,
 				577B0D782982A9A400AE2381 /* UIImage.swift in Sources */,
@@ -1783,7 +1752,7 @@
 					"@executable_path/Frameworks",
 					"$(FRAMEWORK_SEARCH_PATHS)",
 				);
-				MARKETING_VERSION = 0.34;
+				MARKETING_VERSION = 0.40;
 				PRODUCT_BUNDLE_IDENTIFIER = com.neotreks.accuterra.mobile.DemoApp.Develop;
 				PRODUCT_NAME = "AccuTerra Trails";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -1808,7 +1777,7 @@
 					"@executable_path/Frameworks",
 					"$(FRAMEWORK_SEARCH_PATHS)",
 				);
-				MARKETING_VERSION = 0.34;
+				MARKETING_VERSION = 0.40;
 				PRODUCT_BUNDLE_IDENTIFIER = com.neotreks.accuterra.mobile.DemoApp.Develop;
 				PRODUCT_NAME = "AccuTerra Trails";
 				PROVISIONING_PROFILE_SPECIFIER = "AccuTerra Demo App AdHoc 2022";
@@ -1991,9 +1960,29 @@
 				version = 8.6.0;
 			};
 		};
+		57C0DD252F2E199B00EE0CFA /* XCRemoteSwiftPackageReference "accuterra-sdk-distribution" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/neotreks/accuterra-sdk-distribution";
+			requirement = {
+				kind = exactVersion;
+				version = 0.40.0;
+			};
+		};
+		57DCF9152EE826450094A615 /* XCRemoteSwiftPackageReference "accuterra-sdk-distribution" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/neotreks/accuterra-sdk-distribution";
+			requirement = {
+				kind = exactVersion;
+				version = 0.30.3;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		5721C45A2EE710A30072E078 /* AccuTerraSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AccuTerraSDK;
+		};
 		573E74F02E93F2740035EE83 /* AccuTerraSDK */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 573E74EF2E93F2740035EE83 /* XCRemoteSwiftPackageReference "accuterra-sdk-distribution" */;
@@ -2008,6 +1997,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 573E74FB2E93F4150035EE83 /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
+		};
+		57C0DD262F2E199B00EE0CFA /* AccuTerraSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 57C0DD252F2E199B00EE0CFA /* XCRemoteSwiftPackageReference "accuterra-sdk-distribution" */;
+			productName = AccuTerraSDK;
+		};
+		57C0DD282F2E199B00EE0CFA /* AccuTerraSDKCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 57C0DD252F2E199B00EE0CFA /* XCRemoteSwiftPackageReference "accuterra-sdk-distribution" */;
+			productName = AccuTerraSDKCore;
+		};
+		57DCF9162EE826450094A615 /* AccuTerraSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 57DCF9152EE826450094A615 /* XCRemoteSwiftPackageReference "accuterra-sdk-distribution" */;
+			productName = AccuTerraSDK;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

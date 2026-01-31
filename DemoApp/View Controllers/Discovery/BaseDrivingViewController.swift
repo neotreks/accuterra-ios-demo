@@ -36,14 +36,22 @@ class BaseDrivingViewController : LocationViewController {
     private var currentStyle = AccuTerraStyle.vectorStyleURL
 
     // Available online styles
-    private let styles: [URL] = [
-        AccuTerraStyle.vectorStyleURL,
-        ApkHereMapClass().styleURL]
+    private var styles: [URL] {
+        if let imageryStyle = OfflineMapStyle.IMAGERY.styleUrl {
+            return [AccuTerraStyle.vectorStyleURL, imageryStyle]
+        } else {
+            return [AccuTerraStyle.vectorStyleURL]
+        }
+    }
 
     // Available offline styles
-    private let offlineStyles: [URL] = [
-        ApkHereMapClass().styleURL,
-        AccuTerraStyle.vectorStyleURL]
+    private var offlineStyles: [URL] {
+        if let imageryStyle = OfflineMapStyle.IMAGERY.styleUrl {
+            return [AccuTerraStyle.vectorStyleURL, imageryStyle]
+        } else {
+            return [AccuTerraStyle.vectorStyleURL]
+        }
+    }
 
     override func viewDidLoad() {
         // Monitor network reachability changes
