@@ -2930,7 +2930,7 @@
                                 <color key="textColor" systemColor="systemGrayColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rWi-6c-moY" customClass="RatingView">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rWi-6c-moY" customClass="RatingView" customModule="AccuTerra_Trails" customModuleProvider="target">
                                 <rect key="frame" x="120" y="526.5" width="150" height="38"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <color key="tintColor" red="0.94509803920000002" green="0.76862745099999996" blue="0.058823529409999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -6290,8 +6290,8 @@ High data standards:
         <image name="poi.add" width="30" height="30"/>
         <image name="scope" width="16" height="16"/>
         <image name="star" width="15" height="14"/>
-        <image name="star.fill" catalog="system" width="128" height="116"/>
         <image name="star.fill" width="15" height="14"/>
+        <image name="star.fill" catalog="system" width="128" height="116"/>
         <image name="star.lefthalf.fill" width="15" height="14"/>
         <image name="user_avatar" width="600" height="600"/>
         <namedColor name="Accent">
