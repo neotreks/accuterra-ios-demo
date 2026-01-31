@@ -302,7 +302,7 @@
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JG0-W4-j3c" customClass="RatingView">
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JG0-W4-j3c" customClass="RatingView" customModule="AccuTerra_Trails" customModuleProvider="target">
                                             <rect key="frame" x="284" y="10" width="120" height="25"/>
                                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                             <color key="tintColor" systemColor="systemYellowColor"/>
