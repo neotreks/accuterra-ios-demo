@@ -234,6 +234,7 @@ class DiscoverViewController: BaseViewController {
         
         // Initialize map
         self.mapView.initialize(styleURL: styles[styleId], styleProvider: getStyleProvider(style: styles[styleId]))
+        self.mapView.attributionButtonPosition = .bottomRight
 
         trailsListView.delegate = self
         

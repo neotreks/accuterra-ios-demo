@@ -1,13 +1,13 @@
 {
-  "originHash" : "5829f58dcee0499b0d0dcf556ea8804c7f1d291ec82f13202cac435731d4c932",
+  "originHash" : "4452cf66e15f56058f6ed636d30103da7770b96f93ff564b5a0e5ab613ab8c24",
   "pins" : [
     {
       "identity" : "accuterra-sdk-distribution",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/neotreks/accuterra-sdk-distribution",
       "state" : {
-        "revision" : "4dc60a9407f5fe5b3d67f09813492736bc404c39",
-        "version" : "0.40.0"
+        "revision" : "ef6177bdebb0aa1591d4cba12b46e622b653b3e1",
+        "version" : "0.40.3"
       }
     },
     {
